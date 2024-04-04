@@ -34,7 +34,7 @@ const Login = () => {
               <input
                 className="bg-[#F3F4F6]  w-full  focus:outline-none"
                 placeholder="John Doe"
-                type="text"
+                type="email"
               />
             </div>
           </div>
