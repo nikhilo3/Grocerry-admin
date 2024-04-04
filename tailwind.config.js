@@ -14,19 +14,19 @@ export default {
         65: "#F3F4F6",
       },
       primary: {
-        50: '#FFF7ED',
-        55: '#F97316'
+        50: "#FFF7ED",
+        55: "#F97316",
       },
       secondary: {
-        50: '#DCFCE7',
-        55: '#16A34A',
-        60: '#22C55E'
+        50: "#DCFCE7",
+        55: "#16A34A",
+        60: "#22C55E",
       },
       error: {
-        50: '#EF4444'
+        50: "#EF4444",
       },
       warning: {
-        50: '#EAB308'
+        50: "#EAB308",
       },
     },
 
@@ -35,8 +35,10 @@ export default {
         poppins: ["Poppins", "sans-serif"],
         inter: ["Inter", "sans-serif"],
       },
-      
     },
   },
   plugins: [require("daisyui")],
+  daisyui: {
+    themes: ["light"],
+  },
 };
