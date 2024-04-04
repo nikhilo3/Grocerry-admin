@@ -13,7 +13,7 @@ const RootLayout = (props: Props) => {
       <Sidebar />
       <div className="flex flex-col w-full h-full overflow-hidden">
         <Header />
-        <main className="w-full h-full p-8 bg-neutral">{props.children}</main>
+        <main className="w-full h-full p-8 bg-neutral overflow-auto">{props.children}</main>
       </div>
     </div>
   );
