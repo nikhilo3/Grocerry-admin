@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 const Sidebar = () => {
   return <div className="h-full w-[240px] bg-white px-6 py-[54px] border-r border-[#F3F4F6]">
       <div className="flex flex-col gap-14">
-        <h1 className="font-inter text-[32px] font-bold leading-9 text-[#374151]">A Kasera Company</h1>
+        <h1 className="font-inter text-[32px] font-bold leading-9 text-neutral-60">A Kasera Company</h1>
 
         {/* Navlinks */}
       <div className="flex flex-col gap-3">

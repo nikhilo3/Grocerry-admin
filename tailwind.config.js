@@ -3,9 +3,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     colors: {
-      neutral: "#F9FAFB",
+      background: "#F9FAFB",
       white: "#FFFFFF",
-      accent: {
+      neutral: {
         30: "#E5E7EB",
         40: "#D1D5DB",
         45: "#9CA3AF",

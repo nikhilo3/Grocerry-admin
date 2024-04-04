@@ -9,11 +9,11 @@ const RootLayout = (props: Props) => {
   const { pathname } = useLocation();
   if (pathname === "/login") return props.children;
   return (
-    <div className="h-screen w-screen flex">
+    <div className="h-screen w-screen flex ">
       <Sidebar />
       <div className="flex flex-col w-full h-full overflow-hidden">
         <Header />
-        <main className="w-full h-full p-8 bg-neutral">{props.children}</main>
+        <main className="w-full h-full p-8 bg-neutral bg-background">{props.children}</main>
       </div>
     </div>
   );
