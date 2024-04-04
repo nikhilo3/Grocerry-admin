@@ -24,7 +24,7 @@ const ProductsPage = () => {
           {/* product top action buttons */}
           <div className="flex justify-between items-center">
             <div className="flex gap-4">
-              <label className="input input-bordered flex items-center !outline-none gap-[10px] text-accent-400 w-[258px] p-4 bg-accent-100">
+              <label className="input input-bordered flex items-center !outline-none gap-[10px] text-accent-400 w-[258px] p-4 bg-accent-100 rounded-xl">
                 <img
                   src={searchIcon}
                   alt="search"
