@@ -78,7 +78,7 @@ const orders = () => {
                                             <label className="p-2" htmlFor="html">{order._id}</label>
                                         </td>
                                         <td className="w-1/5 text-start">{order.Date}</td>
-                                        <td className="w-1/5 text-warning-500 text-error-300 text-primary-500 text-secondary-500">{order.Name}</td>
+                                        <td className="w-1/5 ">{order.Name}</td>
                                         <td className="w-1/5 text-center"> ₹{order.Total}</td>
                                         <td className={`w-1/5 text-${order.Status === 'Shipped' ? "primary-500" : order.Status==="Cancelled"?"error-300" :order.Status==="In-Progress"?"warning-500":order.Status==="Delivered"?"secondary-500": "white"} px-8`}>{order.Status}</td>
                                         <td className="w-1/5 "><button><i className="fa-solid fa-ellipsis-vertical w-[58.66px]" /></button></td>
