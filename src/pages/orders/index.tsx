@@ -1,88 +1,100 @@
-import orderData from "../../assets/orderData"
-import Card from "../../components/reusable/Card"
-import Filter from "../../components/reusable/Filter"
-import SearchBar from "../../components/reusable/SearchBar"
+import { orderData, orderDetails } from "../../assets/mockData/orderData"
+import InfoCard from "../../components/reusable/InfoCard"
+import addCircleIcon from "../../assets/icons/add-circle.svg";
+import { Link } from "react-router-dom";
+import SearchBar from "../../components/reusable/SearchBar";
+import Filter from "../../components/reusable/Filter";
+import Upload from "../../components/reusable/Upload";
+import Download from "../../components/reusable/Download";
+import UnCheckedBox from "../../assets/icons/unchecked-box";
+
 
 const orders = () => {
-  return (<>
-  {/* card div */}
-    <div className="xl:flex flex-cols-4 justify-between md:flex flex-wrap ">
-        <div className=" md:pt-8">
-        <Card/>
+    return (<div className="flex flex-col gap-11 overflow-hidden">
+        {/* card div */}
+        <div className="flex gap-5">
+            {orderDetails.map((order, index) => (
+                <InfoCard key={index} {...order} />
+            ))}
         </div>
-        <div className=" md:pt-8">
-        <Card/>
-        </div>
-        <div className=" md:pt-8">
-        <Card/>
-        </div>
-        <div className=" md:pt-8">
-        <Card/>
-        </div>
-    </div>
-    {/* card div end */}
-    <div className="w-full p-6 mt-11 bg-white rounded-[20px] border border-gray-200 flex-col justify-start items-start gap-6 inline-flex">
-        <div className="flex items-center">
-            <SearchBar/>
-            <Filter/>
-            <div>
-                <button>upload csv</button>
-                <button>download csv</button>
-                <button>add Order</button>
+        {/* card div end */}
+        <div className="overflow-x-scroll hide-scrollbar">
+            <div className="border border-accent-200 rounded-[20px] bg-white p-6 flex flex-col gap-6 min-w-[1100px]">
+                {/* Order features */}
+                <div className="flex justify-between items-center">
+                    <div className="flex gap-4">
+                        <SearchBar/>
+                        <Filter/>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Upload/>
+                        <Download/>
+                        <Link
+                            to="/orders/add-a-order"
+                            className="rounded-xl bg-primary-500 px-4 py-3 flex items-center justify-center gap-2"
+                        >
+                            <span className="text-white font-medium">Add Order</span>
+                            <img
+                                src={addCircleIcon}
+                                alt="add product"
+                                className="w-[16px] h-[16px]"
+                            />
+                        </Link>
+                    </div>
+                </div>
+                {/* Order features end */}
+                <div className="w-full">
+                    <table className="w-full">
+                        <thead className="grid grid-col-6">
+                            <tr className="w-full p-4 bg-gray-500 rounded-xl text-accent-50 gap-6">
+                                <td className="w-1/5">
+                                    <button><UnCheckedBox className="w-[18px] h-[18px] flex" /></button>
+                                    <label className="p-2" htmlFor="html">Order ID</label>
+                                </td>
+                                <td className="w-1/5">
+                                    Date
+                                </td>
+                                <td className="w-1/5">
+                                    Customer Name
+                                </td>
+                                <td className="w-1/5 text-center">
+                                    Total
+                                </td>
+                                <td className="w-1/5 px-8">
+                                    Status
+                                </td>
+                                <td className="w-1/5">
+                                    Actions
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody className="grid grid-col-6">
+                            {orderData.map((order, index) => {
+                                console.log(order.Status, typeof (order.Status))
+                                return (
+                                    <tr className={`bg-${(index % 2 === 0) ? 'white' : "gray-200"}  w-full p-4 rounded-xl gap-6`} key={index}>
+                                        <td className="w-1/5">
+                                        <button><UnCheckedBox className="w-[18px] h-[18px] flex" /></button>
+                                            <label className="p-2" htmlFor="html">{order._id}</label>
+                                        </td>
+                                        <td className="w-1/5 text-start">{order.Date}</td>
+                                        <td className="w-1/5 text-warning-500 text-error-300 text-primary-500 text-secondary-500">{order.Name}</td>
+                                        <td className="w-1/5 text-center"> ₹{order.Total}</td>
+                                        <td className={`w-1/5 text-${order.Status === 'Shipped' ? "primary-500" : order.Status==="Cancelled"?"error-300" :order.Status==="In-Progress"?"warning-500":order.Status==="Delivered"?"secondary-500": "white"} px-8`}>{order.Status}</td>
+                                        <td className="w-1/5 "><button><i className="fa-solid fa-ellipsis-vertical w-[58.66px]" /></button></td>
+                                    </tr>
+                                    )
+                            })}
+
+                        </tbody>
+                    </table>
+                </div>
+
+
             </div>
         </div>
-        <div className="w-full">
-            <table className="w-full">
-                <thead className="grid grid-col-6">
-                    <tr className="w-full p-4 bg-gray-500 rounded-xl text-accent-50 items-center gap-6">
-                        <td  className="w-1/5">
-                            <input type="radio"/>
-                            <label className="p-2" htmlFor="html">Order ID</label>
-                        </td> 
-                        <td className="w-1/5">
-                            Date
-                        </td>
-                        <td className="w-1/5">
-                            Customer Name
-                        </td>
-                        <td className="w-1/5">
-                            Total
-                        </td>
-                        <td className="w-1/5">
-                            Status
-                        </td>
-                        <td className="w-1/5">
-                        Actions
-                        </td>
-                    </tr>
-                </thead>
-                <tbody className="grid grid-col-6">
-                    {orderData.map((order,index)=>{
-                        console.log(order.Status,typeof(order.Status))
-                        return(<>
-                            <tr className={`bg-${(index%2===0)?'white':"gray-200"}  w-full p-4 rounded-xl items-center gap-6`}>
-                                <td className="w-1/5">
-                                    <input type="radio" className="w-[18px] h-[18px] rounded border-2 border-gray-50"/>
-                                    <label className="p-2" htmlFor="html">{order._id}</label>
-                                </td>
-                                <td className="w-1/5">{order.Date}</td>
-                                <td className="w-1/5">{order.Name}</td>
-                                <td className="w-1/5"> ₹{order.Total}</td>
-                                <td className={`w-1/5 text-${order.Status==='Shipped'?"primary-55":"black"}`}>{order.Status}</td>
-                                <td className="w-1/5 "><button><i className="fa-solid fa-ellipsis-vertical"/></button></td>
-                            </tr>
-                        
-                        </>)
-                    })}
-                    
-                </tbody>
-            </table>
-        </div>
-        
 
-    </div>
-
-    </>)
+    </div>)
 }
 
 export default orders
