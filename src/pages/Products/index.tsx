@@ -20,11 +20,11 @@ const ProductsPage = () => {
       </div>
       {/* product table */}
       <div className="overflow-x-scroll">
-        <div className="border border-[#E5E7EB] rounded-[20px] bg-[#FFF] p-6 flex flex-col gap-6 min-w-[1100px]">
+        <div className="border border-accent-200 rounded-[20px] bg-white p-6 flex flex-col gap-6 min-w-[1100px]">
           {/* product top action buttons */}
           <div className="flex justify-between items-center">
             <div className="flex gap-4">
-              <label className="input input-bordered flex items-center !outline-none gap-[10px] text-[#9CA3AF] w-[258px] p-4 bg-[#F3F4F6]">
+              <label className="input input-bordered flex items-center !outline-none gap-[10px] text-accent-400 w-[258px] p-4 bg-accent-100">
                 <img
                   src={searchIcon}
                   alt="search"
@@ -40,7 +40,7 @@ const ProductsPage = () => {
                 <div
                   tabIndex={0}
                   role="button"
-                  className="btn bg-[#D1D5DB] text-[#4B5563] flex items-center justify-center font-medium text-base rounded-xl"
+                  className="btn bg-accent-300 text-accent-600 flex items-center justify-center font-medium text-base rounded-xl"
                 >
                   <span>Filter by Category</span>
                   <img
@@ -63,16 +63,20 @@ const ProductsPage = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button className="rounded-xl border border-[#DCFCE7] bg-[#F0FDF4] px-4 py-3 flex items-center justify-center gap-2">
-                <span className="text-[#16A34A] font-medium">Upload CSV</span>
+              <button className="rounded-xl border border-secondary-100 bg-secondary-50 px-4 py-3 flex items-center justify-center gap-2">
+                <span className="text-secondary-600 font-medium">
+                  Upload CSV
+                </span>
                 <img
                   src={uploadIcon}
                   alt="upload"
                   className="w-[16px] h-[16px]"
                 />
               </button>
-              <button className="rounded-xl border border-[#DCFCE7] bg-[#F0FDF4] px-4 py-3 flex items-center justify-center gap-2">
-                <span className="text-[#16A34A] font-medium">Download CSV</span>
+              <button className="rounded-xl border border-secondary-100 bg-secondary-50 px-4 py-3 flex items-center justify-center gap-2">
+                <span className="text-secondary-600 font-medium">
+                  Download CSV
+                </span>
                 <img
                   src={downloadIcon}
                   alt="download"
@@ -81,9 +85,9 @@ const ProductsPage = () => {
               </button>
               <Link
                 to="/products/add-a-product"
-                className="rounded-xl bg-[#F97316] px-4 py-3 flex items-center justify-center gap-2"
+                className="rounded-xl bg-primary-500 px-4 py-3 flex items-center justify-center gap-2"
               >
-                <span className="text-[#FFFFFF] font-medium">Add Product</span>
+                <span className="text-white font-medium">Add Product</span>
                 <img
                   src={addCircleIcon}
                   alt="add product"
@@ -95,7 +99,7 @@ const ProductsPage = () => {
           {/* products list */}
           <div className="flex flex-col gap-4">
             <div
-              className="grid bg-[#6B7280] rounded-xl p-4 text-[#F9FAFB] font-normal"
+              className="grid bg-accent-500 rounded-xl p-4 text-accent-50 font-normal"
               style={{
                 gridTemplateColumns: "1fr 7fr 4fr 5fr 4fr 4fr 4fr 2fr",
               }}
@@ -114,7 +118,7 @@ const ProductsPage = () => {
             {products.map((product, index) => (
               <div
                 key={index}
-                className="grid even:bg-[#F9FAFB] rounded-xl p-4 text-[#6B7280] font-normal"
+                className="grid even:bg-accent-50 rounded-xl p-4 text-accent-500 font-normal"
                 style={{
                   gridTemplateColumns: "1fr 7fr 4fr 5fr 4fr 4fr 4fr 2fr",
                 }}
