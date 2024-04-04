@@ -2,40 +2,32 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    colors: {
-      neutral: "#F9FAFB",
-      white: "#FFFFFF",
-      accent: {
-        40: "#D1D5DB",
-        45: "#9CA3AF",
-        50: "#F0F2FF",
-        55: "#6B7280",
-        60: "#374151",
-        65: "#F3F4F6",
-      },
-      primary: {
-        50: '#FFF7ED',
-        55: '#F97316'
-      },
-      secondary: {
-        50: '#DCFCE7',
-        55: '#16A34A',
-        60: '#22C55E'
-      },
-      error: {
-        50: '#EF4444'
-      },
-      warning: {
-        50: '#EAB308'
-      },
-    },
-
     extend: {
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
         inter: ["Inter", "sans-serif"],
       },
-      
+      colors: {
+        background: "#F9FAFB",
+        accent: {
+          50: "#F9FAFB",
+          100: "#F3F4F6",
+          200: "#E5E7EB",
+          300: "#D1D5DB",
+          400: "#9CA3AF",
+          500: "#6B7280",
+          600: "#4B5563",
+          700: "#374151",
+        },
+        secondary: {
+          50: "#F0FDF4",
+          100: "#DCFCE7",
+          600: "#16A34A",
+        },
+        primary: {
+          500: "#F97316",
+        },
+      },
     },
   },
   plugins: [require("daisyui")],
