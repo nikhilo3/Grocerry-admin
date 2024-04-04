@@ -11,6 +11,10 @@ const ROUTES: IRoute[] = [
     path: "/",
     component: lazy(async () => await import("../pages/Home")),
   },
+  {
+    path: "/login",
+    component: lazy(async () => await import("../pages/Login/Login")),
+  },
 ];
 
 export default ROUTES;

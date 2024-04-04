@@ -6,6 +6,7 @@ export default {
       neutral: "#F9FAFB",
       white: "#FFFFFF",
       accent: {
+        30: "#E5E7EB",
         40: "#D1D5DB",
         45: "#9CA3AF",
         50: "#F0F2FF",
