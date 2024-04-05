@@ -1,18 +1,18 @@
 import { orderData, orderDetails } from "../../assets/mockData/orderData"
 import InfoCard from "../../components/reusable/InfoCard"
 import addCircleIcon from "../../assets/icons/add-circle.svg";
-import { Link } from "react-router-dom";
 import SearchBar from "../../components/reusable/SearchBar";
 import Filter from "../../components/reusable/Filter";
 import Upload from "../../components/reusable/Upload";
 import Download from "../../components/reusable/Download";
 import UnCheckedBox from "../../assets/icons/unchecked-box";
+import OrderModal from "./OrderModal";
 
 
 const orders = () => {
     return (<div className="flex flex-col gap-11 overflow-hidden">
         {/* card div */}
-        <div className="flex gap-5">
+        <div className="flex flex-wrap gap-5">
             {orderDetails.map((order, index) => (
                 <InfoCard key={index} {...order} />
             ))}
@@ -29,17 +29,22 @@ const orders = () => {
                     <div className="flex items-center gap-2">
                         <Upload/>
                         <Download/>
-                        <Link
-                            to="/orders/add-a-order"
+                        <button
                             className="rounded-xl bg-primary-500 px-4 py-3 flex items-center justify-center gap-2"
+                            onClick={() => {
+                                if (document) {
+                                  (document.getElementById('my_modal_3') as HTMLFormElement).showModal();
+                                }
+                              }}
                         >
                             <span className="text-white font-medium">Add Order</span>
                             <img
                                 src={addCircleIcon}
-                                alt="add product"
+                                alt=""
                                 className="w-[16px] h-[16px]"
                             />
-                        </Link>
+                        </button>
+                        <OrderModal/>
                     </div>
                 </div>
                 {/* Order features end */}
@@ -72,7 +77,7 @@ const orders = () => {
                         <tbody className="grid grid-col-6">
                             {orderData.map((order, index) => {
                                 return (
-                                    <tr className={`${(index % 2 === 0) ? 'bg-white' : "bg-gray-200"}  w-full p-4 rounded-xl gap-6`} key={index}>
+                                    <tr className={`${(index % 2 === 0) ? 'bg-white' : "bg-gray-50"}  w-full p-4 rounded-xl gap-6`} key={index}>
                                         <td className="w-1/5">
                                             <div className="flex items-center">
                                         <button><UnCheckedBox className="w-[18px] h-[18px] flex" /></button>
