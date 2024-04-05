@@ -45,11 +45,12 @@ const orders = () => {
                 {/* Order features end */}
                 <div className="w-full">
                     <table className="w-full">
-                        <thead className="grid grid-col-6">
+                        <thead className="grid grid-col-6 ">
                             <tr className="w-full p-4 bg-gray-500 rounded-xl text-accent-50 gap-6">
                                 <td className="w-1/5">
-                                    <button><UnCheckedBox className="w-[18px] h-[18px] flex" /></button>
-                                    <label className="p-2" htmlFor="html">Order ID</label>
+                                    <div className="flex items-center">
+                                    <button className=""><UnCheckedBox className="w-[18px] h-[18px]" /></button>
+                                    <label className="px-2" htmlFor="html">Order ID</label></div>
                                 </td>
                                 <td className="w-1/5">
                                     Date
@@ -70,17 +71,17 @@ const orders = () => {
                         </thead>
                         <tbody className="grid grid-col-6">
                             {orderData.map((order, index) => {
-                                console.log(order.Status, typeof (order.Status))
                                 return (
-                                    <tr className={`bg-${(index % 2 === 0) ? 'white' : "gray-200"}  w-full p-4 rounded-xl gap-6`} key={index}>
+                                    <tr className={`${(index % 2 === 0) ? 'bg-white' : "bg-gray-200"}  w-full p-4 rounded-xl gap-6`} key={index}>
                                         <td className="w-1/5">
+                                            <div className="flex items-center">
                                         <button><UnCheckedBox className="w-[18px] h-[18px] flex" /></button>
-                                            <label className="p-2" htmlFor="html">{order._id}</label>
+                                            <label className="px-2" htmlFor="html">{order._id}</label></div>
                                         </td>
                                         <td className="w-1/5 text-start">{order.Date}</td>
                                         <td className="w-1/5 ">{order.Name}</td>
                                         <td className="w-1/5 text-center"> ₹{order.Total}</td>
-                                        <td className={`w-1/5 text-${order.Status === 'Shipped' ? "primary-500" : order.Status==="Cancelled"?"error-300" :order.Status==="In-Progress"?"warning-500":order.Status==="Delivered"?"secondary-500": "white"} px-8`}>{order.Status}</td>
+                                        <td className={`w-1/5 ${order.Status === 'Shipped' ? "text-primary-500" : order.Status==="Cancelled"?"text-error-300" :order.Status==="In-Progress"?"text-warning-500":order.Status==="Delivered"?"text-secondary-500": "text-black"} px-8`}>{order.Status}</td>
                                         <td className="w-1/5 "><button><i className="fa-solid fa-ellipsis-vertical w-[58.66px]" /></button></td>
                                     </tr>
                                     )
