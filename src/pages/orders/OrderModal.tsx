@@ -3,10 +3,10 @@ const OrderModal = () => {
   return (
     <>
         <dialog id="my_modal_3" className="modal">
-        <div className="modal-box xl:min-w-[752px] min-w-[700px] min-h-[400px] m-8 overflow-y-auto ">
+        <div className="modal-box xl:min-w-[752px] min-w-[700px] min-h-[400px] m-8">
             <form method="dialog">
             {/* if there is a button in form, it will close the modal */}
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-8 top-8 text-4xl">✕</button>
+            <button className="btn btn-md btn-circle btn-ghost absolute right-6 top-6 text-3xl">✕</button>
             </form>
             <div className="flex flex-col">
                 <p className="w-full text-gray-700 text-[28px] font-medium ">Add Order</p>
@@ -30,15 +30,13 @@ const OrderModal = () => {
                             <span className="">Select Products Here</span>
                             <span className=""><i className="fa-solid fa-angle-down"></i></span>
                         </summary>
-                        <ul className="p-2 shadow menu dropdown-content z-[1] bg-gray-100 rounded-box w-4/5">
+                        <ul className="mx-2 shadow menu dropdown-content h-[80px] overflow-y-auto z-[1] bg-gray-100 rounded-box grid grid-cols-1 w-4/5">
                             <li><a>Products 1</a></li>
                             <li><a>Products 2</a></li>
                             <li><a>Products 1</a></li>
-                            <li><a>Products 2</a></li>
                             <li><a>Products 1</a></li>
                             <li><a>Products 2</a></li>
                             <li><a>Products 1</a></li>
-                            <li><a>Products 2</a></li>
                             
                         </ul>
                     </details>
