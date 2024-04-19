@@ -28,12 +28,17 @@ export default {
         primary: {
           500: "#F97316",
         },
-        error:{
-          300:"#EF4444"
+
+        error: {
+          50: "#FEF2F2",
+          100: "#FEE2E2",
+          300: "#EF4444",
         },
+
         warning:{
           500:"#EAB308"
         }
+
       },
     },
   },
