@@ -1,20 +1,89 @@
-import { NavLink } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import overview1 from "../../assets/icons/Dashboard icons/overview1.svg";
+import overview2 from "../../assets/icons/Dashboard icons/overview2.svg";
+import products1 from "../../assets/icons/Dashboard icons/products1.svg";
+import products2 from "../../assets/icons/Dashboard icons/products2.svg";
+import orders1 from "../../assets/icons/Dashboard icons/orders1.svg";
+import orders2 from "../../assets/icons/Dashboard icons/orders2.svg";
+import users1 from "../../assets/icons/Dashboard icons/user1.svg";
+import users2 from "../../assets/icons/Dashboard icons/users2.svg";
+import drivers1 from "../../assets/icons/Dashboard icons/drivers1.svg";
+import reports1 from "../../assets/icons/Dashboard icons/report1.svg";
 
 const Sidebar = () => {
+  const { pathname } = useLocation();
+
+  const navLinks = [
+    {
+      label: "Overview",
+      path: "/login",
+      icon1 : overview1,
+      icon2 : overview2
+    },
+    {
+      label: "Products",
+      path: "/products",
+      icon1 : products1,
+      icon2 : products2
+    },
+    {
+      label: "Orders",
+      path: "/orders",
+      icon1 : orders1,
+      icon2 : orders2
+    },
+    {
+      label: "Users",
+      path: "/users",
+      icon1 : users1,
+      icon2 : users2
+    },
+    {
+      label: "Drivers",
+      path: "/drivers",
+      icon1 : drivers1,
+      icon2 : drivers1
+    },
+    {
+      label: "Reports",
+      path: "/reports",
+      icon1 : reports1,
+      icon2 : reports1
+    },
+  ]
   return <div className="h-full w-[240px] bg-white px-6 py-[54px] border-r border-[#F3F4F6]">
       <div className="flex flex-col gap-14">
         <h1 className="font-inter text-[32px] font-bold leading-9 text-neutral-60">A Kasera Company</h1>
 
         {/* Navlinks */}
       <div className="flex flex-col gap-3">
-        <NavLink
+
+      {
+        navLinks.map((link, index) => 
+        <Link 
+        key={index} 
+        to={link.path}
+        className={`rounded-xl p-[14px] flex items-center gap-3 text-[16px] font-inter font-medium border border-[#F3F4F6] 
+        ${pathname === link.path ? "bg-[#FFF7ED] text-[#374151]" : "text-[#9CA3AF]"}
+        `}
+        >
+          {
+            pathname === link.path ? <img src={link.icon2} alt="" /> : <img src={link.icon1} alt="" />
+          }
+          {link?.label}
+        </Link>
+        )
+      }
+
+
+        {/* <NavLink
           to={'/login'}
           className={({ isActive, isPending }) =>
             isPending
               ? 'pending'
               : isActive
                 ? 'text-[#374151] rounded-xl bg-[#FFF7ED] p-[14px] flex items-center gap-3 text-[16px] font-inter font-medium border border-[#F3F4F6]'
-                : 'text-[#9CA3AF] rounded-xl bg-[#FFF7ED] p-[14px] flex items-center gap-3 text-[16px] font-inter font-medium'
+                : 'text-[#9CA3AF] rounded-xl p-[14px] flex items-center gap-3 text-[16px] font-inter font-medium border border-[#F3F4F6]'
           }
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -41,7 +110,7 @@ const Sidebar = () => {
               ? 'pending'
               : isActive
                 ? 'text-[#374151] rounded-xl bg-[#FFF7ED] p-[14px] flex items-center gap-3 text-[16px] font-inter font-medium border border-[#F3F4F6]'
-                : 'text-[#9CA3AF] rounded-xl bg-[#FFF7ED] p-[14px] flex items-center gap-3 text-[16px] font-inter font-medium'
+                : 'text-[#9CA3AF] rounded-xl p-[14px] flex items-center gap-3 text-[16px] font-inter font-medium border border-[#F3F4F6]'
           }
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -58,13 +127,13 @@ const Sidebar = () => {
         </NavLink>
 
         <NavLink
-          to={'/'}
+          to={'/products'}
           className={({ isActive, isPending }) =>
             isPending
               ? 'pending'
               : isActive
                 ? 'text-[#374151] rounded-xl bg-[#FFF7ED] p-[14px] flex items-center gap-3 text-[16px] font-inter font-medium border border-[#F3F4F6]'
-                : 'text-[#9CA3AF] rounded-xl bg-[#FFF7ED] p-[14px] flex items-center gap-3 text-[16px] font-inter font-medium'
+                : 'text-[#9CA3AF] rounded-xl p-[14px] flex items-center gap-3 text-[16px] font-inter font-medium border border-[#F3F4F6]'
           }
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -81,13 +150,13 @@ const Sidebar = () => {
         </NavLink>
 
         <NavLink
-          to={'/'}
+          to={'/driver'}
           className={({ isActive, isPending }) =>
             isPending
               ? 'pending'
               : isActive
                 ? 'text-[#374151] rounded-xl bg-[#FFF7ED] p-[14px] flex items-center gap-3 text-[16px] font-inter font-medium'
-                : 'text-[#9CA3AF] rounded-xl bg-[#FFF7ED] p-[14px] flex items-center gap-3 text-[16px] font-inter font-medium border border-[#F3F4F6]'
+                : 'text-[#9CA3AF] rounded-xl p-[14px] flex items-center gap-3 text-[16px] font-inter font-medium border border-[#F3F4F6]'
           }
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -101,7 +170,7 @@ const Sidebar = () => {
 </defs>
 </svg>
         Drivers
-        </NavLink>
+        </NavLink> */}
 
       </div>
       </div>
