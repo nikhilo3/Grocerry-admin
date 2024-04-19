@@ -27,7 +27,7 @@ export const products = [
     revenue: 500,
   },
   {
-    name: "Product 1",
+    name: "Product xyz",
     category: "Category 1",
     subCategory: "Sub Category 1",
     stock: 100,
@@ -35,7 +35,15 @@ export const products = [
     revenue: 500,
   },
   {
-    name: "Product 1",
+    name: "Aalu gobi",
+    category: "Fruit & Vegetables",
+    subCategory: "Sub Category 1",
+    stock: 0,
+    sold: 50,
+    revenue: 500,
+  },
+  {
+    name: "Butter Chicken",
     category: "Category 1",
     subCategory: "Sub Category 1",
     stock: 100,
@@ -43,15 +51,7 @@ export const products = [
     revenue: 500,
   },
   {
-    name: "Product 1",
-    category: "Category 1",
-    subCategory: "Sub Category 1",
-    stock: 100,
-    sold: 50,
-    revenue: 500,
-  },
-  {
-    name: "Product 1",
+    name: "Paneer Tikka Masala",
     category: "Category 1",
     subCategory: "Sub Category 1",
     stock: 100,
