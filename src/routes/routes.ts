@@ -10,6 +10,9 @@ const ROUTES: IRoute[] = [
   {
     path: "/",
     component: lazy(async () => await import("../pages/Home")),
+  },{
+    path: "/orders",
+    component: lazy(async () => await import("../pages/orders")),
   },
   {
     path: "/products",

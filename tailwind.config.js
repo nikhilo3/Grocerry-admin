@@ -22,13 +22,23 @@ export default {
         secondary: {
           50: "#F0FDF4",
           100: "#DCFCE7",
+          500: "#22C55E",
           600: "#16A34A",
         },
         primary: {
           500: "#F97316",
         },
+        error:{
+          300:"#EF4444"
+        },
+        warning:{
+          500:"#EAB308"
+        }
       },
     },
+  },
+  daisyui: {
+    darkTheme: "light"
   },
   plugins: [require("daisyui")],
 };
