@@ -10,6 +10,7 @@ const classes = {
     primary: "bg-primary-500 text-white",
     green: "border border-secondary-100 bg-secondary-50 text-secondary-600",
     error: "text-error-300 bg-error-100 border border-error-50",
+    "primary/100": "bg-primary-100 border border-primary-200 text-primary-500",
   },
 } as const;
 
