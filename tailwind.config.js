@@ -29,6 +29,9 @@ export default {
           100: "#FFEDD5",
           200: "#FED7AA",
           500: "#F97316",
+          200: "#FED7AA",
+          100: "#FFEDD5",
+
         },
 
         error: {
@@ -40,6 +43,7 @@ export default {
         warning: {
           500: "#EAB308",
         },
+
       },
     },
   },
