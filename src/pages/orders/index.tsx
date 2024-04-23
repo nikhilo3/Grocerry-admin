@@ -1,15 +1,44 @@
 import { orderData, orderDetails } from "../../assets/mockData/orderData"
 import InfoCard from "../../components/reusable/InfoCard"
-import addCircleIcon from "../../assets/icons/add-circle.svg";
-import SearchBar from "../../components/reusable/SearchBar";
-import Filter from "../../components/reusable/Filter";
-import Upload from "../../components/reusable/Upload";
 import Download from "../../components/reusable/Download";
 import UnCheckedBox from "../../assets/icons/unchecked-box";
+import { useEffect, useState } from "react";
+import { products } from "../../assets/mockData/products";
+import search from "../../utils/search";
+import SearchInput from "../../components/reusable/SearchInput";
+import StatusDropdown from "../../components/reusable/StatusDropdown";
+import { PRODUCT_STATUS } from "../../assets/data/status";
+import arrowDown from "../../assets/icons/statusArrowdown.svg";
+import ThreeDots from "../../assets/icons/three-dots";
 import OrderModal from "./OrderModal";
 
 
+
 const orders = () => {
+    const [, setFilteredData] = useState(products);
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [queryString, setQueryString] = useState<string>("");
+    const [isMenuVisible, setIsMenuVisible] = useState(false);
+
+
+    const handleButtonClick = () => {
+        // Toggle the visibility of the menu
+        setIsMenuVisible(!isMenuVisible);
+    };
+
+    useEffect(() => {
+        let data = products;
+        if (selectedCategories.length > 0) {
+            data = data.filter((product) =>
+                selectedCategories.includes(product.category)
+            );
+        }
+        const searchKeys = ["name", "category", "subCategory"];
+        data = search(data, queryString, searchKeys);
+        setFilteredData(data);
+    }, [selectedCategories, queryString]);
+
+
     return (<div className="flex flex-col gap-11 overflow-hidden">
         {/* card div */}
         <div className="flex flex-wrap gap-5">
@@ -23,28 +52,18 @@ const orders = () => {
                 {/* Order features */}
                 <div className="flex justify-between items-center">
                     <div className="flex gap-4">
-                        <SearchBar/>
-                        <Filter/>
+                        <SearchInput
+                            placeholder="Search products..."
+                            onChange={(e) => setQueryString(e.target.value)}
+                        />
+                        <StatusDropdown
+                            dropdownItems={PRODUCT_STATUS}
+                            setDropdownItems={setSelectedCategories}
+                            selectedItems={selectedCategories}
+                        />
                     </div>
                     <div className="flex items-center gap-2">
-                        <Upload/>
-                        <Download/>
-                        <button
-                            className="rounded-xl bg-primary-500 px-4 py-3 flex items-center justify-center gap-2"
-                            onClick={() => {
-                                if (document) {
-                                  (document.getElementById('my_modal_3') as HTMLFormElement).showModal();
-                                }
-                              }}
-                        >
-                            <span className="text-white font-medium">Add Order</span>
-                            <img
-                                src={addCircleIcon}
-                                alt=""
-                                className="w-[16px] h-[16px]"
-                            />
-                        </button>
-                        <OrderModal/>
+                        <Download />
                     </div>
                 </div>
                 {/* Order features end */}
@@ -54,8 +73,8 @@ const orders = () => {
                             <tr className="w-full p-4 bg-gray-500 rounded-xl text-accent-50 gap-6">
                                 <td className="w-1/5">
                                     <div className="flex items-center">
-                                    <button className=""><UnCheckedBox className="w-[18px] h-[18px]" /></button>
-                                    <label className="px-2" htmlFor="html">Order ID</label></div>
+                                        <button className=""><UnCheckedBox className="w-[18px] h-[18px]" /></button>
+                                        <label className="px-2" htmlFor="html">Order ID</label></div>
                                 </td>
                                 <td className="w-1/5">
                                     Date
@@ -77,29 +96,57 @@ const orders = () => {
                         <tbody className="grid grid-col-6">
                             {orderData.map((order, index) => {
                                 return (
-                                    <tr className={`${(index % 2 === 0) ? 'bg-white' : "bg-gray-50"}  w-full p-4 rounded-xl gap-6`} key={index}>
+                                    <tr className={`${(index % 2 === 0) ? 'bg-gray-50' : "bg-white"}  w-full py-4 px-2 my-4 h-[83px] rounded-xl gap-6`} key={index}>
                                         <td className="w-1/5">
                                             <div className="flex items-center">
-                                        <button><UnCheckedBox className="w-[18px] h-[18px] flex" /></button>
-                                            <label className="px-2" htmlFor="html">{order._id}</label></div>
+                                                <button><UnCheckedBox className="w-[18px] h-[18px] flex" /></button>
+                                                <label className="px-2 text-[18px]" htmlFor="html">{order._id}</label>
+                                            </div>
                                         </td>
-                                        <td className="w-1/5 text-start">{order.Date}</td>
-                                        <td className="w-1/5 ">{order.Name}</td>
-                                        <td className="w-1/5 text-center"> ₹{order.Total}</td>
-                                        <td className={`w-1/5 ${order.Status === 'Shipped' ? "text-primary-500" : order.Status==="Cancelled"?"text-error-300" :order.Status==="In-Progress"?"text-warning-500":order.Status==="Delivered"?"text-secondary-500": "text-black"} px-8`}>{order.Status}</td>
-                                        <td className="w-1/5 "><button><i className="fa-solid fa-ellipsis-vertical w-[58.66px]" /></button></td>
+                                        <td className="w-1/5 text-start text-[18px]">{order.Date}</td>
+                                        <td className="w-1/5 text-[18px]  text-start  ">{order.Name}</td>
+                                        <td className="w-1/5 text-center text-[18px] "> ₹{order.Total}</td>
+                                        <td className={`w-1/5 `}>
+                                            <div className="relative ">
+                                                <button className="p-4 w-[200px] border-accent-100 bg-[#FEFCE8] rounded-xl">
+                                                    <div className="flex justify-between">
+                                                        <span className="text-warning-500 text-[16px]">Processing</span>
+                                                        <img className="-warning-500" src={arrowDown} alt="" />
+                                                    </div>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td className="w-1/5 "><div className="relative"> {/* Allows absolute positioning for the menu */}
+                                            <button onClick={handleButtonClick}>
+                                                <ThreeDots className="w-[18px] h-[18px]" />
+                                            </button>
+                                            {/* Display the menu if it's visible */}
+                                            {isMenuVisible && (
+                                                <div className="absolute flex flex-col w-[164px] h-[123px] top-[-10px] right-2 p-2 bg-white border rounded-xl shadow-lg ">
+                                                    <button className=" text-[14px] font-semibold p-2"
+                                                         onClick={() =>document.getElementById("my_modal_3").showModal()}
+                                                    >
+                                                        View Order
+                                                    </button>
+                                                    <OrderModal/>   
+                                                    <button className=" text-[14px] font-semibold" >
+                                                        Download invoice
+                                                    </button>
+                                                    <button className=" text-[14px] font-semibold p-2 text-error-300" >
+                                                        Delete Order
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div></td>
                                     </tr>
-                                    )
+                                )
                             })}
 
                         </tbody>
                     </table>
                 </div>
-
-
             </div>
         </div>
-
     </div>)
 }
 

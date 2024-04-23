@@ -5,28 +5,7 @@ export const orderData=[
         Name:"Salmaan Ahmed K N",
         Total:"235",
         Status:"Shipped",
-    },
-    {
-        _id:"28420",
-        Date:"24/01/2024",
-        Name:"Salmaan Ahmed K N",
-        Total:"235",
-        Status:"Delivered",
-    },
-    {
-        _id:"28420",
-        Date:"24/01/2024",
-        Name:"Salmaan Ahmed K N",
-        Total:"235",
-        Status:"Cancelled",
-    },
-    {
-        _id:"28420",
-        Date:"24/01/2024",
-        Name:"Salmaan Ahmed K N",
-        Total:"235",
-        Status:"In-Progress",
-    },
+    }, 
 ]
 export const orderDetails = [
     {
