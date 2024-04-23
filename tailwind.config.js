@@ -26,6 +26,8 @@ export default {
           600: "#16A34A",
         },
         primary: {
+          100: "#FFEDD5",
+          200: "#FED7AA",
           500: "#F97316",
           200: "#FED7AA",
           100: "#FFEDD5",
@@ -39,14 +41,14 @@ export default {
         },
 
         warning: {
-          500: "#EAB308"
-        }
+          500: "#EAB308",
+        },
 
       },
     },
   },
   daisyui: {
-    darkTheme: "light"
+    darkTheme: "light",
   },
   plugins: [require("daisyui")],
 };
