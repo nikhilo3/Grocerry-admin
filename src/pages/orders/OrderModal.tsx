@@ -1,57 +1,57 @@
-import arrowDown from "../../assets/icons/statusArrowdown.svg";
-import DownloadInvoice from "../../components/reusable/DownloadInvoice";
+import  { forwardRef, Ref} from 'react';
+import arrowDown from '../../assets/icons/statusArrowdown.svg';
+import DownloadInvoice from '../../components/reusable/DownloadInvoice';
 
 
-const OrderModal = () => {
-    return (
-        <>
-            <dialog id="my_modal_3" className="modal ">
-                <div className="modal-box relative p-8" style={{ maxWidth: '900px', maxHeight: '1000px' }}>
-                    <form method="dialog">
-                        <button className="btn btn-md btn-circle btn-ghost absolute right-4 top-4 text-[48px]">✕</button>
-                    </form>
-                    <div className="flex flex-col ">
-                        <div className="pb-2">
-                            <h2 className="text-gray-700 text-[36px] font-semibold">Order Details</h2>
-                            <p className="text-gray-500 text-sm font-normal">
-                                Lorem ipsum dolor sit amet consectetur. Tortor elit.
-                            </p>
-                        </div>
-                        <div className="flex gap-6 overflow-hidden">
-                            <div className="w-1/2 font-inter text-sm overflow-auto">
-                                <div className="">
-                                    <div className="flex flex-col py-2">
-                                        <span className="text-accent-500">Order Details</span>
-                                        <span className="text-accent-700">#24305921309JNFIN</span>
-                                        <span className="text-accent-700">Ordered at 12/03/24 at 12:24pm</span>
-                                    </div>
-                                    <div className="py-2 flex flex-col">
-                                        <span className="text-accent-500">Customer Details</span>
-                                        <span className="text-accent-700">Imsalmaanahmed@gmail.com</span>
-                                        <span className="text-accent-700">+91 912739289584</span>
-                                    </div>
-                                    <div className="py-2 flex flex-col">
-                                        <span className="text-accent-500">Address Details</span>
-                                        <p className="text-accent-700 w-[250px]">
-                                            No. 46, 12th Cross Street,
-                                            ABCDEFG Street,
-                                            X Area, Y City,
-                                            8947233 Pincode
-                                        </p>
-                                    </div>
-                                </div>
-                                <hr className="my-4" />
-                                <div className='flex flex-col gap-4'>
-                                    <span className="py-4 text-accent-700 text-[20px] font-semibold">Change Status</span>
-                                    <button className="p-4  border-accent-100 bg-[#FEFCE8] rounded-xl w-[200px]">
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-warning-500 text-[16px]">Processing</span>
-                                            <img src={arrowDown} alt="Arrow Down" />
-                                        </div>
-                                    </button>
-                                </div>
+const OrderModal = forwardRef((_prop, ref: Ref<HTMLDialogElement>) => (
+    <dialog ref={ref} className="modal">
+        <div className="modal-box relative p-8" style={{ maxWidth: '900px', maxHeight: '1000px' }}>
+            <form method="dialog">
+                <button className="btn btn-md btn-circle btn-ghost absolute right-4 top-4 text-[48px]">✕</button>
+            </form>
+            <div className="flex flex-col">
+                <div className="pb-2">
+                    <h2 className="text-gray-700 text-[36px] font-semibold">Order Details</h2>
+                    <p className="text-gray-500 text-sm font-normal">
+                        Details about the order.
+                    </p>
+                </div>
+                {/* Order details content */}
+                <div className="flex gap-6 overflow-hidden">
+                    {/* Left side of modal */}
+                    <div className="w-1/2 font-inter text-sm overflow-auto">
+                        {/* Order details */}
+                        <div>
+                            <div className="flex flex-col py-2">
+                                <span className="text-accent-500">Order Details</span>
+                                <span className="text-accent-700">#24305921309JNFIN</span>
+                                <span className="text-accent-700">Ordered at 12/03/24 at 12:24pm</span>
                             </div>
-                            <div className="w-1/2">
+                            <div className="py-2 flex flex-col">
+                                <span className="text-accent-500">Customer Details</span>
+                                <span className="text-accent-700">customer@example.com</span>
+                                <span className="text-accent-700">+91 912739289584</span>
+                            </div>
+                            <div className="py-2 flex flex-col">
+                                <span className="text-accent-500">Address Details</span>
+                                <p className="text-accent-700 w-[250px]">Address information.</p>
+                            </div>
+                        </div>
+                        {/* Status Change */}
+                        <hr className="my-4" />
+                        <div className='flex flex-col gap-4'>
+                            <span className="py-4 text-accent-700 text-[20px] font-semibold">Change Status</span>
+                            <button className="p-4  border-accent-100 bg-[#FEFCE8] rounded-xl w-[200px]">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-warning-500 text-[16px]">Processing</span>
+                                    <img src={arrowDown} alt="Arrow Down" />
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Right side of modal */}
+                    <div className="w-1/2">
                                 <div className='h-[180px] overflow-scroll hide-scrollbar flex flex-col gap-2'>
                                     <div className='flex justify-between'>
                                         <div className='flex gap-2'>
@@ -145,15 +145,13 @@ const OrderModal = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div className='flex justify-end pt-10'>
-                    <DownloadInvoice />
-                    </div>
                 </div>
-            </dialog>
-        </>
-    );
-};
-
+                {/* Download invoice */}
+                <div className='flex justify-end pt-10'>
+                    <DownloadInvoice /> {/* Component for downloading the invoice */}
+                </div>
+            </div>
+        </div>
+    </dialog>
+));
 export default OrderModal;
