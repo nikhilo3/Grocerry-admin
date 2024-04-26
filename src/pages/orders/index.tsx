@@ -11,7 +11,6 @@ import DownloadInvoice from '../../components/reusable/DownloadInvoice';
 import profile from '../../assets/icons/Group.svg'
 import vector from '../../assets/icons/Vector.svg'
 
-
 const drivers = [
     { id: 1, name: 'John Doe' },
     { id: 2, name: 'Jane Smith' },
