@@ -36,7 +36,7 @@ const ProductsPage = () => {
 
   return (
     <div className="flex flex-col gap-11 overflow-hidden">
-      {/* product cards */}
+      {/* all product cards */}
       <div className="flex gap-5">
         {productDetails.map((product, index) => (
           <InfoCard key={index} {...product} />
