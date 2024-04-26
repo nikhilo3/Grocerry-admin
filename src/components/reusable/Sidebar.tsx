@@ -16,7 +16,7 @@ const Sidebar = () => {
   const navLinks = [
     {
       label: "Overview",
-      path: "/login",
+      path: "/",
       icon1 : overview1,
       icon2 : overview2
     },
