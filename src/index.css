@@ -27,3 +27,11 @@
 .scrollbar-md::-webkit-scrollbar-thumb {
   @apply bg-accent-400;
 }
+/* decrease the width and style of default scrollbar */
+.scrollbar-sm::-webkit-scrollbar {
+  @apply w-1 rounded-md;
+}
+
+.scrollbar-sm::-webkit-scrollbar-thumb {
+  @apply bg-accent-400;
+}

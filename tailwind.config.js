@@ -18,6 +18,7 @@ export default {
           500: "#6B7280",
           600: "#4B5563",
           700: "#374151",
+          800: "#1F2937",
         },
         secondary: {
           50: "#F0FDF4",
@@ -31,7 +32,6 @@ export default {
           500: "#F97316",
           200: "#FED7AA",
           100: "#FFEDD5",
-
         },
 
         error: {
@@ -43,7 +43,6 @@ export default {
         warning: {
           500: "#EAB308",
         },
-
       },
     },
   },
