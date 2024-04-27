@@ -25,14 +25,6 @@ const Drivers = () => {
   return (
     <div>
       <div className="flex flex-col gap-7 justify-center">
-        <div className="flex items-center gap-5">
-          {DriversData.map((item) => (
-            <>
-              <InfoCard data={item.value} title={item.title} />
-            </>
-          ))}
-        </div>
-
         <div className="overflow-x-scroll hide-scrollbar min-h-[40vh]">
           <div className="border border-accent-200 rounded-[20px] bg-white p-6 flex flex-col gap-6 min-w-[1100px]">
             {/* top buttons and searchBar */}
