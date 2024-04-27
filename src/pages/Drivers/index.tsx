@@ -1,6 +1,5 @@
 import Button from "../../components/reusable/Button";
-import { DriversData, drivers } from "../../assets/mockData/driverData";
-import InfoCard from "../../components/reusable/InfoCard";
+import { drivers } from "../../assets/mockData/driverData";
 import SearchInput from "../../components/reusable/SearchInput";
 import addCircleSvg from "../../assets/icons/add-circle.svg";
 import Download from "../../components/reusable/Download";
