@@ -1,6 +1,5 @@
 import Button from "../../components/reusable/Button";
-import { DriversData, drivers } from "../../assets/mockData/driverData";
-import InfoCard from "../../components/reusable/InfoCard";
+import { drivers } from "../../assets/mockData/driverData";
 import SearchInput from "../../components/reusable/SearchInput";
 import addCircleSvg from "../../assets/icons/add-circle.svg";
 import Download from "../../components/reusable/Download";
@@ -25,14 +24,6 @@ const Drivers = () => {
   return (
     <div>
       <div className="flex flex-col gap-7 justify-center">
-        <div className="flex items-center gap-5">
-          {DriversData.map((item) => (
-            <>
-              <InfoCard data={item.value} title={item.title} />
-            </>
-          ))}
-        </div>
-
         <div className="overflow-x-scroll hide-scrollbar min-h-[40vh]">
           <div className="border border-accent-200 rounded-[20px] bg-white p-6 flex flex-col gap-6 min-w-[1100px]">
             {/* top buttons and searchBar */}
