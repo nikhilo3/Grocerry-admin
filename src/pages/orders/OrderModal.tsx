@@ -48,7 +48,7 @@ const OrderModal = forwardRef((_props, ref: Ref<HTMLDialogElement>) => {
                             <div className="py-2 flex flex-col">
                                 <span className="text-accent-500">Address Details</span>
                                 <p className="text-accent-700 w-[250px]">
-                                    Address information.
+                                No. 46, 12th Cross Street, ABCDEFG Street, X Area, Y City, 8947233 Pincode
                                 </p>
                             </div>
 

@@ -10,6 +10,20 @@ import Dropdown from '../../components/reusable/StatusDropdown';
 import DownloadInvoice from '../../components/reusable/DownloadInvoice';
 import profile from '../../assets/icons/Group.svg'
 import vector from '../../assets/icons/Vector.svg'
+import arrowblue from '../../assets/icons/fi-br-angle-small-down.svg'
+import arrowOran from '../../assets/icons/Dashboard icons/fi-br-angle-small-down.svg'
+import arrowGreen from '../../assets/fi-br-angle-small-down.svg'
+
+
+
+
+const statusArrowImages: Record<string, string> = {
+    "Processing": arrowDown,
+    "Out-for-Delivery": arrowOran,
+    "Delivered": arrowGreen,
+    "Packing":arrowblue
+  };
+  
 
 const drivers = [
     { id: 1, name: 'John Doe' },
@@ -20,6 +34,13 @@ const drivers = [
 ];
 // Define order status options
 const ORDER_STATUS_OPTIONS = ['Processing', 'Packing', 'Out-for-Delivery', 'Delivered'];
+
+const statusStyles: Record<string, string> = {
+    'Processing': 'text-warning-500 bg-[#FEFCE8]',
+    'Packing': 'text-blue-600 bg-blue-100',
+    'Out-for-Delivery': 'text-orange-600 bg-orange-100',
+    'Delivered': 'text-green-600 bg-green-100',
+  };
 
 // Search function with proper parameter types
 const search = (data: any[], query: string, keys: string[]): any[] => {
@@ -38,6 +59,8 @@ const getStatusClasses = (status: string): string => {
             return 'text-orange-600 bg-orange-100';
         case 'Delivered':
             return 'text-green-600 bg-green-100';
+        case 'Processing':
+             return'text-warning-500 bg-[#FEFCE8]'
         default:
             return 'text-gray-600 bg-gray-100';
     }
@@ -54,6 +77,9 @@ const Orders = () => {
     const [filteredData, setFilteredData] = useState(orderData);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedDriver, setSelectedDriver] = useState<{ id: number; name: string } | null>(null);
+
+   
+ // Fallback to default if not found
 
 
     // Filter the list of drivers based on the search term
@@ -139,7 +165,8 @@ const Orders = () => {
                         {filteredData.length > 0 ? (
                             filteredData.map((order, index) => {
                                 const statusClasses = getStatusClasses(order.Status);
-
+                                const currentOrderStatus = orderData[0].Status; // Example reference
+                                const arrowDownimage = statusArrowImages[currentOrderStatus] || statusArrowImages["Processing"];
                                 return (
                                     <div
                                         key={index}
@@ -150,20 +177,21 @@ const Orders = () => {
                                             <UnCheckedBox className="w-[18px] h-[18px]" />
                                             <span className="px-2 text-[16px] text-accent-500">{order._id}</span>
                                         </div>
-                                        <div className="flex items-center justify-center text-[16px]">{order.Date}</div>
-                                        <div className="flex items-center justify-center text-[16px]">{order.Name}</div>
-                                        <div className="flex items-center justify-center text-[16px]">₹{order.Total}</div>
+                                        <div className="flex items-center justify-center text-[16px]  text-accent-500">{order.Date}</div>
+                                        <div className="flex items-center justify-center text-[16px]  text-accent-500">{order.Name}</div>
+                                        <div className="flex items-center justify-center text-[16px]  text-accent-500">₹{order.Total}</div>
 
                                         <div className="relative">
                                             <div
-                                                className={`p-4 w-[220px] flex justify-between rounded-xl items-center ${statusClasses}`}
+                                                className={`p-4 w-[220px] flex justify-between rounded-xl  items-center ${statusClasses} ${activeDropdownRow === index ? 'rounded-b-none' : ''
+                                            }`}
                                                 onClick={() => handleDropdownToggle(index)}
                                             >
                                                 <span className="text-[16px]">{order.Status}</span>
                                                 <img
                                                     className={`w-[16px] h-[16px] transition-transform duration-300 ${activeDropdownRow === index ? 'rotate-180' : ''
                                                         }`}
-                                                    src={arrowDown}
+                                                    src={arrowDownimage}
                                                     alt="Dropdown Arrow"
                                                 />
                                             </div>
@@ -177,7 +205,7 @@ const Orders = () => {
                                                     ).map((s) => (
                                                         <button
                                                             key={s}
-                                                            className="block text-start p-2 hover:bg-warning-100"
+                                                            className={`block text-start p-4 w-[220px] hover:bg-warning-100 ${statusStyles[s]}`}
                                                             onClick={() => handleStatusChange(s, index)}
                                                         >
                                                             {s}

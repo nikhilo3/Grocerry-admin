@@ -14,12 +14,14 @@ export const orderData = [
     Status: "Processing",
   },
   {
-    _id:"28420",
-    Date:"24/01/2024",
-    Name:"Salmaan Ahmed K N",
-    Total:"235",
-    Status:"Processing",
-}, 
+    _id: "28420",
+    Date: "24/01/2024",
+    Name: "Salmaan Ahmed K N",
+    Total: "235",
+    Status: "Processing",
+  },
+  
+
 
 ]
 export const orderDetails = [
