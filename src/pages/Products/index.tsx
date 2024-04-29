@@ -12,12 +12,17 @@ import Dropdown from "../../components/reusable/Dropdown";
 import { PRODUCT_CATEGORIES } from "../../assets/data/constants";
 import DownloadCSVButton from "../../components/reusable/DownloadCSVButton";
 import search from "../../utils/search";
+import ActionModal from "../../components/reusable/ActionModal";
 
 const ProductsPage = () => {
   const [filteredData, setFilteredData] = useState(products);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [queryString, setQueryString] = useState<string>("");
   const [isOutOfStockActive, setIsOutOfStockActive] = useState<boolean>(false);
+  const [actionModal, setActionModal] = useState({
+    isOpen: false,
+    index: null as number | null,
+  });
 
   useEffect(() => {
     let data = products;
@@ -116,9 +121,35 @@ const ProductsPage = () => {
                       {value}
                     </span>
                   ))}
-                  <button className="ml-auto">
-                    <ThreeDots className="w-[18px] h-[18px]" />
-                  </button>
+                  <div className="ml-auto relative">
+                    <button
+                      className="px-3"
+                      onClick={() => {
+                        setActionModal({ isOpen: true, index });
+                      }}
+                    >
+                      <ThreeDots className="w-[18px] h-[18px]" />
+                    </button>
+                    {actionModal.index === index && actionModal.isOpen && (
+                      <ActionModal
+                        close={() =>
+                          setActionModal({ isOpen: false, index: null })
+                        }
+                        className="flex flex-col items-start"
+                      >
+                        <Link
+                          to={`/products/1}`}
+                          className="py-3 px-6 font-medium"
+                        >
+                          View Product
+                        </Link>
+                        <hr className="w-full" />
+                        <button className="py-3 px-6 font-medium text-error-300">
+                          Delete Product
+                        </button>
+                      </ActionModal>
+                    )}
+                  </div>
                 </div>
               ))
             ) : (

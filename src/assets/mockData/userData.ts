@@ -7,14 +7,6 @@ export const userStats = [
     title: "Active Users",
     data: 10,
   },
-  {
-    title: "Conversion Rate",
-    data: "23%",
-  },
-  {
-    title: "Retention Rate",
-    data: "12%",
-  },
 ];
 
 export const userData = [
