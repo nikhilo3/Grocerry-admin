@@ -27,11 +27,11 @@ export default {
           600: "#16A34A",
         },
         primary: {
+          50: "#FFF7ED",
           100: "#FFEDD5",
           200: "#FED7AA",
+          300: "#FDBA74",
           500: "#F97316",
-          200: "#FED7AA",
-          100: "#FFEDD5",
         },
 
         error: {
