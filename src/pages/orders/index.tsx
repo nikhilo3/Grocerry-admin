@@ -7,12 +7,12 @@ import OrderModal from './OrderModal';
 import InfoCard from '../../components/reusable/InfoCard';
 import SearchInput from '../../components/reusable/SearchInput';
 import Dropdown from '../../components/reusable/StatusDropdown';
-import DownloadInvoice from '../../components/reusable/DownloadInvoice';
 import profile from '../../assets/icons/Group.svg'
 import vector from '../../assets/icons/Vector.svg'
 import arrowblue from '../../assets/icons/fi-br-angle-small-down.svg'
 import arrowOran from '../../assets/icons/Dashboard icons/fi-br-angle-small-down.svg'
 import arrowGreen from '../../assets/fi-br-angle-small-down.svg'
+import DownloadCSVButton from '../../components/reusable/DownloadCSVButton';
 
 
 
@@ -145,7 +145,7 @@ const Orders = () => {
                         />
                         <div className="pl-[450px] flex justify-end">
 
-                            <DownloadInvoice />
+                            <DownloadCSVButton data={[]} fileName={''}   />
                         </div>
                     </div>
 

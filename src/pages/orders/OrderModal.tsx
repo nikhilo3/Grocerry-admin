@@ -1,7 +1,7 @@
 import { forwardRef, Ref, useState } from 'react';
 import arrowDown from '../../assets/icons/statusArrowdown.svg';
-import DownloadInvoice from '../../components/reusable/DownloadInvoice';
 import hard from "../../assets/icons/Rectangle 77.png"
+import Download from '../../components/reusable/DownloadInvoice';
 
 const ORDER_STATUS_OPTIONS = ['Processing', 'Packing', 'Out-for-Delivery', 'Delivered'];
 
@@ -40,15 +40,15 @@ const OrderModal = forwardRef((_props, ref: Ref<HTMLDialogElement>) => {
                                 <span className="text-accent-700 text-[12px]">#24305921309JNFIN</span>
                                 <span className="text-accent-700 text-[12px]">Ordered at 12/03/24 at 12:24 pm</span>
                             </div>
-                            <div className="py-2 flex flex-col">
-                                <span className="text-accent-500">Customer Details</span>
-                                <span className="text-accent-700">customer@example.com</span>
-                                <span className="text-accent-700">+91 912739289584</span>
+                            <div className="py-1 flex flex-col">
+                                <span className="text-accent-500 text-[12px]">Customer Details</span>
+                                <span className="text-accent-700 text-[12px]">customer@example.com</span>
+                                <span className="text-accent-700 text-[12px]">+91 912739289584</span>
                             </div>
-                            <div className="py-2 flex flex-col">
+                            <div className="py-1 flex flex-col">
                                 <span className="text-accent-500">Address Details</span>
-                                <p className="text-accent-700 w-[250px]">
-                                No. 46, 12th Cross Street, ABCDEFG Street, X Area, Y City, 8947233 Pincode
+                                <p className="text-accent-700 w-[250px] text-[12px]">
+                                    No. 46, 12th Cross Street, ABCDEFG Street, X Area, Y City, 8947233 Pincode
                                 </p>
                             </div>
 
@@ -66,17 +66,17 @@ const OrderModal = forwardRef((_props, ref: Ref<HTMLDialogElement>) => {
                                         }`}
                                     onClick={toggleDropdown}
                                 >
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-warning-500 text-[16px]">
-                                            {selectedStatus}
-                                        </span>
-                                        <img
-                                            className={`w-[16px] h-[16px] transition-transform duration-300 ${activeDropdown ? 'rotate-180' : ''
-                                                }`}
-                                            src={arrowDown}
-                                            alt="Arrow Down"
-                                        />
-                                    </div>
+
+                                    <span className="text-warning-500 text-[16px]">
+                                        {selectedStatus}
+                                    </span>
+                                    <img
+                                        className={`w-[16px] h-[16px]  transition-transform duration-300 ${activeDropdown ? 'rotate-180' : ''
+                                            }`}
+                                        src={arrowDown}
+                                        alt="Arrow Down"
+                                    />
+
                                 </div>
                                 {activeDropdown && (
                                     <div
@@ -216,8 +216,8 @@ const OrderModal = forwardRef((_props, ref: Ref<HTMLDialogElement>) => {
                     </div>
 
                     {/* Download invoice */}
-                    <div className="flex justify-end ">
-                        <DownloadInvoice />
+                    <div className="flex justify-end pt-6 ">
+                        <Download />
                     </div>
                 </div>
             </div>
