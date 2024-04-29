@@ -4,7 +4,7 @@ const Download = () => {
   return (
     <button className="rounded-xl border border-secondary-100 bg-primary-500 px-4 py-3 flex items-center justify-center gap-2">
       <span className="text-white font-medium">
-        Download CSV
+        Download Invoice
       </span>
       <img
         src={downloadIcon}
