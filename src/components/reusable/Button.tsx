@@ -17,6 +17,7 @@ const classes = {
 
     "primary/100": "bg-primary-100 border border-primary-200 text-primary-500",
     "primary-ghost": "text-primary-500 bg-transparent",
+    "accent/200": "bg-accent-200 text-accent-600",
   },
 } as const;
 

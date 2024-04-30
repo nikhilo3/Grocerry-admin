@@ -138,7 +138,7 @@ const ProductsPage = () => {
                         className="flex flex-col items-start"
                       >
                         <Link
-                          to={`/products/1}`}
+                          to={`/products/update/1`}
                           className="py-3 px-6 font-medium"
                         >
                           View Product
