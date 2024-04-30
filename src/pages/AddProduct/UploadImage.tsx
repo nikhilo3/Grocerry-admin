@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import attachmentIcon from "../../assets/icons/attachment.svg";
 import crossIcon from "../../assets/icons/cross.svg";
 import FormErrorLine from "../../components/reusable/FormErrorLine";
+import Swal from "sweetalert2";
 
 export type error = {
   category?: {
@@ -28,8 +29,6 @@ const UploadImage: React.FC<UploadImage> = ({
   setSelectedImages,
 }) => {
   const [isFileDropping, setIsFileDropping] = useState(false);
-  const [categoryDropdown, setCategoryDropdown] = useState(false);
-  const [subcategoryDropdown, setSubcategoryDropdown] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleOpenInput = () => {
@@ -81,21 +80,6 @@ const UploadImage: React.FC<UploadImage> = ({
       }
     }
   };
-
-  const category = [
-    "Fruit & Vegetables",
-    "Frozen Food",
-    "Chips & Namkin ",
-    "Juice & Beverages",
-  ];
-
-  const subCategories = [
-    "Fresh Fruits",
-    "Fresh Vegetables",
-    "Coriander & Others",
-    "Seasonal",
-    "Certified Organics",
-  ];
 
   return (
     <div>
