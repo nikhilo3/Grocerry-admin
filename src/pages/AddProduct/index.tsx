@@ -6,13 +6,17 @@ import UploadProduct, { error } from "./UploadImage";
 import { useState } from "react";
 import Swal from "sweetalert2";
 import Button from "../../components/reusable/Button";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import add from "../../assets/icons/add-circle-orange.svg";
 import deleteIcon from "../../assets/icons/delete.svg";
 import eye from "../../assets/icons/eye.svg";
 import AddVarietyModal from "./AddVarietyModal";
+import editIcon from "../../assets/icons/fi-br-edit.svg";
 
 const AddProduct = () => {
+  const { id } = useParams<{ id: string | undefined }>();
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
   const {
     register,
     formState: { errors },
@@ -46,11 +50,42 @@ const AddProduct = () => {
               </span>
             </Button>
           </Link>
-          <div className="flex justify-end items-center">
-            <Button className="flex justify-center items-center gap-2 w-[196px]">
-              Create Product
-              <img className="h-4" src={checkIcon} alt="" />
-            </Button>
+          <div className="flex justify-end items-center gap-4">
+            {!id ? (
+              <Button className="flex justify-center items-center gap-2 w-[196px]">
+                Create Product
+                <img className="h-4" src={checkIcon} alt="" />
+              </Button>
+            ) : (
+              <>
+                {isEditing ? (
+                  <>
+                    <Button
+                      onClick={() => setIsEditing(false)}
+                      variant="primary-outline"
+                      className="flex justify-center items-center gap-2 w-[127px]"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={() => setIsEditing(false)}
+                      className="flex justify-center items-center gap-2 w-[127px]"
+                    >
+                      Done
+                      <img className="h-4" src={editIcon} alt="" />
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    onClick={() => setIsEditing(true)}
+                    className="flex justify-center items-center gap-2 w-[176px]"
+                  >
+                    Edit Product
+                    <img className="h-4" src={editIcon} alt="" />
+                  </Button>
+                )}
+              </>
+            )}
           </div>
         </div>
 
