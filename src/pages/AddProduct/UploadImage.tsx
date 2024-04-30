@@ -1,12 +1,6 @@
 import React, { useRef, useState } from "react";
 import attachmentIcon from "../../assets/icons/attachment.svg";
 import crossIcon from "../../assets/icons/cross.svg";
-import caretDownSvg from "../../assets/icons/caret-down.svg";
-import caretUpSvg from "../../assets/icons/caret-up.svg";
-import addCircleOrangeSvg from "../../assets/icons/add-circle-orange.svg";
-import Swal from "sweetalert2";
-import AddCategory from "./AddCategory";
-import AddSubCategory from "./AddSubCategory";
 import FormErrorLine from "../../components/reusable/FormErrorLine";
 
 export type error = {
