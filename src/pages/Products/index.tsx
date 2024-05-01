@@ -90,7 +90,7 @@ const ProductsPage = () => {
             <div
               className="grid bg-accent-500 rounded-xl p-4 text-accent-50 font-normal"
               style={{
-                gridTemplateColumns: "1fr 7fr 5fr 5fr 4fr 4fr 4fr 1fr",
+                gridTemplateColumns: "1fr 7fr 5fr 5fr 4fr 1fr",
               }}
             >
               <button>
@@ -100,8 +100,6 @@ const ProductsPage = () => {
               <span>Category</span>
               <span>Sub Category</span>
               <span>Stock</span>
-              <span>Sold</span>
-              <span>Revenue</span>
               <span>Actions</span>
             </div>
             {filteredData.length > 0 ? (
@@ -110,7 +108,7 @@ const ProductsPage = () => {
                   key={index}
                   className="grid even:bg-accent-50 rounded-xl p-4 text-accent-500 font-normal"
                   style={{
-                    gridTemplateColumns: "1fr 7fr 5fr 5fr 4fr 4fr 4fr 1fr",
+                    gridTemplateColumns: "1fr 7fr 5fr 5fr 4fr 1fr",
                   }}
                 >
                   <button>
