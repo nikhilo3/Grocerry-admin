@@ -6,7 +6,7 @@ import {
 } from "../../assets/mockData/overviewData";
 import Button from "../../components/reusable/Button";
 import arrow from "../../assets/icons/fi-br-arrow-small-right.svg";
-import arrowDown from "../../assets/icons/addrow-doen.svg";
+import arrowDown from "../../assets/icons/arrow-down-overview.svg";
 import Chart from "./Chart";
 
 const HomePage = () => {
