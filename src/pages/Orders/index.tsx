@@ -154,6 +154,7 @@ const Orders = () => {
                         onClick={() => {
                           setActionModal({ isOpen: true, index });
                         }}
+                        className="px-2.5"
                       >
                         <ThreeDots className="w-[18px] h-[18px]" />
                       </button>
