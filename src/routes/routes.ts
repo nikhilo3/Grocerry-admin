@@ -13,7 +13,7 @@ const ROUTES: IRoute[] = [
   },
   {
     path: "/orders",
-    component: lazy(async () => await import("../pages/orders")),
+    component: lazy(async () => await import("../pages/Orders")),
   },
   {
     path: "/products",
@@ -33,11 +33,11 @@ const ROUTES: IRoute[] = [
   },
   {
     path: "/products/add-a-product",
-    component: lazy(async () => await import("../pages/AddProduct")),
+    component: lazy(async () => await import("../pages/AddUpdateProduct")),
   },
   {
     path: "/products/update/:id",
-    component: lazy(async () => await import("../pages/AddProduct")),
+    component: lazy(async () => await import("../pages/AddUpdateProduct")),
   },
   {
     path: "/drivers",
