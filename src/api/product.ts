@@ -1,0 +1,27 @@
+import axios from "axios";
+import { ProductFormData, Variety } from "../pages/AddUpdateProduct";
+import { jsonToFd } from "../utils/jsonToFd";
+import API from ".";
+
+type Product = ProductFormData & {
+  varieties: Variety[];
+  sub_category: string;
+};
+
+export const handleAddProduct = async (product: Product): Promise<string> => {
+  const fd = jsonToFd(product);
+  return new Promise((resolve, reject) => {
+    axios
+      .post(API.addProduct, fd, {})
+      .then((res) => {
+        // if the res statusCode is not in range of 200-299
+        if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
+          reject(res.data?.message);
+        }
+        resolve(res.data?.message);
+      })
+      .catch((err) => {
+        reject(err.response.data?.message);
+      });
+  });
+};

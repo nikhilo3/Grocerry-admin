@@ -127,7 +127,7 @@ const UploadImage: React.FC<UploadImage> = ({
               </h3>
             </div>
           </button>
-          <FormErrorLine message={errors?.productImages?.message as String} />
+          <FormErrorLine message={errors?.productImages?.message } />
 
           {/* uploaded files */}
           <div className="mt-3 text-accent-500 h-[193px] w-full">

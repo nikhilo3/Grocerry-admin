@@ -8,9 +8,15 @@ import { useEffect } from "react";
 
 interface Props {
   setVarieties: React.Dispatch<React.SetStateAction<Variety[]>>;
+  varieties: Variety[];
+  selectedVariety: number | null;
 }
 
-const AddVarietyModal = ({ setVarieties }: Props) => {
+const UpdateVarietyModal = ({
+  setVarieties,
+  selectedVariety,
+  varieties,
+}: Props) => {
   const {
     register,
     formState: { errors },
@@ -19,15 +25,25 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
   } = useForm<Variety>();
 
   const onSubmit: SubmitHandler<Variety> = (data) => {
-    setVarieties((prev) => [...prev, data]);
+    if (selectedVariety !== null) {
+      const updatedVarieties = [...varieties];
+      updatedVarieties[selectedVariety] = data;
+      setVarieties(updatedVarieties);
+    }
     (
-      document.getElementById("add_variety_modal") as HTMLDialogElement
+      document.getElementById("update_variety_modal") as HTMLDialogElement
     )?.close();
     reset();
   };
 
+  useEffect(() => {
+    if (selectedVariety !== null) {
+      reset(varieties[selectedVariety]);
+    }
+  }, [selectedVariety]);
+
   return (
-    <dialog id="add_variety_modal" className="modal">
+    <dialog id="update_variety_modal" className="modal">
       <div className="modal-box min-w-[632px] p-8 bg-white border border-accent-200 rounded-3xl hide-scrollbar">
         <form onSubmit={handleSubmit(onSubmit)}>
           <h3 className="text-[20px] font-medium font-inter text-accent-700">
@@ -211,7 +227,7 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
             </Button>
           </div>
           <Button className="mt-5 flex gap-2 ml-auto">
-            Add Variety
+            <span>Update Variety</span>
             <img className="h-5 w-5" src={addCircle} alt="" />
           </Button>
         </form>
@@ -222,4 +238,4 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
     </dialog>
   );
 };
-export default AddVarietyModal;
+export default UpdateVarietyModal;
