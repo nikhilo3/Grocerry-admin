@@ -6,13 +6,13 @@ import Swal from "sweetalert2";
 
 export type error = {
   category?: {
-    message: String;
+    message: string;
   };
   subCategory?: {
-    message: String;
+    message: string;
   };
   productImages?: {
-    message: String;
+    message: string;
   };
 };
 
@@ -127,7 +127,7 @@ const UploadImage: React.FC<UploadImage> = ({
               </h3>
             </div>
           </button>
-          <FormErrorLine message={errors?.productImages?.message } />
+          <FormErrorLine message={errors?.productImages?.message!} />
 
           {/* uploaded files */}
           <div className="mt-3 text-accent-500 h-[193px] w-full">

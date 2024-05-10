@@ -19,6 +19,7 @@ import toast from "react-hot-toast";
 import UpdateVarietyModal from "./UpdateVarietyModal";
 import { useMutation } from "@tanstack/react-query";
 import { handleAddProduct } from "../../api/product";
+import UploadImage, { error } from "./UploadImage";
 
 const category = [
   "Fruit & Vegetables",
@@ -43,14 +44,14 @@ export type Variety = {
   discounted_percent: number;
   units: string;
   quantity: number;
-  name: string;
+  documents: File[];
 };
 
 export interface ProductFormData {
   name: string;
   description: string;
   category: string;
-  sub_category: string[];
+  subCategory: string[];
   brand?: string;
   tags?: string;
   code: string;
@@ -96,17 +97,18 @@ const AddProduct = () => {
       toast.error("Category is required");
       return;
     }
-    if (!data.sub_category || data.sub_category?.length === 0) {
+    if (!data["subCategory"] || data["subCategory"]?.length === 0) {
       toast.error("Sub Category is required");
       return;
     }
 
     const dataToSend = {
-      varieties,
+      varietyList: varieties,
       ...{
         ...data,
-        sub_category: data.sub_category.join(",") as any,
+        subCategory: data["subCategory"].join(",") as any,
       },
+      documents: selectedImages,
     };
 
     console.log(dataToSend);
@@ -255,14 +257,14 @@ const AddProduct = () => {
             </div>
 
             {/* Upload Product Images */}
-            {/* <div className="w-full col-span-2">
-              <UploadProduct
+            <div className="w-full col-span-2">
+              <UploadImage
                 selectedImages={selectedImages}
                 setSelectedImages={setSelectedImages}
                 errors={errors as error}
                 register={register}
               />
-            </div> */}
+            </div>
           </div>
           <div className="flex flex-col gap-6 col-span-2 w-full">
             {/* Product Varieties */}
@@ -493,8 +495,8 @@ const AddProduct = () => {
                     }  w-full flex justify-between `}
                   >
                     <div className="font-medium text-base text-accent-600 truncate min-h-fit">
-                      {watch("sub_category")
-                        ? watch("sub_category").join(", ")
+                      {watch("subCategory")
+                        ? watch("subCategory").join(", ")
                         : "Select Subcategory"}
                     </div>
                     <span>
@@ -515,17 +517,14 @@ const AddProduct = () => {
                           <label
                             htmlFor={item}
                             onClick={() => {
-                              const subCategory = watch("sub_category") ?? [];
+                              const subCategory = watch("subCategory") ?? [];
                               if (subCategory.includes(item)) {
                                 setValue(
-                                  "sub_category",
+                                  "subCategory",
                                   subCategory.filter((i) => i !== item)
                                 );
                               } else {
-                                setValue("sub_category", [
-                                  ...subCategory,
-                                  item,
-                                ]);
+                                setValue("subCategory", [...subCategory, item]);
                               }
                             }}
                             role="button"
@@ -539,7 +538,7 @@ const AddProduct = () => {
                               className="checkbox checkbox-xs  checkbox-warning rounded-md"
                               type="checkbox"
                               checked={
-                                watch("sub_category")?.includes(item) ?? false
+                                watch("subCategory")?.includes(item) ?? false
                               }
                             />
                           </label>

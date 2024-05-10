@@ -1,4 +1,4 @@
-import { productDetails, products } from "../../assets/mockData/products";
+import { productDetails } from "../../assets/mockData/products";
 import InfoCard from "../../components/reusable/InfoCard";
 import sadFace from "../../assets/icons/fi-br-sad.svg";
 import addCircleIcon from "../../assets/icons/add-circle.svg";
@@ -13,9 +13,11 @@ import { PRODUCT_CATEGORIES } from "../../assets/data/constants";
 import DownloadCSVButton from "../../components/reusable/DownloadCSVButton";
 import search from "../../utils/search";
 import ActionModal from "../../components/reusable/ActionModal";
+import { useQuery } from "@tanstack/react-query";
+import { handleGetAllProducts } from "../../api/product";
 
 const ProductsPage = () => {
-  const [filteredData, setFilteredData] = useState(products);
+  const [filteredData, setFilteredData] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [queryString, setQueryString] = useState<string>("");
   const [isOutOfStockActive, setIsOutOfStockActive] = useState<boolean>(false);
@@ -24,7 +26,17 @@ const ProductsPage = () => {
     index: null as number | null,
   });
 
+  const {
+    data: products,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["products"],
+    queryFn: handleGetAllProducts,
+  });
+
   useEffect(() => {
+    if (!products) return;
     let data = products;
     if (isOutOfStockActive) {
       data = data.filter((product) => product.stock < 1);
@@ -37,7 +49,10 @@ const ProductsPage = () => {
     const searchKeys = ["name", "category", "subCategory"];
     data = search(data, queryString, searchKeys);
     setFilteredData(data);
-  }, [selectedCategories, queryString, isOutOfStockActive]);
+  }, [selectedCategories, queryString, isOutOfStockActive, products]);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error fetching data</div>;
 
   return (
     <div className="flex flex-col gap-11 overflow-hidden">
@@ -114,11 +129,11 @@ const ProductsPage = () => {
                   <button>
                     <UnCheckedBox className="w-[18px] h-[18px]" />
                   </button>
-                  {Object.values(product).map((value, index) => (
-                    <span className="truncate" key={index}>
-                      {value}
-                    </span>
-                  ))}
+                  <span className="truncate">{product.name}</span>
+                  <span>{product.category}</span>
+                  <span>{product.subCategory}</span>
+                  <span>{product.stock ?? 0}</span>
+
                   <div className="ml-auto relative">
                     <button
                       className="px-3"
@@ -136,7 +151,7 @@ const ProductsPage = () => {
                         className="flex flex-col items-start"
                       >
                         <Link
-                          to={`/products/update/1`}
+                          to={`/products/update/${product.id}`}
                           className="py-3 px-6 font-medium"
                         >
                           View Product

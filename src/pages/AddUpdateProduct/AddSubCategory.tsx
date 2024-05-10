@@ -34,7 +34,7 @@ const AddSubCategory = () => {
             <div className="flex justify-between items-center">
               <div className="">
                 <h1 className="text-xl font-semibold  text-accent-700">
-                  Add Sub-Category
+                  Add subCategory
                 </h1>
                 <p className="mt-1 text-sm font-normal text-accent-500">
                   Lorem ipsum dolor sit amet consectetur. Tortor elit
@@ -107,7 +107,7 @@ const AddSubCategory = () => {
                     className="text-base font-medium  text-accent-500"
                     htmlFor=""
                   >
-                    Enter Sub-Category Name
+                    Enter subCategory Name
                   </label>
                   <input
                     className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"

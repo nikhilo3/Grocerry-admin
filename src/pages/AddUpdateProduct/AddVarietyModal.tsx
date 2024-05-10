@@ -4,13 +4,17 @@ import Button from "../../components/reusable/Button";
 import upload from "../../assets/icons/upload-file.svg";
 import addCircle from "../../assets/icons/add-circle.svg";
 import { Variety } from ".";
-import { useEffect } from "react";
+import { useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 interface Props {
   setVarieties: React.Dispatch<React.SetStateAction<Variety[]>>;
 }
 
 const AddVarietyModal = ({ setVarieties }: Props) => {
+  const [images, setImages] = useState<File[]>([]);
+  const imagesRef = useRef();
   const {
     register,
     formState: { errors },
@@ -19,7 +23,17 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
   } = useForm<Variety>();
 
   const onSubmit: SubmitHandler<Variety> = (data) => {
-    setVarieties((prev) => [...prev, data]);
+    if (images.length === 0) {
+      toast.error("Please upload images");
+      return;
+    }
+    setVarieties((prev) => [
+      ...prev,
+      {
+        ...data,
+        documents: images,
+      },
+    ]);
     (
       document.getElementById("add_variety_modal") as HTMLDialogElement
     )?.close();
@@ -27,7 +41,7 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
   };
 
   return (
-    <dialog id="add_variety_modal" className="modal">
+    <dialog id="add_variety_modal" className="modal !z-50">
       <div className="modal-box min-w-[632px] p-8 bg-white border border-accent-200 rounded-3xl hide-scrollbar">
         <form onSubmit={handleSubmit(onSubmit)}>
           <h3 className="text-[20px] font-medium font-inter text-accent-700">
@@ -41,22 +55,22 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
             <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
               <label
                 className="font-inter font-medium text-base text-accent-500"
-                htmlFor="name"
+                htmlFor="type"
               >
-                Variety Name*
+                Variety Type*
               </label>
               <input
-                {...register("name", {
+                {...register("type", {
                   required: {
                     value: true,
-                    message: "Variety Name is required",
+                    message: "Variety Type is required",
                   },
                 })}
                 className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
                 type="text"
-                placeholder="eg., Tomato"
+                placeholder="eg., WEIGHT"
               />
-              {errors.name && <FormErrorLine message={errors.name.message} />}
+              {errors.type && <FormErrorLine message={errors.type.message} />}
             </div>
             <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
               <label
@@ -201,14 +215,38 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
             >
               Variety Images*
             </label>
+            <input
+              ref={imagesRef as any}
+              type="file"
+              className="hidden"
+              accept="image/*"
+              multiple
+              onChange={(e) => {
+                if (e.target.files) setImages(Array.from(e.target.files));
+              }}
+            />
             <Button
               type="button"
+              onClick={() => (imagesRef.current as any).click()}
               variant="accent/200"
               className="flex items-center justify-between bg-accent-100"
             >
               <span>Upload Images </span>
               <img className="h-5 w-5" src={upload} alt="" />
             </Button>
+            <div className="flex flex-col gap-1 ml-2">
+              {images.map((image, index) => (
+                <div key={index} className="w-full truncate">
+                  <Link
+                    to={URL.createObjectURL(image)}
+                    target="_blank"
+                    className="text-accent-500 underline"
+                  >
+                    {image.name}
+                  </Link>
+                </div>
+              ))}
+            </div>
           </div>
           <Button className="mt-5 flex gap-2 ml-auto">
             Add Variety

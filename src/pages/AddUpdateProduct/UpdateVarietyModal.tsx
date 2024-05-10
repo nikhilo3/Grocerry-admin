@@ -62,7 +62,7 @@ const UpdateVarietyModal = ({
                 Variety Name*
               </label>
               <input
-                {...register("name", {
+                {...register("type", {
                   required: {
                     value: true,
                     message: "Variety Name is required",
@@ -72,7 +72,7 @@ const UpdateVarietyModal = ({
                 type="text"
                 placeholder="eg., Tomato"
               />
-              {errors.name && <FormErrorLine message={errors.name.message} />}
+              {errors.type && <FormErrorLine message={errors.type.message} />}
             </div>
             <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
               <label

@@ -1,28 +1,31 @@
-/**
- * Converts a JSON object to FormData.
- * @param json The JSON object to convert.
- * @returns The converted FormData object.
- */
-export const jsonToFd = <T extends Record<string, any>>(json: T): FormData => {
+export const jsonToFd = <T extends Record<string, any>>(
+  json: T,
+  parentKey?: string
+): FormData => {
   const formData = new FormData();
   Object.entries(json).forEach(([key, value]) => {
+    if (key === "documents") {
+      value.forEach((file: any) => {
+        formData.append("documents", file);
+      });
+      return;
+    }
+    const fullKey = parentKey ? `${parentKey}[${key}]` : key;
     if (!value) return;
-    if (typeof value === "object") {
-      // run the function recursively
-      const nestedFormData = jsonToFd(value);
-      nestedFormData.forEach((nestedKey, nestedValue) => {
-        formData.append(`${key}[${nestedKey}]`, nestedValue);
+    if (typeof value === "object" && !Array.isArray(value)) {
+      const nestedFormData = jsonToFd(value, fullKey);
+      nestedFormData.forEach((nestedValue, nestedKey) => {
+        formData.append(nestedKey, nestedValue);
       });
     } else if (Array.isArray(value)) {
-      value.forEach((item, index) => {
-        // run the function recursively
-        const nestedFormData = jsonToFd(item);
-        nestedFormData.forEach((nestedKey, nestedValue) => {
-          formData.append(`${key}[${index}][${nestedKey}]`, nestedValue);
+      value.forEach((item, itemIndex) => {
+        const nestedFormData = jsonToFd(item, `${fullKey}[${itemIndex}]`);
+        nestedFormData.forEach((nestedValue, nestedKey) => {
+          formData.append(nestedKey, nestedValue);
         });
       });
     } else {
-      formData.append(key, value);
+      formData.append(fullKey, value);
     }
   });
 
