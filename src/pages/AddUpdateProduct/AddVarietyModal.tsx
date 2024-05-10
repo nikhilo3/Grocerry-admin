@@ -233,7 +233,7 @@ const AddVarietyModal = () => {
                   },
                 })}
                 className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
-                type="number"
+                type="text"
                 placeholder="eg., brand1"
               />
               {errors.brands && (
