@@ -61,6 +61,18 @@ const UpdateVarietyModal = ({
     }
   }, [selectedVariety]);
 
+  useEffect(() => {
+    if (selectedVariety !== null) {
+      const urls = varieties[selectedVariety].documentUrls ?? [];
+      setImages(urls);
+    }
+  }, [varieties, selectedVariety]);
+
+  const convertToUrl = (file: File | string) => {
+    if (typeof file === "string") return "";
+    return URL.createObjectURL(file);
+  };
+
   return (
     <dialog id="update_variety_modal" className="modal">
       <div className="modal-box min-w-[632px] p-8 bg-white border border-accent-200 rounded-3xl hide-scrollbar">
@@ -300,11 +312,11 @@ const UpdateVarietyModal = ({
               {images?.map((image, index) => (
                 <div key={index} className="w-full truncate">
                   <Link
-                    to={URL.createObjectURL(image)}
+                    to={convertToUrl(image)}
                     target="_blank"
-                    className="text-accent-500 underline"
+                    className="text-accent-500 underline truncate"
                   >
-                    {image.name}
+                    {image.name ?? String(image)}
                   </Link>
                 </div>
               ))}
