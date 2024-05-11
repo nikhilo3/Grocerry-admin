@@ -3,9 +3,29 @@ import { ProductFormData, Variety } from "../pages/AddUpdateProduct";
 import { jsonToFd } from "../utils/jsonToFd";
 import API from ".";
 import { productToFd } from "../utils/productToFd";
+
 type Product = ProductFormData & {
   varietyList: Variety[];
   subCategory: string;
+};
+
+export type ProductResponseType = {
+  name: string;
+  code: string;
+  category: string;
+  subCategory: string;
+  description: string;
+  brand?: string;
+  type: string;
+  value: string;
+  unit: string;
+  varietyDescription: string;
+  price: number;
+  discountPercent: number;
+  discountedPrice: number;
+  deliveryCharges: number;
+  quantity: number;
+  documents?: string[];
 };
 
 const token = "c9d04268-54d5-46c4-8c93-72f36a9c565f";
@@ -33,7 +53,9 @@ export const handleAddProduct = async (product: Product): Promise<string> => {
   });
 };
 
-export const handleGetAllProducts = async (): Promise<Product[]> => {
+export const handleGetAllProducts = async (): Promise<
+  ProductResponseType[]
+> => {
   return new Promise((resolve, reject) => {
     axios
       .get(API.allProducts, {

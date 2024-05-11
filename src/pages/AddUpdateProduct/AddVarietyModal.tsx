@@ -12,8 +12,8 @@ interface Props {
   setVarieties: React.Dispatch<React.SetStateAction<Variety[]>>;
 }
 
-const TYPES = ["SIZE", "WEIGHT", "PACK OF", "PRICE"];
-const UNIT = ["KG", "GRAM", "PCS", "S", "L", "XL", "M", "RS"];
+export const TYPES = ["SIZE", "WEIGHT", "PACK OF", "PRICE"];
+export const UNIT = ["KG", "GRAM", "PCS", "S", "L", "XL", "M", "RS"];
 
 const AddVarietyModal = ({ setVarieties }: Props) => {
   const [images, setImages] = useState<File[]>([]);

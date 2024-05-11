@@ -65,7 +65,7 @@ const AddSubCategory = () => {
                                }  w-full flex justify-between `}
                     >
                       <span className="font-medium text-base text-accent-600">
-                        Select Category
+                        Select Sub Category
                       </span>
                       <span>
                         <img

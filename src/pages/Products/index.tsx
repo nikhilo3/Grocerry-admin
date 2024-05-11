@@ -14,12 +14,16 @@ import DownloadCSVButton from "../../components/reusable/DownloadCSVButton";
 import search from "../../utils/search";
 import ActionModal from "../../components/reusable/ActionModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { handleDeleteProduct, handleGetAllProducts } from "../../api/product";
+import {
+  ProductResponseType,
+  handleDeleteProduct,
+  handleGetAllProducts,
+} from "../../api/product";
 import toast from "react-hot-toast";
 import { PulseLoader } from "react-spinners";
 
 const ProductsPage = () => {
-  const [filteredData, setFilteredData] = useState([]);
+  const [filteredData, setFilteredData] = useState<ProductResponseType[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [queryString, setQueryString] = useState<string>("");
   const [isOutOfStockActive, setIsOutOfStockActive] = useState<boolean>(false);
@@ -67,7 +71,7 @@ const ProductsPage = () => {
     if (!products) return;
     let data = products;
     if (isOutOfStockActive) {
-      data = data.filter((product) => product.stock < 1);
+      data = data.filter((product) => product.quantity < 1);
     }
     if (selectedCategories.length > 0) {
       data = data.filter((product) =>
@@ -91,7 +95,7 @@ const ProductsPage = () => {
         ))}
       </div>
       {/* product table */}
-      <div className="overflow-x-scroll hide-scrollbar min-h-[40vh]">
+      <div className="overflow-x-scroll hide-scrollbar min-h-[40vh]  pb-40">
         <div className="border border-accent-200 rounded-[20px] bg-white p-6 flex flex-col gap-6 min-w-[1100px]">
           {/* product top action buttons */}
           <div className="flex justify-between items-center">
@@ -115,7 +119,7 @@ const ProductsPage = () => {
                 <span>{!isOutOfStockActive ? "Out of Stock" : "Show all"}</span>
                 <img src={sadFace} alt="sad" className="w-[16px] h-[16px]" />
               </Button>
-              <DownloadCSVButton data={products} fileName="products" />
+              <DownloadCSVButton data={products!} fileName="products" />
               <Link to="/products/add-a-product">
                 <Button className="flex items-center justify-center gap-2">
                   <span>Add Product</span>
@@ -160,7 +164,7 @@ const ProductsPage = () => {
                   <span className="truncate">{product.name}</span>
                   <span>{product.category}</span>
                   <span>{product.subCategory}</span>
-                  <span>{product.stock ?? 0}</span>
+                  <span>{product.quantity ?? 0}</span>
 
                   <div className="ml-auto relative">
                     <button
@@ -183,7 +187,7 @@ const ProductsPage = () => {
                         className="flex flex-col items-start"
                       >
                         <Link
-                          to={`/products/update/${product.id}`}
+                          to={`/products/update/${product.code}`}
                           className="py-3 px-6 font-medium"
                         >
                           View Product
