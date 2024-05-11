@@ -13,19 +13,26 @@ import { PRODUCT_CATEGORIES } from "../../assets/data/constants";
 import DownloadCSVButton from "../../components/reusable/DownloadCSVButton";
 import search from "../../utils/search";
 import ActionModal from "../../components/reusable/ActionModal";
-import { useQuery } from "@tanstack/react-query";
-import { handleGetAllProducts } from "../../api/product";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { handleDeleteProduct, handleGetAllProducts } from "../../api/product";
+import toast from "react-hot-toast";
+import { PulseLoader } from "react-spinners";
 
 const ProductsPage = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [queryString, setQueryString] = useState<string>("");
   const [isOutOfStockActive, setIsOutOfStockActive] = useState<boolean>(false);
+  const [deletingProduct, setDeletingProduct] = useState({
+    isDeleting: false,
+    index: null as number | null,
+  });
   const [actionModal, setActionModal] = useState({
     isOpen: false,
     index: null as number | null,
   });
 
+  // get all products
   const {
     data: products,
     isLoading,
@@ -33,6 +40,27 @@ const ProductsPage = () => {
   } = useQuery({
     queryKey: ["products"],
     queryFn: handleGetAllProducts,
+  });
+
+  const queryClient = useQueryClient();
+
+  // delete product
+  const { mutate, isPending } = useMutation({
+    mutationFn: handleDeleteProduct,
+    onSuccess: (msg) => {
+      queryClient
+        .invalidateQueries({
+          queryKey: ["products"],
+        })
+        .then(() => {
+          setDeletingProduct({ isDeleting: false, index: null });
+          toast.success(msg);
+        });
+    },
+    onError: (err: string) => {
+      setDeletingProduct({ isDeleting: false, index: null });
+      toast.error(err);
+    },
   });
 
   useEffect(() => {
@@ -141,7 +169,11 @@ const ProductsPage = () => {
                         setActionModal({ isOpen: true, index });
                       }}
                     >
-                      <ThreeDots className="w-[18px] h-[18px]" />
+                      {isPending && deletingProduct.index === index ? (
+                        <PulseLoader color="#cdcfd1" size={6} />
+                      ) : (
+                        <ThreeDots className="w-[18px] h-[18px]" />
+                      )}
                     </button>
                     {actionModal.index === index && actionModal.isOpen && (
                       <ActionModal
@@ -157,7 +189,14 @@ const ProductsPage = () => {
                           View Product
                         </Link>
                         <hr className="w-full" />
-                        <button className="py-3 px-6 font-medium text-error-300">
+                        <button
+                          onClick={() => {
+                            setDeletingProduct({ isDeleting: true, index });
+                            setActionModal({ isOpen: false, index: null });
+                            mutate(product.code);
+                          }}
+                          className="py-3 px-6 font-medium text-error-300"
+                        >
                           Delete Product
                         </button>
                       </ActionModal>

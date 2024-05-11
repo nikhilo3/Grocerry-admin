@@ -12,6 +12,9 @@ interface Props {
   setVarieties: React.Dispatch<React.SetStateAction<Variety[]>>;
 }
 
+const TYPES = ["SIZE", "WEIGHT", "PACK OF", "PRICE"];
+const UNITS = ["KG", "GRAM", "PCS", "S", "L", "XL", "M", "RS"];
+
 const AddVarietyModal = ({ setVarieties }: Props) => {
   const [images, setImages] = useState<File[]>([]);
   const imagesRef = useRef();
@@ -20,6 +23,8 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
     formState: { errors },
     handleSubmit,
     reset,
+    watch,
+    setValue,
   } = useForm<Variety>();
 
   const onSubmit: SubmitHandler<Variety> = (data) => {
@@ -40,6 +45,9 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
     reset();
   };
 
+  register("type", { required: "Variety Type is required" });
+  register("units", { required: "Units is required" });
+
   return (
     <dialog id="add_variety_modal" className="modal !z-50">
       <div className="modal-box min-w-[632px] p-8 bg-white border border-accent-200 rounded-3xl hide-scrollbar">
@@ -59,17 +67,29 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
               >
                 Variety Type*
               </label>
-              <input
-                {...register("type", {
-                  required: {
-                    value: true,
-                    message: "Variety Type is required",
-                  },
-                })}
-                className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
-                type="text"
-                placeholder="eg., WEIGHT"
-              />
+              <div className="dropdown w-full">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="font-normal btn m-1 w-full text-accent-500 text-left bg-background flex items-center justify-start"
+                >
+                  {watch("type") ?? "Select Variety Type"}
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full px-4"
+                >
+                  {TYPES.map((type) => (
+                    <li
+                      key={type}
+                      onClick={() => setValue("type", type)}
+                      className="menu-item mt-2 cursor-pointer"
+                    >
+                      {type}
+                    </li>
+                  ))}
+                </ul>
+              </div>
               {errors.type && <FormErrorLine message={errors.type.message} />}
             </div>
             <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
@@ -130,6 +150,10 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
                     value: true,
                     message: "Price are required",
                   },
+                  min: {
+                    value: 0,
+                    message: "Price should be greater than 0",
+                  },
                 })}
                 className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
                 type="number"
@@ -150,6 +174,15 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
                     value: true,
                     message: "Discount Price are required",
                   },
+                  min: {
+                    value: 0,
+                    message:
+                      "Discount Price should be greater than or equal to 0",
+                  },
+                  max: {
+                    value: 100,
+                    message: "Discount Price should be less than 100",
+                  },
                 })}
                 className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
                 type="number"
@@ -169,17 +202,29 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
               >
                 Units*
               </label>
-              <input
-                {...register("units", {
-                  required: {
-                    value: true,
-                    message: "Units is required",
-                  },
-                })}
-                className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
-                type="text"
-                placeholder="eg., KG"
-              />
+              <div className="dropdown w-full">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="font-normal btn m-1 w-full text-accent-500 text-left bg-background flex items-center justify-start"
+                >
+                  {watch("units") ?? "Select A Unit"}
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full px-4 max-h-40 overflow-y-auto scrollbar-sm"
+                >
+                  {UNITS.map((type) => (
+                    <li
+                      key={type}
+                      onClick={() => setValue("units", type)}
+                      className="menu-item mt-2 cursor-pointer"
+                    >
+                      {type}
+                    </li>
+                  ))}
+                </ul>
+              </div>
               {errors.units && <FormErrorLine message={errors.units.message} />}
             </div>
             <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
@@ -194,6 +239,10 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
                   required: {
                     value: true,
                     message: "Quantity is required",
+                  },
+                  min: {
+                    value: 0,
+                    message: "Quantity should be greater than 0",
                   },
                 })}
                 className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
