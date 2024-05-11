@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import FormErrorLine from "../../components/reusable/FormErrorLine";
 import { useState } from "react";
 import Button from "../../components/reusable/Button";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import add from "../../assets/icons/add-circle-orange.svg";
 import deleteIcon from "../../assets/icons/delete.svg";
 import eye from "../../assets/icons/eye.svg";
@@ -17,9 +17,10 @@ import caretUpSvg from "../../assets/icons/caret-up.svg";
 import addCircleOrangeSvg from "../../assets/icons/add-circle-orange.svg";
 import toast from "react-hot-toast";
 import UpdateVarietyModal from "./UpdateVarietyModal";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { handleAddProduct } from "../../api/product";
 import UploadImage, { error } from "./UploadImage";
+import { PulseLoader } from "react-spinners";
 
 const category = [
   "Fruit & Vegetables",
@@ -42,7 +43,7 @@ export type Variety = {
   description: string;
   price: number;
   discounted_percent: number;
-  units: string;
+  unit: string;
   quantity: number;
   documents: File[];
 };
@@ -69,11 +70,14 @@ const AddProduct = () => {
     handleSubmit,
     watch,
     setValue,
+    reset,
   } = useForm<ProductFormData>();
 
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [categoryDropdown, setCategoryDropdown] = useState(false);
   const [subcategoryDropdown, setSubcategoryDropdown] = useState(false);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   // add product mutation
   const { mutate: mutateAddProduct, isPending: isAddProductPending } =
@@ -81,6 +85,11 @@ const AddProduct = () => {
       mutationFn: handleAddProduct,
       onSuccess: (msg) => {
         toast.success(msg);
+        queryClient.invalidateQueries({
+          queryKey: ["products"],
+        });
+        navigate("/products");
+        reset();
       },
       onError: (err: string) => {
         toast.error(err);
@@ -136,10 +145,19 @@ const AddProduct = () => {
             {!id ? (
               <Button
                 type={id ? "button" : "submit"}
+                disabled={isAddProductPending}
                 className="flex justify-center items-center gap-2 w-[196px]"
               >
-                Create Product
-                <img className="h-4" src={checkIcon} alt="" />
+                {isAddProductPending ? (
+                  <>
+                    <PulseLoader color="#cdcfd1" size={6} />
+                  </>
+                ) : (
+                  <>
+                    Create Product
+                    <img className="h-4" src={checkIcon} alt="" />
+                  </>
+                )}
               </Button>
             ) : (
               <>

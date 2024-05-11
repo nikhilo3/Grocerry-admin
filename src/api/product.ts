@@ -2,7 +2,7 @@ import axios from "axios";
 import { ProductFormData, Variety } from "../pages/AddUpdateProduct";
 import { jsonToFd } from "../utils/jsonToFd";
 import API from ".";
-
+import { productToFd } from "../utils/productToFd";
 type Product = ProductFormData & {
   varietyList: Variety[];
   subCategory: string;
@@ -11,9 +11,7 @@ type Product = ProductFormData & {
 const token = "c9d04268-54d5-46c4-8c93-72f36a9c565f";
 
 export const handleAddProduct = async (product: Product): Promise<string> => {
-  console.log(product);
-  const fd = jsonToFd(product);
-  console.log(fd);
+  const fd = productToFd(product);
   return new Promise((resolve, reject) => {
     axios
       .post(API.addProduct, fd, {

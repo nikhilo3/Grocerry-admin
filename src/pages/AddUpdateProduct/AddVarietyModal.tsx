@@ -13,7 +13,7 @@ interface Props {
 }
 
 const TYPES = ["SIZE", "WEIGHT", "PACK OF", "PRICE"];
-const UNITS = ["KG", "GRAM", "PCS", "S", "L", "XL", "M", "RS"];
+const UNIT = ["KG", "GRAM", "PCS", "S", "L", "XL", "M", "RS"];
 
 const AddVarietyModal = ({ setVarieties }: Props) => {
   const [images, setImages] = useState<File[]>([]);
@@ -46,7 +46,7 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
   };
 
   register("type", { required: "Variety Type is required" });
-  register("units", { required: "Units is required" });
+  register("unit", { required: "Unit is required" });
 
   return (
     <dialog id="add_variety_modal" className="modal !z-50">
@@ -198,9 +198,9 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
             <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
               <label
                 className="font-inter font-medium text-base text-accent-500"
-                htmlFor="units"
+                htmlFor="unit"
               >
-                Units*
+                Unit*
               </label>
               <div className="dropdown w-full">
                 <div
@@ -208,16 +208,16 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
                   role="button"
                   className="font-normal btn m-1 w-full text-accent-500 text-left bg-background flex items-center justify-start"
                 >
-                  {watch("units") ?? "Select A Unit"}
+                  {watch("unit") ?? "Select A Unit"}
                 </div>
                 <ul
                   tabIndex={0}
                   className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full px-4 max-h-40 overflow-y-auto scrollbar-sm"
                 >
-                  {UNITS.map((type) => (
+                  {UNIT.map((type) => (
                     <li
                       key={type}
-                      onClick={() => setValue("units", type)}
+                      onClick={() => setValue("unit", type)}
                       className="menu-item mt-2 cursor-pointer"
                     >
                       {type}
@@ -225,7 +225,7 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
                   ))}
                 </ul>
               </div>
-              {errors.units && <FormErrorLine message={errors.units.message} />}
+              {errors.unit && <FormErrorLine message={errors.unit.message} />}
             </div>
             <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
               <label
