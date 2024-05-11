@@ -2,7 +2,7 @@ import backArrowIcon from "../../assets/icons/back-arrow.svg";
 import checkIcon from "../../assets/icons/check.svg";
 import { SubmitHandler, useForm } from "react-hook-form";
 import FormErrorLine from "../../components/reusable/FormErrorLine";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../components/reusable/Button";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import add from "../../assets/icons/add-circle-orange.svg";
@@ -17,8 +17,12 @@ import caretUpSvg from "../../assets/icons/caret-up.svg";
 import addCircleOrangeSvg from "../../assets/icons/add-circle-orange.svg";
 import toast from "react-hot-toast";
 import UpdateVarietyModal from "./UpdateVarietyModal";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { handleAddProduct } from "../../api/product";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  handleAddProduct,
+  handleGetProductsByQueries,
+  handleUpdateProduct,
+} from "../../api/product";
 import UploadImage, { error } from "./UploadImage";
 import { PulseLoader } from "react-spinners";
 
@@ -40,26 +44,26 @@ const subCategories = [
 export type Variety = {
   type: string;
   value: string;
+  unit: string;
   description: string;
   price: number;
-  discounted_percent: number;
-  unit: string;
   quantity: number;
+  discountPercent: number;
   documents: File[];
 };
 
 export interface ProductFormData {
   name: string;
-  description: string;
+  code: string;
   category: string;
   subCategory: string[];
+  description: string;
   brand?: string;
   tags?: string;
-  code: string;
 }
 
 const AddProduct = () => {
-  const { id } = useParams<{ id: string | undefined }>();
+  const { productCode } = useParams<{ productCode: string | undefined }>();
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [varieties, setVarieties] = useState<Variety[]>([]);
   const [selectedVariety, setSelectedVariety] = useState<number | null>(null);
@@ -79,6 +83,36 @@ const AddProduct = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  //get Product Data for editing if productCode is present
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ["product", productCode],
+    queryFn: () => handleGetProductsByQueries(`code=${productCode}`),
+    enabled: false,
+  });
+
+  // fetch if productCode is present or change
+  useEffect(() => {
+    if (productCode) {
+      refetch();
+    }
+  }, [productCode]);
+
+  useEffect(() => {
+    if (!productCode) return;
+    if (!data || data.length === 0) return;
+    const product = data[0];
+    console.log(product);
+    reset({
+      ...(product as any),
+      brand: product.brand === "non-branded" ? "" : product.brand,
+    });
+    setValue("category", product.category);
+    setValue("subCategory", product.subCategory.split(","));
+    setSelectedImages(product.documents?.map((doc) => new File([], doc)) ?? []);
+
+    setVarieties(product.varietyList);
+  }, [data, productCode]);
+
   // add product mutation
   const { mutate: mutateAddProduct, isPending: isAddProductPending } =
     useMutation({
@@ -96,17 +130,35 @@ const AddProduct = () => {
       },
     });
 
-  const onSubmit: SubmitHandler<ProductFormData> = (data) => {
+  // update product mutation
+  const { mutate: mutateUpdateProduct, isPending: isUpdateProductPending } =
+    useMutation({
+      mutationFn: handleUpdateProduct,
+      onSuccess: (msg) => {
+        toast.success(msg);
+        queryClient.invalidateQueries({
+          queryKey: ["products"],
+        });
+        navigate("/products");
+        setIsEditing(false);
+        reset();
+      },
+      onError: (err: string) => {
+        toast.error(err);
+      },
+    });
+
+  const onSubmit: SubmitHandler<ProductFormData> = (formData) => {
     if (varieties.length === 0) {
       toast.error("Varieties are required");
       return;
     }
 
-    if (data.category === "Select Category" || !data.category) {
+    if (formData.category === "Select Category" || !formData.category) {
       toast.error("Category is required");
       return;
     }
-    if (!data["subCategory"] || data["subCategory"]?.length === 0) {
+    if (!formData["subCategory"] || formData["subCategory"]?.length === 0) {
       toast.error("Sub Category is required");
       return;
     }
@@ -114,17 +166,28 @@ const AddProduct = () => {
     const dataToSend = {
       varietyList: varieties,
       ...{
-        ...data,
-        subCategory: data["subCategory"].join(",") as any,
+        ...formData,
+        subCategory: formData["subCategory"].join(",") as any,
       },
       documents: selectedImages,
     };
 
-    console.log(dataToSend);
-
-    mutateAddProduct(dataToSend);
+    if (productCode) {
+      mutateUpdateProduct({
+        ...dataToSend,
+        // @ts-ignore
+        id: data[0].id,
+      });
+    } else {
+      mutateAddProduct(dataToSend);
+    }
   };
 
+  if (productCode) {
+    if (isLoading) return <div>Loading...</div>;
+    if (isError) return <div>Error fetching product</div>;
+    if (!data || data.length === 0) return <div>Product not found</div>;
+  }
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -142,9 +205,9 @@ const AddProduct = () => {
             </Button>
           </Link>
           <div className="flex justify-end items-center gap-4">
-            {!id ? (
+            {!productCode ? (
               <Button
-                type={id ? "button" : "submit"}
+                type={productCode ? "button" : "submit"}
                 disabled={isAddProductPending}
                 className="flex justify-center items-center gap-2 w-[196px]"
               >
@@ -172,12 +235,19 @@ const AddProduct = () => {
                       Cancel
                     </Button>
                     <Button
-                      type={id ? "submit" : "button"}
-                      onClick={() => setIsEditing(false)}
+                      type={productCode ? "submit" : "button"}
                       className="flex justify-center items-center gap-2 w-[127px]"
                     >
-                      Done
-                      <img className="h-4" src={editIcon} alt="" />
+                      {isUpdateProductPending ? (
+                        <>
+                          <PulseLoader color="#cdcfd1" size={6} />
+                        </>
+                      ) : (
+                        <>
+                          Done
+                          <img className="h-4" src={editIcon} alt="" />
+                        </>
+                      )}
                     </Button>
                   </>
                 ) : (
@@ -194,7 +264,12 @@ const AddProduct = () => {
           </div>
         </div>
 
-        <div className="max-w-[1500px] w-full  lg:flex-row  gap-5 grid  mb-44 grid-cols-5">
+        <div
+          style={{
+            pointerEvents: !isEditing && productCode ? "none" : "all",
+          }}
+          className="max-w-[1500px] w-full  lg:flex-row  gap-5 grid  mb-44 grid-cols-5"
+        >
           {/* basic information */}
           <div className="w-full col-span-3 flex flex-col gap-6">
             <div className="bg-white w-full xl:w-full rounded-[20px] border border-accent-50  p-6">

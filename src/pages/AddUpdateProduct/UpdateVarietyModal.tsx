@@ -177,12 +177,12 @@ const UpdateVarietyModal = ({
             <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
               <label
                 className="font-inter font-medium text-base text-accent-500"
-                htmlFor="discounted_percent"
+                htmlFor="discountPercent"
               >
                 Discounted Percent*
               </label>
               <input
-                {...register("discounted_percent", {
+                {...register("discountPercent", {
                   required: {
                     value: true,
                     message: "Discount Price are required",
@@ -201,8 +201,8 @@ const UpdateVarietyModal = ({
                 type="number"
                 placeholder="eg., 5"
               />
-              {errors.discounted_percent && (
-                <FormErrorLine message={errors.discounted_percent.message} />
+              {errors.discountPercent && (
+                <FormErrorLine message={errors.discountPercent.message} />
               )}
             </div>
           </div>
@@ -297,7 +297,7 @@ const UpdateVarietyModal = ({
               <img className="h-5 w-5" src={upload} alt="" />
             </Button>
             <div className="flex flex-col gap-1 ml-2">
-              {images.map((image, index) => (
+              {images?.map((image, index) => (
                 <div key={index} className="w-full truncate">
                   <Link
                     to={URL.createObjectURL(image)}

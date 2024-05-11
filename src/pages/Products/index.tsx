@@ -197,7 +197,7 @@ const ProductsPage = () => {
                           onClick={() => {
                             setDeletingProduct({ isDeleting: true, index });
                             setActionModal({ isOpen: false, index: null });
-                            mutate(product.code);
+                            mutate(product.id);
                           }}
                           className="py-3 px-6 font-medium text-error-300"
                         >

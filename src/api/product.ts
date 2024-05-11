@@ -28,7 +28,7 @@ export type ProductResponseType = {
   documents?: string[];
 };
 
-const token = "c9d04268-54d5-46c4-8c93-72f36a9c565f";
+const token = "6b91b556-79db-4820-86c5-a62ac02d7e2e";
 
 export const handleAddProduct = async (product: Product): Promise<string> => {
   const fd = productToFd(product);
@@ -53,12 +53,58 @@ export const handleAddProduct = async (product: Product): Promise<string> => {
   });
 };
 
+export const handleUpdateProduct = async (
+  product: Product
+): Promise<string> => {
+  const fd = productToFd(product);
+  return new Promise((resolve, reject) => {
+    axios
+      .put(API.updateProduct, fd, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
+          reject(res.data?.errorMessage);
+        }
+        resolve(res.data?.message);
+      })
+      .catch((err) => {
+        reject(err.response.data?.message);
+      });
+  });
+};
+
 export const handleGetAllProducts = async (): Promise<
   ProductResponseType[]
 > => {
   return new Promise((resolve, reject) => {
     axios
       .get(API.allProducts, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
+          reject(res.data?.errorMessage);
+        }
+        resolve(res.data?.responseBody?.content ?? []);
+      })
+      .catch((err) => {
+        reject(err.response.data?.message);
+      });
+  });
+};
+
+export const handleGetProductsByQueries = async (
+  query?: string
+): Promise<ProductResponseType[]> => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`${API.allProducts}${query ? `?${query}` : ""}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

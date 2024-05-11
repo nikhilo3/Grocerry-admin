@@ -6,6 +6,7 @@ const API = {
   addProduct: PRODUCT_URL + "/product/add",
   allProducts: PRODUCT_URL + "/product/list",
   deleteProduct: PRODUCT_URL + "/product/delete",
+  updateProduct: PRODUCT_URL + "/product/update",
 };
 
 export default API;
