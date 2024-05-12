@@ -3,10 +3,17 @@ const PRODUCT_URL = import.meta.env.VITE_PRODUCT_SERVICE_BASE_URL + "/v1";
 // const AUTH_URL = "http://localhost:8080" + "/v1";
 
 const API = {
+  // products
   addProduct: PRODUCT_URL + "/product/add",
   allProducts: PRODUCT_URL + "/product/list",
   deleteProduct: PRODUCT_URL + "/product/delete",
   updateProduct: PRODUCT_URL + "/product/update",
+
+  // drivers
+  addDriver: PRODUCT_URL + "/driver/add",
+  allDrivers: PRODUCT_URL + "/driver/list",
+  deleteDriver: PRODUCT_URL + "/driver/delete",
+  updateDriver: PRODUCT_URL + "/driver/update",
 };
 
 export default API;

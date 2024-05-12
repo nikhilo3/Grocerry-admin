@@ -1,5 +1,4 @@
 import Button from "../../components/reusable/Button";
-import { drivers } from "../../assets/mockData/driverData";
 import SearchInput from "../../components/reusable/SearchInput";
 import addCircleSvg from "../../assets/icons/add-circle.svg";
 import Download from "../../components/reusable/Download";
@@ -8,19 +7,39 @@ import search from "../../utils/search";
 import UnCheckedBox from "../../assets/icons/unchecked-box";
 import DriverDetail from "./DriverDetail";
 import AddDriver from "./AddDriver";
+import { useQuery } from "@tanstack/react-query";
+import { DriverResponseType, getAllDrivers } from "../../api/driver";
+import UpdateDriver from "./UpdateDriver";
 
 const Drivers = () => {
-  const [filteredData, setFilteredData] = useState(drivers);
+  const [filteredData, setFilteredData] = useState<DriverResponseType[]>([]);
   const [queryString, setQueryString] = useState<string>("");
-  const [driverId, setDriverId] = useState("");
+  const [selectedDriverData, setSelectedDriverData] =
+    useState<DriverResponseType | null>(null);
+  const [editDriverData, setEditDriverData] =
+    useState<DriverResponseType | null>(null);
+
+  // get all drivers query
+  const {
+    isError,
+    isLoading,
+    data: drivers,
+  } = useQuery({
+    queryKey: ["drivers"],
+    queryFn: getAllDrivers,
+    staleTime: Infinity,
+  });
 
   useEffect(() => {
-    let data = drivers;
+    if (!drivers || isError || isLoading) return;
+    let data = drivers!;
     const searchKeys = ["id", "name", "vehicle"];
     data = search(data, queryString, searchKeys);
     setFilteredData(data);
-  }, [queryString]);
+  }, [queryString, drivers, isLoading, isError]);
 
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error...</div>;
   return (
     <div>
       <div className="flex flex-col gap-7 justify-center">
@@ -38,6 +57,7 @@ const Drivers = () => {
                   <Download />
                   <Button
                     onClick={() => {
+                      setEditDriverData(null);
                       if (document) {
                         (
                           document.getElementById(
@@ -60,7 +80,7 @@ const Drivers = () => {
               <div
                 className="grid justify-center text-center bg-accent-500 rounded-xl p-4 text-accent-50 font-normal"
                 style={{
-                  gridTemplateColumns: "0.1fr 2fr 3fr 3fr 3fr 3fr 1fr",
+                  gridTemplateColumns: "0.1fr 2fr 3fr 3fr 3fr 1fr",
                 }}
               >
                 <button>
@@ -70,33 +90,33 @@ const Drivers = () => {
                 <span className="text-nowrap">Full Name</span>
                 <span className="text-nowrap">Phone No.</span>
                 <span className="text-nowrap">Vehicle No.</span>
-                <span className="text-nowrap">Deliveries Completed</span>
                 <span className="text-nowrap  ">Actions</span>
               </div>
               {filteredData.length > 0 ? (
                 filteredData.map((drivers, index) => (
                   <div
                     key={index}
-                    className="grid justify-center items-center w-full text-center  even:bg-accent-50 rounded-xl p-4 text-accent-500 font-normal"
+                    className="grid justify-center items-center w-full gap-4 text-center  even:bg-accent-50 rounded-xl p-4 text-accent-500 font-normal"
                     style={{
-                      gridTemplateColumns: "0.1fr 2fr 3fr 3fr 3fr 3fr 1fr",
+                      gridTemplateColumns: "0.1fr 2fr 3fr 3fr 3fr 1fr",
                     }}
                   >
                     <button>
                       <UnCheckedBox className="w-[18px] h-[18px]" />
                     </button>
-                    {Object.values(drivers).map((value, index) => (
-                      <span className="truncate" key={index}>
-                        {value}
-                      </span>
-                    ))}
+                    <span className="truncate" key={index}>
+                      {drivers.id}
+                    </span>
+                    <span className="truncate">{drivers.name}</span>
+                    <span className="truncate">{drivers.contactNo}</span>
+                    <span className="truncate">{drivers.vehicleNo}</span>
                     <Button
                       onClick={() => {
-                        setDriverId(drivers.id);
+                        setSelectedDriverData(drivers);
                         if (document) {
                           (
                             document.getElementById(
-                              "my_modal_3"
+                              "driverDetails"
                             ) as HTMLFormElement
                           ).showModal();
                         }
@@ -117,8 +137,15 @@ const Drivers = () => {
           </div>
         </div>
 
-        <DriverDetail driverId={driverId} />
+        <DriverDetail
+          driver={selectedDriverData}
+          setEditDriverData={setEditDriverData}
+        />
         <AddDriver />
+        <UpdateDriver
+          driver={editDriverData}
+          setEditDriverData={setEditDriverData}
+        />
       </div>
     </div>
   );

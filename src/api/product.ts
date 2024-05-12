@@ -1,8 +1,8 @@
 import axios from "axios";
 import { ProductFormData, Variety } from "../pages/AddUpdateProduct";
-import { jsonToFd } from "../utils/jsonToFd";
 import API from ".";
 import { productToFd } from "../utils/productToFd";
+import { TOKEN } from "../assets/mockData/auth";
 
 type Product = ProductFormData & {
   varietyList: Variety[];
@@ -28,8 +28,6 @@ export type ProductResponseType = {
   documents?: string[];
 };
 
-const token = "6b91b556-79db-4820-86c5-a62ac02d7e2e";
-
 export const handleAddProduct = async (product: Product): Promise<string> => {
   const fd = productToFd(product);
   return new Promise((resolve, reject) => {
@@ -37,7 +35,7 @@ export const handleAddProduct = async (product: Product): Promise<string> => {
       .post(API.addProduct, fd, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`, //
+          Authorization: `Bearer ${TOKEN}`, //
         },
       })
       .then((res) => {
@@ -62,7 +60,7 @@ export const handleUpdateProduct = async (
       .put(API.updateProduct, fd, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${TOKEN}`,
         },
       })
       .then((res) => {
@@ -84,7 +82,7 @@ export const handleGetAllProducts = async (): Promise<
     axios
       .get(API.allProducts, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${TOKEN}`,
         },
       })
       .then((res) => {
@@ -106,7 +104,7 @@ export const handleGetProductsByQueries = async (
     axios
       .get(`${API.allProducts}${query ? `?${query}` : ""}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${TOKEN}`,
         },
       })
       .then((res) => {
@@ -127,7 +125,7 @@ export const handleDeleteProduct = async (code: string): Promise<string> => {
       .delete(API.deleteProduct, {
         data: [code],
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${TOKEN}`,
         },
       })
       .then((res) => {
