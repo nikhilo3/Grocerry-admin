@@ -3,10 +3,12 @@ import API from ".";
 import { TOKEN } from "../assets/mockData/auth";
 import { IOrder } from "../types/order.types";
 
-export const handleGetAllOrders = async (): Promise<IOrder[]> => {
+export const handleGetAllOrders = async (
+  query: string = ""
+): Promise<IOrder[]> => {
   return new Promise((resolve, reject) => {
     axios
-      .get(API.allOrders, {
+      .get(`${API.allOrders}?${query}`, {
         headers: {
           Authorization: `Bearer ${TOKEN}`,
         },

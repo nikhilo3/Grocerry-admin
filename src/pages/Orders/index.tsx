@@ -1,17 +1,20 @@
-import { useState, useEffect } from "react"; // Fix unused import warning
-import { orderData, orderDetails } from "../../assets/mockData/orderData";
+import { useState, useEffect, useCallback } from "react"; // Fix unused import warning
+import { orderDetails } from "../../assets/mockData/orderData";
 import ThreeDots from "../../assets/icons/three-dots";
 import UnCheckedBox from "../../assets/icons/unchecked-box";
 import OrderModal from "./OrderModal";
 import InfoCard from "../../components/reusable/InfoCard";
 import SearchInput from "../../components/reusable/SearchInput";
-import Dropdown from "../../components/reusable/StatusDropdown";
 import DownloadCSVButton from "../../components/reusable/DownloadCSVButton";
 import ActionModal from "../../components/reusable/ActionModal";
-import AssignDriverModal from "./AssignDriverModal";
 import { useQuery } from "@tanstack/react-query";
 import { handleGetAllOrders } from "../../api/order";
 import { IOrder } from "../../types/order.types";
+import Dropdown from "../../components/reusable/Dropdown";
+import ErrorOccurred from "../../components/reusable/ErrorOccurred";
+import AppLoading from "../../components/loaders/AppLoading";
+import debounce from "../../utils/debounce";
+import objToQuery from "../../utils/objToQuery";
 
 // Define order status options
 // ! do not change the order of the options
@@ -22,14 +25,6 @@ export const ORDER_STATUS_OPTIONS = [
   "OUT_FOR_DELIVERY",
   "DELIVERED",
 ];
-
-// Search function with proper parameter types
-const search = (data: any[], query: string, keys: string[]): any[] => {
-  if (!query) return data;
-  return data.filter((item) =>
-    keys.some((key) => item[key].toLowerCase().includes(query.toLowerCase()))
-  );
-};
 
 // Function to get Tailwind classes based on order status
 const getStatusClasses = (status: string): string => {
@@ -55,19 +50,36 @@ const Orders = () => {
   const [activeDropdownRow, setActiveDropdownRow] = useState<number | null>(
     null
   );
-  const [queryString, setQueryString] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState<string>("");
+
   const [filteredData, setFilteredData] = useState<IOrder[]>([]);
   const [selectedViewOrder, setSelectedViewOrder] = useState<IOrder | null>(
     null
   );
 
-  // get order query
-  const { isLoading, data, isError } = useQuery({
-    queryFn: handleGetAllOrders,
-    staleTime: Infinity,
-    queryKey: ["orders"],
+  const [queryParams, setQueryParams] = useState({
+    pageNo: 1,
+    perPage: 10,
+    name: null as string | null,
+    orderStatus: null as string | null,
   });
+
+  // get order query
+  const { isLoading, data, isError, refetch } = useQuery({
+    queryFn: () => handleGetAllOrders(objToQuery(queryParams)),
+    staleTime: Infinity,
+    queryKey: ["orders", queryParams],
+  });
+
+  const debouncedRefetch = useCallback(
+    debounce(() => {
+      refetch();
+    }),
+    [] // dependencies
+  ); //callback to ensure that setSearchParams is not called on every render
+
+  useEffect(() => {
+    debouncedRefetch();
+  }, [queryParams]);
 
   useEffect(() => {
     if (!data || isLoading) return;
@@ -78,8 +90,7 @@ const Orders = () => {
     setActiveDropdownRow(activeDropdownRow === index ? null : index);
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error...</div>;
+  if (isError) return <ErrorOccurred error="Failed to fetch orders" />;
 
   return (
     <div className="flex flex-col gap-11 overflow-hidden font-inter">
@@ -93,15 +104,20 @@ const Orders = () => {
         <div className="border border-accent-200 rounded-[20px] bg-white p-6 flex flex-col gap-6 min-w-[1100px]">
           <div className="gap-6 items-center flex">
             <SearchInput
-              placeholder="Search order"
-              onChange={(e) => setQueryString(e.target.value)}
+              placeholder="Search by name..."
+              onChange={(e) => {
+                setQueryParams({ ...queryParams, name: e.target.value });
+              }}
             />
             <Dropdown
               dropdownItems={ORDER_STATUS_OPTIONS}
-              selectedItems={[selectedStatus]}
-              setDropdownItems={(items: any[]) =>
-                setSelectedStatus(items[0] || "")
-              }
+              selectedItem={queryParams.orderStatus}
+              setDropdownItem={(value) => {
+                setQueryParams({
+                  ...queryParams,
+                  orderStatus: value,
+                });
+              }}
             />
             <div className="pl-[450px] flex justify-end">
               <DownloadCSVButton data={[]} fileName={""} />
@@ -123,7 +139,9 @@ const Orders = () => {
           </div>
 
           <div className="mt-4">
-            {filteredData.length > 0 ? (
+            {isLoading ? (
+              <AppLoading />
+            ) : filteredData.length > 0 ? (
               filteredData.map((order, index) => {
                 const statusClasses = getStatusClasses(order.orderStatus);
                 return (
