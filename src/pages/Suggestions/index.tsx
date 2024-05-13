@@ -10,6 +10,9 @@ import {
   handleRemoveSuggestion,
 } from "../../api/suggestion";
 import toast from "react-hot-toast";
+import ErrorOccurred from "../../components/reusable/ErrorOccurred";
+import AppLoading from "../../components/loaders/AppLoading";
+import Swal from "sweetalert2";
 
 const Suggestions = () => {
   const [queryString, setQueryString] = useState<string>("");
@@ -35,8 +38,22 @@ const Suggestions = () => {
     },
   });
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error...</div>;
+  const deleteSuggestion = (id: string) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, keep it",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        mutate(id);
+      }
+    });
+  };
+
+  if (isError) return <ErrorOccurred error="Failed to fetch suggestions" />;
 
   return (
     <>
@@ -71,7 +88,9 @@ const Suggestions = () => {
                 <span className="ml-4">Message</span>
                 <span className="m-auto">Actions</span>
               </div>
-              {data && data?.length > 0 ? (
+              {isLoading ? (
+                <AppLoading />
+              ) : data && data?.length > 0 ? (
                 data.map((data, index) => (
                   <div
                     key={index}
@@ -88,7 +107,7 @@ const Suggestions = () => {
                       {data.comment}
                     </span>
                     <Button
-                      onClick={() => mutate(data.id)}
+                      onClick={() => deleteSuggestion(data.id)}
                       disabled={isPending}
                       variant="primary-ghost"
                       className="mx-auto py-2"
