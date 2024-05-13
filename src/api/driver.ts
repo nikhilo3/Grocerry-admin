@@ -15,7 +15,7 @@ export const handleAddDriver = (driver: DriverFormData): Promise<string> => {
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
           reject(res.data?.errorMessage ?? "Something went wrong!");
         }
-        resolve(res.data?.message);
+        resolve(res.data?.message ?? "Driver added successfully!");
       })
       .catch((err) => {
         reject(err.response.data?.message ?? "Something went wrong!");
@@ -42,13 +42,14 @@ export const getAllDrivers = async (
         },
       })
       .then((res) => {
+        if (res.data?.statusCode === 404) resolve([]);
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
-          reject(res.data?.errorMessage);
+          reject(res.data?.errorMessage ?? "Failed to fetch drivers!");
         }
         resolve(res.data?.responseBody?.content ?? []);
       })
       .catch((err) => {
-        reject(err.response.data?.message);
+        reject(err.response.data?.message ?? "Failed to fetch drivers!");
       });
   });
 };
@@ -64,12 +65,12 @@ export const handleDeleteDriver = async (id: string): Promise<string> => {
       })
       .then((res) => {
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
-          reject(res.data?.errorMessage);
+          reject(res.data?.errorMessage ?? "Failed to delete driver!");
         }
         resolve(res.data?.message ?? "Driver deleted successfully!");
       })
       .catch((err) => {
-        reject(err.response.data?.message);
+        reject(err.response.data?.message ?? "Failed to delete driver!");
       });
   });
 };
@@ -86,12 +87,12 @@ export const handleUpdateDriver = async (
       })
       .then((res) => {
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
-          reject(res.data?.errorMessage);
+          reject(res.data?.errorMessage ?? "Failed to update driver!");
         }
         resolve(res.data?.message ?? "Driver updated successfully!");
       })
       .catch((err) => {
-        reject(err.response.data?.message);
+        reject(err.response.data?.message ?? "Failed to update driver!");
       });
   });
 };
@@ -111,12 +112,12 @@ export const handleGetDriversByName = async (
           resolve([]);
         }
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
-          reject(res.data?.errorMessage);
+          reject(res.data?.errorMessage ?? "Failed to fetch drivers!");
         }
         resolve(res.data?.responseBody?.content ?? []);
       })
       .catch((err) => {
-        reject(err.response.data?.message);
+        reject(err.response.data?.message ?? "Failed to fetch drivers!");
       });
   });
 };

@@ -14,13 +14,14 @@ export const handleGetAllOrders = async (
         },
       })
       .then((res) => {
+        if (res.data?.statusCode === 404) resolve([]);
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
-          reject(res.data?.errorMessage);
+          reject(res.data?.errorMessage ?? "Failed to fetch orders!");
         }
         resolve(res.data?.responseBody?.content ?? []);
       })
       .catch((err) => {
-        reject(err.response.data?.message);
+        reject(err.response.data?.message ?? "Failed to fetch orders!");
       });
   });
 };
@@ -45,12 +46,12 @@ export const handleChangeOrderStatus = async (data: {
       )
       .then((res) => {
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
-          reject(res.data?.errorMessage);
+          reject(res.data?.errorMessage ?? "Failed to update order status!");
         }
         resolve(res.data?.message ?? "Order status updated successfully");
       })
       .catch((err) => {
-        reject(err.response.data?.message);
+        reject(err.response.data?.message ?? "Failed to update order status!");
       });
   });
 };
@@ -76,12 +77,12 @@ export const handleChangeOrderStatusToOutForDelivery = async (data: {
       )
       .then((res) => {
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
-          reject(res.data?.errorMessage);
+          reject(res.data?.errorMessage ?? "Failed to update order status!");
         }
         resolve(res.data?.message ?? "Assigned driver and updated status!");
       })
       .catch((err) => {
-        reject(err.response.data?.message);
+        reject(err.response.data?.message ?? "Failed to update order status!");
       });
   });
 };

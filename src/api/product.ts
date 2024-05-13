@@ -114,13 +114,14 @@ export const handleGetProductsByQueries = async (
         },
       })
       .then((res) => {
+        if (res.data?.statusCode === 404) resolve([]);
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
-          reject(res.data?.errorMessage);
+          reject(res.data?.errorMessage ?? "Failed to fetch products!");
         }
         resolve(res.data?.responseBody?.content ?? []);
       })
       .catch((err) => {
-        reject(err.response.data?.message);
+        reject(err.response.data?.message ?? "Failed to fetch products!");
       });
   });
 };

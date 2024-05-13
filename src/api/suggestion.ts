@@ -24,12 +24,12 @@ export const getAllSuggestions = async (): Promise<ISuggestion[]> => {
           resolve([]);
         }
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
-          reject(res.data?.errorMessage);
+          reject(res.data?.errorMessage ?? "Failed to fetch suggestions!");
         }
         resolve(res.data?.responseBody ?? []);
       })
       .catch((err) => {
-        reject(err.response.data?.message);
+        reject(err.response.data?.message ?? "Failed to fetch suggestions!");
       });
   });
 };
@@ -45,12 +45,12 @@ export const handleRemoveSuggestion = async (id: string): Promise<string> => {
       })
       .then((res) => {
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
-          reject(res.data?.errorMessage);
+          reject(res.data?.errorMessage ?? "Failed to remove suggestion!");
         }
         resolve(res.data?.message ?? "Suggestion removed successfully!");
       })
       .catch((err) => {
-        reject(err.response.data?.message);
+        reject(err.response.data?.message ?? "Failed to remove suggestion!");
       });
   });
 };
