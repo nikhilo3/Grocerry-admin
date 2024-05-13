@@ -6,10 +6,8 @@ import { twMerge } from "tailwind-merge";
 
 interface IDropdownProps {
   dropdownItems: Array<string>;
-  setDropdownItems:
-    | React.Dispatch<React.SetStateAction<Array<string>>>
-    | ((items: Array<string>) => void);
-  selectedItems: Array<string>;
+  setDropdownItem: (item: string | null) => void;
+  selectedItem: string | null;
 }
 const Dropdown = (props: IDropdownProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -25,7 +23,7 @@ const Dropdown = (props: IDropdownProps) => {
           isDropdownOpen ? "rounded-b-none" : "rounded-b-xl"
         )}
       >
-        <span>Filter by Category</span>
+        <span>{props.selectedItem || "Filter by Category"}</span>
         <img
           src={arrowDown}
           alt="arrow down"
@@ -45,15 +43,12 @@ const Dropdown = (props: IDropdownProps) => {
         {props.dropdownItems?.map((item, index) => (
           <button
             onClick={() => {
-              if (props.selectedItems.includes(item)) {
-                props.setDropdownItems(
-                  props.selectedItems.filter(
-                    (selectedItem) => selectedItem !== item
-                  )
-                );
-                return;
+              if (props.selectedItem === item) {
+                props.setDropdownItem(null);
+              } else {
+                props.setDropdownItem(item);
               }
-              props.setDropdownItems([item, ...props.selectedItems]);
+              setIsDropdownOpen(false);
             }}
             key={index}
             className={twMerge(
@@ -64,7 +59,7 @@ const Dropdown = (props: IDropdownProps) => {
             )}
           >
             <span>{item}</span>
-            {props.selectedItems.includes(item) ? (
+            {props.selectedItem === item ? (
               <img
                 src={checked}
                 alt="checked btn"

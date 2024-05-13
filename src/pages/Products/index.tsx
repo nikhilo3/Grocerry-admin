@@ -7,30 +7,38 @@ import ThreeDots from "../../assets/icons/three-dots";
 import { Link } from "react-router-dom";
 import Button from "../../components/reusable/Button";
 import SearchInput from "../../components/reusable/SearchInput";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Dropdown from "../../components/reusable/Dropdown";
 import { PRODUCT_CATEGORIES } from "../../assets/data/constants";
 import DownloadCSVButton from "../../components/reusable/DownloadCSVButton";
-import search from "../../utils/search";
 import ActionModal from "../../components/reusable/ActionModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  ProductResponseType,
-  handleDeleteProduct,
-  handleGetAllProducts,
-} from "../../api/product";
+import { handleDeleteProduct, handleGetAllProducts } from "../../api/product";
 import toast from "react-hot-toast";
-import { PulseLoader } from "react-spinners";
+import { MoonLoader, PulseLoader, SyncLoader } from "react-spinners";
+import ErrorOccurred from "../../components/reusable/ErrorOccurred";
+import { IProduct } from "../../types/product.types";
+import AppLoading from "../../components/loaders/AppLoading";
+import objToQuery from "../../utils/objToQuery";
+import debounce from "../../utils/debounce";
+import Swal from "sweetalert2";
 
 const ProductsPage = () => {
-  const [filteredData, setFilteredData] = useState<ProductResponseType[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [queryString, setQueryString] = useState<string>("");
+  const queryClient = useQueryClient();
+  const [filteredData, setFilteredData] = useState<IProduct[]>([]);
+  const [queryParams, setQueryParams] = useState({
+    pageNo: 1,
+    perPage: 10,
+    name: null as string | null,
+    category: null as string | null,
+  });
   const [isOutOfStockActive, setIsOutOfStockActive] = useState<boolean>(false);
+
   const [deletingProduct, setDeletingProduct] = useState({
     isDeleting: false,
     index: null as number | null,
   });
+
   const [actionModal, setActionModal] = useState({
     isOpen: false,
     index: null as number | null,
@@ -41,12 +49,12 @@ const ProductsPage = () => {
     data: products,
     isLoading,
     isError,
+    error,
+    refetch,
   } = useQuery({
-    queryKey: ["products"],
-    queryFn: handleGetAllProducts,
+    queryKey: ["products", queryParams],
+    queryFn: () => handleGetAllProducts(objToQuery(queryParams)),
   });
-
-  const queryClient = useQueryClient();
 
   // delete product
   const { mutate, isPending } = useMutation({
@@ -67,24 +75,41 @@ const ProductsPage = () => {
     },
   });
 
-  useEffect(() => {
-    if (!products) return;
-    let data = products;
-    if (isOutOfStockActive) {
-      data = data.filter((product) => product.quantity < 1);
-    }
-    if (selectedCategories.length > 0) {
-      data = data.filter((product) =>
-        selectedCategories.includes(product.category)
-      );
-    }
-    const searchKeys = ["name", "category", "subCategory"];
-    data = search(data, queryString, searchKeys);
-    setFilteredData(data);
-  }, [selectedCategories, queryString, isOutOfStockActive, products]);
+  const deleteProduct = async (id: string) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        mutate(id);
+      }
+    });
+  };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error fetching data</div>;
+  const debouncedRefetch = useCallback(
+    debounce(() => {
+      refetch();
+    }),
+    [] // dependencies
+  ); //callback to ensure that setSearchParams is not called on every render
+
+  useEffect(() => {
+    debouncedRefetch();
+  }, [queryParams]);
+
+  useEffect(() => {
+    if (isError || isLoading) return;
+    if (products) {
+      setFilteredData(products);
+    }
+  }, [products, isError, isLoading]);
+
+  if (isError) return <ErrorOccurred error={String(error)} />;
 
   return (
     <div className="flex flex-col gap-11 overflow-hidden">
@@ -101,13 +126,23 @@ const ProductsPage = () => {
           <div className="flex justify-between items-center">
             <div className="flex gap-4">
               <SearchInput
-                placeholder="Search products..."
-                onChange={(e) => setQueryString(e.target.value)}
+                placeholder="Search by name..."
+                onChange={(e) => {
+                  setQueryParams((prev) => ({
+                    ...prev,
+                    name: e.target.value,
+                  }));
+                }}
               />
               <Dropdown
                 dropdownItems={PRODUCT_CATEGORIES}
-                setDropdownItems={setSelectedCategories}
-                selectedItems={selectedCategories}
+                setDropdownItem={(item) => {
+                  setQueryParams((prev) => ({
+                    ...prev,
+                    category: item,
+                  }));
+                }}
+                selectedItem={queryParams.category}
               />
             </div>
             <div className="flex items-center gap-2">
@@ -149,7 +184,9 @@ const ProductsPage = () => {
               <span>Stock</span>
               <span>Actions</span>
             </div>
-            {filteredData.length > 0 ? (
+            {isLoading ? (
+              <AppLoading className="h-44" />
+            ) : filteredData.length > 0 ? (
               filteredData.map((product, index) => (
                 <div
                   key={index}
@@ -164,17 +201,28 @@ const ProductsPage = () => {
                   <span className="truncate">{product.name}</span>
                   <span>{product.category}</span>
                   <span>{product.subCategory}</span>
-                  <span>{product.quantity ?? 0}</span>
+                  <span className="truncate">
+                    {product.varietyList.map((item, i) => (
+                      <span
+                        key={i}
+                        className={item.quantity === 0 ? "text-error-300" : ""}
+                      >
+                        {i > 0 && ", "}
+                        {item.quantity}
+                      </span>
+                    ))}
+                  </span>
 
                   <div className="ml-auto relative">
                     <button
-                      className="px-3"
+                      className="px-3 min-w-[55px]"
+                      disabled={isPending}
                       onClick={() => {
                         setActionModal({ isOpen: true, index });
                       }}
                     >
                       {isPending && deletingProduct.index === index ? (
-                        <PulseLoader color="#cdcfd1" size={6} />
+                        <SyncLoader color="#cdcfd1" size={6} />
                       ) : (
                         <ThreeDots className="w-[18px] h-[18px]" />
                       )}
@@ -197,7 +245,7 @@ const ProductsPage = () => {
                           onClick={() => {
                             setDeletingProduct({ isDeleting: true, index });
                             setActionModal({ isOpen: false, index: null });
-                            mutate(product.id);
+                            deleteProduct(product.id);
                           }}
                           className="py-3 px-6 font-medium text-error-300"
                         >
