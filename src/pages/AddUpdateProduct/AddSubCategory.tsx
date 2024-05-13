@@ -34,7 +34,7 @@ const AddSubCategory = () => {
             <div className="flex justify-between items-center">
               <div className="">
                 <h1 className="text-xl font-semibold  text-accent-700">
-                  Add subCategory
+                  Add sub category
                 </h1>
                 <p className="mt-1 text-sm font-normal text-accent-500">
                   Lorem ipsum dolor sit amet consectetur. Tortor elit

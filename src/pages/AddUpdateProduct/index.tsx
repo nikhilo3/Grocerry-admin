@@ -577,7 +577,7 @@ const AddProduct = () => {
                   className="font-inter font-medium text-base text-accent-500"
                   htmlFor="category"
                 >
-                  Select Category*
+                  Select Sub Category*
                 </label>
                 <div className="min-w-[259px]  max-w-full relative">
                   <div

@@ -93,3 +93,28 @@ export const handleUpdateDriver = async (
       });
   });
 };
+
+export const handleGetDriversByName = async (
+  name: string
+): Promise<DriverResponseType[]> => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`${API.allDrivers}?name=${name}`, {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      })
+      .then((res) => {
+        if (res.data?.statusCode === 404) {
+          resolve([]);
+        }
+        if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
+          reject(res.data?.errorMessage);
+        }
+        resolve(res.data?.responseBody?.content ?? []);
+      })
+      .catch((err) => {
+        reject(err.response.data?.message);
+      });
+  });
+};

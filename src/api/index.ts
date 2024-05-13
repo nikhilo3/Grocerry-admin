@@ -14,6 +14,10 @@ const API = {
   allDrivers: PRODUCT_URL + "/driver/list",
   deleteDriver: PRODUCT_URL + "/driver/delete",
   updateDriver: PRODUCT_URL + "/driver/update",
+
+  // orders
+  allOrders: PRODUCT_URL + "/order/list",
+  updateOrder: PRODUCT_URL + "/order/update",
 };
 
 export default API;

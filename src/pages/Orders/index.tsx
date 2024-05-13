@@ -9,13 +9,18 @@ import Dropdown from "../../components/reusable/StatusDropdown";
 import DownloadCSVButton from "../../components/reusable/DownloadCSVButton";
 import ActionModal from "../../components/reusable/ActionModal";
 import AssignDriverModal from "./AssignDriverModal";
+import { useQuery } from "@tanstack/react-query";
+import { handleGetAllOrders } from "../../api/order";
+import { IOrder } from "../../types/order.types";
 
 // Define order status options
-const ORDER_STATUS_OPTIONS = [
-  "Processing",
-  "Packing",
-  "Out-for-Delivery",
-  "Delivered",
+// ! do not change the order of the options
+export const ORDER_STATUS_OPTIONS = [
+  "CANCELED",
+  "PROCESSING",
+  "PACKAGING",
+  "OUT_FOR_DELIVERY",
+  "DELIVERED",
 ];
 
 // Search function with proper parameter types
@@ -29,13 +34,13 @@ const search = (data: any[], query: string, keys: string[]): any[] => {
 // Function to get Tailwind classes based on order status
 const getStatusClasses = (status: string): string => {
   switch (status) {
-    case "Packing":
+    case "PACKAGING":
       return "text-blue-600 bg-blue-100";
-    case "Out-for-Delivery":
+    case "OUT_FOR_DELIVERY":
       return "text-orange-600 bg-orange-100";
-    case "Delivered":
+    case "DELIVERED":
       return "text-green-600 bg-green-100";
-    case "Processing":
+    case "PROCESSING":
       return "text-warning-500 bg-[#FEFCE8]";
     default:
       return "text-gray-600 bg-gray-100";
@@ -52,23 +57,29 @@ const Orders = () => {
   );
   const [queryString, setQueryString] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("");
-  const [filteredData, setFilteredData] = useState(orderData);
+  const [filteredData, setFilteredData] = useState<IOrder[]>([]);
+  const [selectedViewOrder, setSelectedViewOrder] = useState<IOrder | null>(
+    null
+  );
+
+  // get order query
+  const { isLoading, data, isError } = useQuery({
+    queryFn: handleGetAllOrders,
+    staleTime: Infinity,
+    queryKey: ["orders"],
+  });
 
   useEffect(() => {
-    let data = orderData;
-    if (selectedStatus) {
-      data = data.filter((order) => order.Status === selectedStatus);
-    }
-
-    const searchKeys = ["Name", "orderID"];
-    data = search(data, queryString, searchKeys);
-
+    if (!data || isLoading) return;
     setFilteredData(data);
-  }, [queryString, selectedStatus]);
+  }, [isLoading, data]);
 
   const handleDropdownToggle = (index: number) => {
     setActiveDropdownRow(activeDropdownRow === index ? null : index);
   };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error...</div>;
 
   return (
     <div className="flex flex-col gap-11 overflow-hidden font-inter">
@@ -114,7 +125,7 @@ const Orders = () => {
           <div className="mt-4">
             {filteredData.length > 0 ? (
               filteredData.map((order, index) => {
-                const statusClasses = getStatusClasses(order.Status);
+                const statusClasses = getStatusClasses(order.orderStatus);
                 return (
                   <div
                     key={index}
@@ -123,19 +134,19 @@ const Orders = () => {
                     } rounded-xl relative`}
                   >
                     <div className="flex items-center gap-6">
-                      <UnCheckedBox className="w-[18px] h-[18px]" />
-                      <span className="px-2 text-[16px] text-accent-500">
-                        {order._id}
+                      <UnCheckedBox className="min-w-[18px] min-h-[18px] opacity-70" />
+                      <span className="px-2 text-[16px] text-accent-500 truncate">
+                        {order.id}
                       </span>
                     </div>
                     <div className="flex items-center justify-center text-[16px]  text-accent-500">
-                      {order.Date}
+                      {new Date(order.createdAt).toLocaleDateString()}
                     </div>
                     <div className="flex items-center justify-center text-[16px]  text-accent-500">
-                      {order.Name}
+                      {order.userDetailsDto.name}
                     </div>
                     <div className="flex items-center justify-center text-[16px]  text-accent-500">
-                      ₹{order.Total}
+                      ₹{order.totalItemCost}
                     </div>
 
                     <div className="relative">
@@ -145,7 +156,7 @@ const Orders = () => {
                         }`}
                         onClick={() => handleDropdownToggle(index)}
                       >
-                        <span className="text-[16px]">{order.Status}</span>
+                        <span className="text-[16px]">{order.orderStatus}</span>
                       </div>
                     </div>
 
@@ -168,6 +179,7 @@ const Orders = () => {
                           <button
                             className="text-[14px] pl-6 text-left font-medium"
                             onClick={() => {
+                              setSelectedViewOrder(order);
                               document
                                 .getElementById("order_modal")
                                 //@ts-ignore
@@ -194,8 +206,10 @@ const Orders = () => {
           </div>
         </div>
       </div>
-      <AssignDriverModal />
-      <OrderModal />
+      <OrderModal
+        selectedOrder={selectedViewOrder}
+        setSelectedOrder={setSelectedViewOrder}
+      />
     </div>
   );
 };
