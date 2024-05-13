@@ -31,10 +31,12 @@ export type DriverResponseType = {
   available: boolean;
 };
 
-export const getAllDrivers = async (): Promise<DriverResponseType[]> => {
+export const getAllDrivers = async (
+  query: string
+): Promise<DriverResponseType[]> => {
   return new Promise((resolve, reject) => {
     axios
-      .get(API.allDrivers, {
+      .get(`${API.allDrivers}?${query}`, {
         headers: {
           Authorization: `Bearer ${TOKEN}`,
         },

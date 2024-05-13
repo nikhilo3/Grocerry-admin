@@ -2,18 +2,25 @@ import Button from "../../components/reusable/Button";
 import SearchInput from "../../components/reusable/SearchInput";
 import addCircleSvg from "../../assets/icons/add-circle.svg";
 import Download from "../../components/reusable/Download";
-import { useEffect, useState } from "react";
-import search from "../../utils/search";
+import { useCallback, useEffect, useState } from "react";
 import UnCheckedBox from "../../assets/icons/unchecked-box";
 import DriverDetail from "./DriverDetail";
 import AddDriver from "./AddDriver";
 import { useQuery } from "@tanstack/react-query";
 import { DriverResponseType, getAllDrivers } from "../../api/driver";
 import UpdateDriver from "./UpdateDriver";
+import ErrorOccurred from "../../components/reusable/ErrorOccurred";
+import AppLoading from "../../components/loaders/AppLoading";
+import debounce from "../../utils/debounce";
+import objToQuery from "../../utils/objToQuery";
 
 const Drivers = () => {
   const [filteredData, setFilteredData] = useState<DriverResponseType[]>([]);
-  const [queryString, setQueryString] = useState<string>("");
+  const [queryParams, setQueryParams] = useState({
+    pageNo: 1,
+    perPage: 10,
+    name: null as string | null,
+  });
   const [selectedDriverData, setSelectedDriverData] =
     useState<DriverResponseType | null>(null);
   const [editDriverData, setEditDriverData] =
@@ -23,23 +30,31 @@ const Drivers = () => {
   const {
     isError,
     isLoading,
+    refetch,
     data: drivers,
   } = useQuery({
-    queryKey: ["drivers"],
-    queryFn: getAllDrivers,
+    queryKey: ["drivers", queryParams],
+    queryFn: () => getAllDrivers(objToQuery(queryParams)),
     staleTime: Infinity,
   });
 
   useEffect(() => {
     if (!drivers || isError || isLoading) return;
-    let data = drivers!;
-    const searchKeys = ["id", "name", "vehicle"];
-    data = search(data, queryString, searchKeys);
-    setFilteredData(data);
-  }, [queryString, drivers, isLoading, isError]);
+    setFilteredData(drivers);
+  }, [drivers, isLoading, isError]);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error...</div>;
+  const debouncedRefetch = useCallback(
+    debounce(() => {
+      refetch();
+    }),
+    [] // dependencies
+  ); //callback to ensure that setSearchParams is not called on every render
+
+  useEffect(() => {
+    debouncedRefetch();
+  }, [queryParams]);
+
+  if (isError) return <ErrorOccurred error="Failed to fetch drivers" />;
   return (
     <div>
       <div className="flex flex-col gap-7 justify-center">
@@ -49,8 +64,13 @@ const Drivers = () => {
             <div className="">
               <div className="flex justify-between items-center">
                 <SearchInput
-                  onChange={(e) => setQueryString(e.target.value)}
-                  placeholder="Search Drivers"
+                  onChange={(e) => {
+                    setQueryParams({
+                      ...queryParams,
+                      name: e.target.value,
+                    });
+                  }}
+                  placeholder="Search by name..."
                 />
                 {/* add Drivers and Download CSV */}
                 <div className="flex justify-center gap-3 items-center">
@@ -92,7 +112,9 @@ const Drivers = () => {
                 <span className="text-nowrap">Vehicle No.</span>
                 <span className="text-nowrap  ">Actions</span>
               </div>
-              {filteredData.length > 0 ? (
+              {isLoading ? (
+                <AppLoading />
+              ) : filteredData.length > 0 ? (
                 filteredData.map((drivers, index) => (
                   <div
                     key={index}

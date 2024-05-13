@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import arrowDown from "../../assets/icons/statusArrowdown.svg";
-import hard from "../../assets/images/Rectangle 77.png";
 import Download from "../../components/reusable/DownloadInvoice";
 import { ORDER_STATUS_OPTIONS } from ".";
 import { IOrder } from "../../types/order.types";
