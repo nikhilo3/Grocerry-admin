@@ -18,6 +18,10 @@ const API = {
   // orders
   allOrders: PRODUCT_URL + "/order/list",
   updateOrder: PRODUCT_URL + "/order/update",
+
+  // suggestions
+  getAllSuggestions: PRODUCT_URL + "/suggestion/list",
+  removeSuggestion: PRODUCT_URL + "/suggestion/remove",
 };
 
 export default API;

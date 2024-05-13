@@ -45,8 +45,8 @@ const Sidebar = () => {
       icon2: drivers1,
     },
     {
-      label: "Suggested",
-      path: "/suggested-products",
+      label: "Suggestions",
+      path: "/suggestions",
       icon1: products1,
       icon2: products2,
     },

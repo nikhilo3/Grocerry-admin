@@ -1,21 +1,42 @@
 import UnCheckedBox from "../../assets/icons/unchecked-box";
 import SearchInput from "../../components/reusable/SearchInput";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DownloadCSVButton from "../../components/reusable/DownloadCSVButton";
-import search from "../../utils/search";
 import Button from "../../components/reusable/Button";
-import { suggestedd } from "../../assets/mockData/suggested";
 import trash from "../../assets/icons/trash.svg";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  getAllSuggestions,
+  handleRemoveSuggestion,
+} from "../../api/suggestion";
+import toast from "react-hot-toast";
 
-const SuggestedProducts = () => {
-  const [filteredData, setFilteredData] = useState(suggestedd);
+const Suggestions = () => {
   const [queryString, setQueryString] = useState<string>("");
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const searchKeys = ["name", "_id"];
-    const data = search(suggestedd, queryString, searchKeys);
-    setFilteredData(data);
-  }, [queryString]);
+  // get all suggestions query
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["allSuggestions"],
+    queryFn: getAllSuggestions,
+  });
+
+  // remove suggestion query
+  const { mutate, isPending } = useMutation({
+    mutationFn: handleRemoveSuggestion,
+    onSuccess: (msg) => {
+      queryClient.invalidateQueries({
+        queryKey: ["allSuggestions"],
+      });
+      toast.success(msg);
+    },
+    onError: (err: string) => {
+      toast.error(err);
+    },
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error...</div>;
 
   return (
     <>
@@ -32,50 +53,53 @@ const SuggestedProducts = () => {
                 />
               </div>
               <div className="flex items-center gap-2">
-                <DownloadCSVButton data={suggestedd} fileName="userData" />
+                <DownloadCSVButton data={data!} fileName="userData" />
               </div>
             </div>
             {/* userData list */}
             <div className="flex flex-col gap-4">
               <div
-                className="grid bg-accent-500 rounded-xl p-4 text-accent-50 font-normal"
+                className="grid bg-accent-500 rounded-xl p-4 text-accent-50 font-normal gap-4"
                 style={{
-                  gridTemplateColumns: "1fr 3fr 4fr 4fr 4fr 1.5fr",
+                  gridTemplateColumns: "0.5fr 4fr 7fr 1.5fr",
                 }}
               >
                 <button>
                   <UnCheckedBox className="w-[18px] h-[18px]" />
                 </button>
                 <span>User Id</span>
-                <span>Full Name</span>
-                <span className="col-span-2">Message</span>
+                <span className="ml-4">Message</span>
                 <span className="m-auto">Actions</span>
               </div>
-              {filteredData.length > 0 ? (
-                filteredData.map((data, index) => (
+              {data && data?.length > 0 ? (
+                data.map((data, index) => (
                   <div
                     key={index}
-                    className="grid even:bg-accent-50 rounded-xl p-4 text-accent-500 font-normal"
+                    className="grid even:bg-accent-50 rounded-xl p-4 text-accent-500 font-normal gap-4"
                     style={{
-                      gridTemplateColumns: "1fr 3fr 4fr 4fr 4fr 1.5fr",
+                      gridTemplateColumns: "0.5fr 4fr 7fr 1.5fr",
                     }}
                   >
                     <button>
                       <UnCheckedBox className="w-[18px] h-[18px]" />
                     </button>
-                    <span className="truncate my-auto">{data._id}</span>
-                    <span className="truncate my-auto">{data.name}</span>
-                    <span className="truncate my-auto  col-span-2">
-                      {data.message}
+                    <span className="truncate my-auto">{data.id}</span>
+                    <span className="truncate my-auto ml-4">
+                      {data.comment}
                     </span>
-                    <Button variant="primary-ghost" className="mx-auto py-2">
+                    <Button
+                      onClick={() => mutate(data.id)}
+                      disabled={isPending}
+                      variant="primary-ghost"
+                      className="mx-auto py-2"
+                    >
                       <img src={trash} alt="delete" />
                     </Button>
                   </div>
                 ))
               ) : (
                 <div className="text-center text-accent-400 text-lg h-44 flex items-center justify-center">
-                  No user data found
+                  No data available
                 </div>
               )}
             </div>
@@ -85,4 +109,4 @@ const SuggestedProducts = () => {
     </>
   );
 };
-export default SuggestedProducts;
+export default Suggestions;
