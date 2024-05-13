@@ -19,4 +19,5 @@ export interface IProduct {
     productId: string;
     documentUrls: string[];
   }[];
+  documentUrls?: string[];
 }

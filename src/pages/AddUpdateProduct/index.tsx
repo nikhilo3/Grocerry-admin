@@ -25,21 +25,10 @@ import {
 } from "../../api/product";
 import UploadImage, { error } from "./UploadImage";
 import { PulseLoader } from "react-spinners";
-
-const category = [
-  "Fruit & Vegetables",
-  "Frozen Food",
-  "Chips & Namkin ",
-  "Juice & Beverages",
-];
-
-const subCategories = [
-  "Fresh Fruits",
-  "Fresh Vegetables",
-  "Coriander & Others",
-  "Seasonal",
-  "Certified Organics",
-];
+import { PRODUCT_CATEGORIES } from "../../assets/data/constants";
+import Swal from "sweetalert2";
+import AppLoading from "../../components/loaders/AppLoading";
+import ErrorOccurred from "../../components/reusable/ErrorOccurred";
 
 export type Variety = {
   type: string;
@@ -49,20 +38,20 @@ export type Variety = {
   price: number;
   quantity: number;
   discountPercent: number;
-  documents: File[];
+  documentUrls: File[];
 };
 
 export interface ProductFormData {
   name: string;
   code: string;
   category: string;
-  subCategory: string[];
+  subCategory: string;
   description: string;
   brand?: string;
   tags?: string;
 }
 
-const AddProduct = () => {
+const AddUpdateProduct = () => {
   const { productCode } = useParams<{ productCode: string | undefined }>();
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [varieties, setVarieties] = useState<Variety[]>([]);
@@ -97,6 +86,12 @@ const AddProduct = () => {
     }
   }, [productCode]);
 
+  // log form data on change
+  useEffect(() => {
+    console.log(watch());
+  }, [watch()]);
+
+  // set form data if product is fetched
   useEffect(() => {
     if (!productCode) return;
     if (!data || data.length === 0) return;
@@ -106,10 +101,11 @@ const AddProduct = () => {
       ...(product as any),
       brand: product.brand === "non-branded" ? "" : product.brand,
     });
-    setValue("category", product.category);
-    setValue("subCategory", product.subCategory.split(","));
-    setSelectedImages(product.documents?.map((doc) => new File([], doc)) ?? []);
+    setSelectedImages(
+      product.documentUrls?.map((doc) => new File([], doc)) ?? []
+    );
 
+    // @ts-ignore
     setVarieties(product.varietyList);
   }, [data, productCode]);
 
@@ -148,6 +144,11 @@ const AddProduct = () => {
       },
     });
 
+  // reset subcategory when category changes
+  useEffect(() => {
+    setValue("subCategory", "");
+  }, [watch("category")]);
+
   const onSubmit: SubmitHandler<ProductFormData> = (formData) => {
     if (varieties.length === 0) {
       toast.error("Varieties are required");
@@ -165,10 +166,7 @@ const AddProduct = () => {
 
     const dataToSend = {
       varietyList: varieties,
-      ...{
-        ...formData,
-        subCategory: formData["subCategory"].join(",") as any,
-      },
+      ...formData,
       documents: selectedImages,
     };
 
@@ -184,10 +182,29 @@ const AddProduct = () => {
   };
 
   if (productCode) {
-    if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Error fetching product</div>;
-    if (!data || data.length === 0) return <div>Product not found</div>;
+    if (isLoading) return <AppLoading />;
+    if (isError) return <ErrorOccurred />;
+    if (!data || data.length === 0)
+      return <ErrorOccurred error="Product not Found!!" />;
   }
+
+  const handleDeleteVariety = (index: number) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to delete this variety?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setSelectedVariety(null);
+        setVarieties((prev) => prev.filter((_, i) => i !== index));
+      }
+    });
+  };
+
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -209,7 +226,7 @@ const AddProduct = () => {
               <Button
                 type={productCode ? "button" : "submit"}
                 disabled={isAddProductPending}
-                className="flex justify-center items-center gap-2 w-[196px]"
+                className="flex justify-center items-center gap-2 w-[196px] min-h-[48px]"
               >
                 {isAddProductPending ? (
                   <>
@@ -236,7 +253,7 @@ const AddProduct = () => {
                     </Button>
                     <Button
                       type={productCode ? "submit" : "button"}
-                      className="flex justify-center items-center gap-2 w-[127px]"
+                      className="flex justify-center items-center gap-2 w-[127px] min-h-[48px]"
                     >
                       {isUpdateProductPending ? (
                         <>
@@ -386,7 +403,7 @@ const AddProduct = () => {
                           type="text"
                           disabled
                           key={index}
-                          value={variety.value}
+                          value={variety.description}
                           placeholder="eg., variety1"
                         />
                         <div className="flex items-center justify-center gap-2 absolute top-1/2 -translate-y-1/2 right-3">
@@ -403,11 +420,7 @@ const AddProduct = () => {
                             <img src={eye} alt="" className="text-red-500" />
                           </button>
                           <button
-                            onClick={() => {
-                              setVarieties((prev) =>
-                                prev.filter((_, i) => i !== index)
-                              );
-                            }}
+                            onClick={() => handleDeleteVariety(index)}
                             type="button"
                           >
                             <img
@@ -520,7 +533,7 @@ const AddProduct = () => {
                       className="w-full z-50 bg-accent-100 shadow-md  rounded-xl  rounded-t-none absolute"
                     >
                       <div className="overflow-y-auto max-h-[242px] scrollbar-md">
-                        {category.map((item) => (
+                        {Object.keys(PRODUCT_CATEGORIES).map((item) => (
                           <label
                             htmlFor={item}
                             onClick={() => {
@@ -581,7 +594,16 @@ const AddProduct = () => {
                 </label>
                 <div className="min-w-[259px]  max-w-full relative">
                   <div
-                    onClick={() => setSubcategoryDropdown((prev) => !prev)}
+                    onClick={() => {
+                      if (
+                        watch("category") === "Select Category" ||
+                        !watch("category")
+                      ) {
+                        toast.error("Please select category first");
+                        return;
+                      }
+                      setSubcategoryDropdown((prev) => !prev);
+                    }}
                     role="button"
                     className={`bg-accent-50 py-[18px] px-4  border border-accent-100 z-0 rounded-xl ${
                       subcategoryDropdown ? "rounded-b-none" : ""
@@ -589,7 +611,7 @@ const AddProduct = () => {
                   >
                     <div className="font-medium text-base text-accent-600 truncate min-h-fit">
                       {watch("subCategory")
-                        ? watch("subCategory").join(", ")
+                        ? watch("subCategory")
                         : "Select Subcategory"}
                     </div>
                     <span>
@@ -606,36 +628,37 @@ const AddProduct = () => {
                       className="w-full bg-accent-100 shadow-md overflow-y-auto rounded-xl rounded-t-none absolute"
                     >
                       <div className="overflow-y-auto max-h-[242px] scrollbar-md">
-                        {subCategories.map((item) => (
-                          <label
-                            htmlFor={item}
-                            onClick={() => {
-                              const subCategory = watch("subCategory") ?? [];
-                              if (subCategory.includes(item)) {
-                                setValue(
-                                  "subCategory",
-                                  subCategory.filter((i) => i !== item)
-                                );
-                              } else {
-                                setValue("subCategory", [...subCategory, item]);
-                              }
-                            }}
-                            role="button"
-                            className="flex justify-between items-center w-full p-4  border-t border-accent-200"
-                          >
-                            <div className="text-sm cursor-pointer flex-1 font-medium text-accent-600 font-inter">
-                              {item}
-                            </div>
-                            <input
-                              value={item}
-                              className="checkbox checkbox-xs  checkbox-warning rounded-md"
-                              type="checkbox"
-                              checked={
-                                watch("subCategory")?.includes(item) ?? false
-                              }
-                            />
-                          </label>
-                        ))}
+                        {
+                          // @ts-ignore
+                          PRODUCT_CATEGORIES[
+                            watch("category") ?? ("" as any)
+                          ]?.map((item: string) => (
+                            <label
+                              htmlFor={item}
+                              onClick={() => {
+                                if (watch("subCategory") === item) {
+                                  setValue("subCategory", "");
+                                } else {
+                                  setValue("subCategory", item);
+                                }
+                              }}
+                              role="button"
+                              className="flex justify-between items-center w-full p-4  border-t border-accent-200"
+                            >
+                              <div className="text-sm cursor-pointer flex-1 font-medium text-accent-600 font-inter">
+                                {item}
+                              </div>
+                              <input
+                                value={item}
+                                className="checkbox checkbox-xs  checkbox-warning rounded-md"
+                                type="checkbox"
+                                checked={
+                                  watch("subCategory") === item ? true : false
+                                }
+                              />
+                            </label>
+                          ))
+                        }
                       </div>
                       <div className="px-4  bg-primary-200 flex py-2.5 w-full border-t border-accent-200">
                         <button
@@ -660,7 +683,6 @@ const AddProduct = () => {
                     </div>
                   )}
                 </div>
-
                 {errors.category && (
                   <FormErrorLine message={errors.category.message} />
                 )}
@@ -681,4 +703,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default AddUpdateProduct;

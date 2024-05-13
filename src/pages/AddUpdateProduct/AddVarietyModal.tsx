@@ -36,7 +36,7 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
       ...prev,
       {
         ...data,
-        documents: images,
+        documentUrls: images,
       },
     ]);
     (
@@ -68,8 +68,9 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
               >
                 Variety Type*
               </label>
-              <div className="dropdown w-full">
+              <div autoFocus={false} className="dropdown w-full">
                 <div
+                  autoFocus={false}
                   tabIndex={0}
                   role="button"
                   className="font-normal btn m-1 w-full text-accent-500 text-left bg-background flex items-center justify-start"

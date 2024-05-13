@@ -41,7 +41,7 @@ const UpdateVarietyModal = ({
       const updatedVarieties = [...varieties];
       updatedVarieties[selectedVariety] = {
         ...data,
-        documents: images,
+        documentUrls: images,
       };
       setVarieties(updatedVarieties);
     }
@@ -56,8 +56,9 @@ const UpdateVarietyModal = ({
 
   useEffect(() => {
     if (selectedVariety !== null) {
+      console.log(varieties[selectedVariety]);
       reset(varieties[selectedVariety]);
-      setImages(varieties[selectedVariety].documents);
+      setImages(varieties[selectedVariety].documentUrls);
     }
   }, [selectedVariety]);
 

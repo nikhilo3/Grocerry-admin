@@ -15,7 +15,7 @@ import ActionModal from "../../components/reusable/ActionModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { handleDeleteProduct, handleGetAllProducts } from "../../api/product";
 import toast from "react-hot-toast";
-import { MoonLoader, PulseLoader, SyncLoader } from "react-spinners";
+import { SyncLoader } from "react-spinners";
 import ErrorOccurred from "../../components/reusable/ErrorOccurred";
 import { IProduct } from "../../types/product.types";
 import AppLoading from "../../components/loaders/AppLoading";
@@ -135,7 +135,7 @@ const ProductsPage = () => {
                 }}
               />
               <Dropdown
-                dropdownItems={PRODUCT_CATEGORIES}
+                dropdownItems={Object.keys(PRODUCT_CATEGORIES)}
                 setDropdownItem={(item) => {
                   setQueryParams((prev) => ({
                     ...prev,

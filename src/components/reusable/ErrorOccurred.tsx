@@ -14,9 +14,7 @@ const ErrorOccurred = ({ error, children, className, ...rest }: Props) => {
       {...rest}
     >
       <div className="text-center">
-        <h3 className="text-2xl font-bold text-error-300">
-          Some Error Occurred
-        </h3>
+        <h3 className="text-2xl font-bold text-error-300">Error Occurred</h3>
         <p className="text-error-300">{error}</p>
       </div>
     </div>
