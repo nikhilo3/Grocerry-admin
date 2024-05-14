@@ -42,6 +42,13 @@ const getStatusClasses = (status: string): string => {
   }
 };
 
+const DEFAULT_QUERY_PARAMS = {
+  pageNo: 1,
+  perPage: 10,
+  name: null as string | null,
+  orderStatus: null as string | null,
+};
+
 const Orders = () => {
   const [actionModal, setActionModal] = useState({
     isOpen: false,
@@ -56,29 +63,26 @@ const Orders = () => {
     null
   );
 
-  const [queryParams, setQueryParams] = useState({
-    pageNo: 1,
-    perPage: 10,
-    name: null as string | null,
-    orderStatus: null as string | null,
-  });
+  const [queryParams, setQueryParams] = useState(DEFAULT_QUERY_PARAMS);
+  const [debouncedQueryParams, setDebouncedQueryParams] =
+    useState(DEFAULT_QUERY_PARAMS);
 
   // get order query
-  const { isLoading, data, isError, refetch } = useQuery({
-    queryFn: () => handleGetAllOrders(objToQuery(queryParams)),
+  const { isLoading, data, isError } = useQuery({
+    queryFn: () => handleGetAllOrders(objToQuery(debouncedQueryParams)),
     staleTime: Infinity,
-    queryKey: ["orders", queryParams],
+    queryKey: ["orders", debouncedQueryParams],
   });
 
   const debouncedRefetch = useCallback(
-    debounce(() => {
-      refetch();
+    debounce((queryParams) => {
+      setDebouncedQueryParams(queryParams);
     }),
     [] // dependencies
   ); //callback to ensure that setSearchParams is not called on every render
 
   useEffect(() => {
-    debouncedRefetch();
+    debouncedRefetch(queryParams);
   }, [queryParams]);
 
   useEffect(() => {

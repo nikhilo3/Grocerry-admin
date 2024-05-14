@@ -23,15 +23,19 @@ import objToQuery from "../../utils/objToQuery";
 import debounce from "../../utils/debounce";
 import Swal from "sweetalert2";
 
+const DEFAULT_QUERY_PARAMS = {
+  pageNo: 1,
+  perPage: 10,
+  name: null as string | null,
+  category: null as string | null,
+};
+
 const ProductsPage = () => {
   const queryClient = useQueryClient();
   const [filteredData, setFilteredData] = useState<IProduct[]>([]);
-  const [queryParams, setQueryParams] = useState({
-    pageNo: 1,
-    perPage: 10,
-    name: null as string | null,
-    category: null as string | null,
-  });
+  const [queryParams, setQueryParams] = useState(DEFAULT_QUERY_PARAMS);
+  const [debouncedQueryParams, setDebouncedQueryParams] =
+    useState(DEFAULT_QUERY_PARAMS);
   const [isOutOfStockActive, setIsOutOfStockActive] = useState<boolean>(false);
 
   const [deletingProduct, setDeletingProduct] = useState({
@@ -50,10 +54,9 @@ const ProductsPage = () => {
     isLoading,
     isError,
     error,
-    refetch,
   } = useQuery({
-    queryKey: ["products", queryParams],
-    queryFn: () => handleGetAllProducts(objToQuery(queryParams)),
+    queryKey: ["products", debouncedQueryParams],
+    queryFn: () => handleGetAllProducts(objToQuery(debouncedQueryParams)),
   });
 
   // delete product
@@ -92,14 +95,15 @@ const ProductsPage = () => {
   };
 
   const debouncedRefetch = useCallback(
-    debounce(() => {
-      refetch();
+    debounce((queryParams) => {
+      setDebouncedQueryParams(queryParams);
+      console.log("debounced", debouncedQueryParams);
     }),
     [] // dependencies
   ); //callback to ensure that setSearchParams is not called on every render
 
   useEffect(() => {
-    debouncedRefetch();
+    debouncedRefetch(queryParams);
   }, [queryParams]);
 
   useEffect(() => {

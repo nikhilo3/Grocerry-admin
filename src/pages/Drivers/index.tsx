@@ -14,13 +14,17 @@ import debounce from "../../utils/debounce";
 import objToQuery from "../../utils/objToQuery";
 import DownloadCSVButton from "../../components/reusable/DownloadCSVButton";
 
+const DEFAULT_QUERY_PARAMS = {
+  pageNo: 1,
+  perPage: 10,
+  name: null as string | null,
+};
+
 const Drivers = () => {
   const [filteredData, setFilteredData] = useState<DriverResponseType[]>([]);
-  const [queryParams, setQueryParams] = useState({
-    pageNo: 1,
-    perPage: 10,
-    name: null as string | null,
-  });
+  const [queryParams, setQueryParams] = useState(DEFAULT_QUERY_PARAMS);
+  const [debouncedQueryParams, setDebouncedQueryParams] =
+    useState(DEFAULT_QUERY_PARAMS);
   const [selectedDriverData, setSelectedDriverData] =
     useState<DriverResponseType | null>(null);
   const [editDriverData, setEditDriverData] =
@@ -30,11 +34,10 @@ const Drivers = () => {
   const {
     isError,
     isLoading,
-    refetch,
     data: drivers,
   } = useQuery({
-    queryKey: ["drivers", queryParams],
-    queryFn: () => getAllDrivers(objToQuery(queryParams)),
+    queryKey: ["drivers", debouncedQueryParams],
+    queryFn: () => getAllDrivers(objToQuery(debouncedQueryParams)),
     staleTime: Infinity,
   });
 
@@ -44,14 +47,14 @@ const Drivers = () => {
   }, [drivers, isLoading, isError]);
 
   const debouncedRefetch = useCallback(
-    debounce(() => {
-      refetch();
+    debounce((queryParams) => {
+      setDebouncedQueryParams(queryParams);
     }),
     [] // dependencies
   ); //callback to ensure that setSearchParams is not called on every render
 
   useEffect(() => {
-    debouncedRefetch();
+    debouncedRefetch(queryParams);
   }, [queryParams]);
 
   if (isError) return <ErrorOccurred error="Failed to fetch drivers" />;

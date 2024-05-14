@@ -71,12 +71,7 @@ const Suggestions = () => {
           <div className="border border-accent-200 rounded-[20px] bg-white p-6 flex flex-col gap-6 min-w-[1100px]">
             {/* product top action buttons */}
             <div className="flex justify-between items-center">
-              <div className="flex gap-4">
-                <SearchInput
-                  placeholder="Search user..."
-                  onChange={(e) => setQueryString(e.target.value)}
-                />
-              </div>
+              <div className="flex gap-4"></div>
               <div className="flex items-center gap-2">
                 <DownloadCSVButton data={data!} fileName="suggestions" />
               </div>
