@@ -15,6 +15,8 @@ import ErrorOccurred from "../../components/reusable/ErrorOccurred";
 import AppLoading from "../../components/loaders/AppLoading";
 import debounce from "../../utils/debounce";
 import objToQuery from "../../utils/objToQuery";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import Invoice from "./Invoice";
 
 // Define order status options
 // ! do not change the order of the options
@@ -173,7 +175,7 @@ const Orders = () => {
 
                     <div className="relative">
                       <div
-                        className={`p-4 w-[220px] flex justify-between rounded-xl  items-center ${statusClasses} ${
+                        className={`p-4 w-[220px] flex rounded-xl justify-center items-center ${statusClasses} ${
                           activeDropdownRow === index ? "rounded-b-none" : ""
                         }`}
                         onClick={() => handleDropdownToggle(index)}
@@ -211,9 +213,20 @@ const Orders = () => {
                             View Order
                           </button>
                           <hr />
-                          <button className="text-[14px] pl-6 text-left font-medium min-w-fit">
-                            Download Invoice
-                          </button>
+                          <PDFDownloadLink
+                            document={<Invoice order={order} />}
+                            fileName="invoice.pdf"
+                          >
+                            {(res) =>
+                              res.loading ? (
+                                "Loading document..."
+                              ) : (
+                                <button className="text-[14px] pl-6 text-left font-medium min-w-fit">
+                                  Download Invoice
+                                </button>
+                              )
+                            }
+                          </PDFDownloadLink>
                         </ActionModal>
                       )}
                     </div>

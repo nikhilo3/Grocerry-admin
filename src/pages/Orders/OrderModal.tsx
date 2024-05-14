@@ -8,6 +8,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { handleChangeOrderStatus } from "../../api/order";
 import toast from "react-hot-toast";
 import AssignDriverModal from "./AssignDriverModal";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import InvoicePdf from "./Invoice";
 
 const OrderModal = ({
   selectedOrder,
@@ -249,7 +251,14 @@ const OrderModal = ({
 
             {/* Download invoice */}
             <div className="flex justify-end pt-6 ">
-              <Download />
+              <PDFDownloadLink
+                document={<InvoicePdf order={selectedOrder!} />}
+                fileName="invoice.pdf"
+              >
+                {({ blob, url, loading, error }) =>
+                  loading ? "Loading document..." : <Download />
+                }
+              </PDFDownloadLink>
             </div>
           </div>
         </div>
