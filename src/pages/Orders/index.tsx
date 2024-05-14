@@ -120,7 +120,7 @@ const Orders = () => {
               }}
             />
             <div className="pl-[450px] flex justify-end">
-              <DownloadCSVButton data={[]} fileName={""} />
+              <DownloadCSVButton data={data!} fileName={"orders"} />
             </div>
           </div>
 

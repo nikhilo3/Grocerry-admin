@@ -40,7 +40,7 @@ const UsersPage = () => {
                 />
               </div>
               <div className="flex items-center gap-2">
-                <DownloadCSVButton data={userData} fileName="userData" />
+                <DownloadCSVButton data={userData} fileName="users" />
               </div>
             </div>
             {/* userData list */}

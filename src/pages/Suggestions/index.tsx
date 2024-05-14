@@ -53,6 +53,14 @@ const Suggestions = () => {
     });
   };
 
+  const handleShowFullSuggestion = (suggestion: string) => {
+    Swal.fire({
+      title: "Suggestion",
+      text: suggestion,
+      icon: "info",
+    });
+  };
+
   if (isError) return <ErrorOccurred error="Failed to fetch suggestions" />;
 
   return (
@@ -70,7 +78,7 @@ const Suggestions = () => {
                 />
               </div>
               <div className="flex items-center gap-2">
-                <DownloadCSVButton data={data!} fileName="userData" />
+                <DownloadCSVButton data={data!} fileName="suggestions" />
               </div>
             </div>
             {/* userData list */}
@@ -106,14 +114,23 @@ const Suggestions = () => {
                     <span className="truncate my-auto ml-4">
                       {data.comment}
                     </span>
-                    <Button
-                      onClick={() => deleteSuggestion(data.id)}
-                      disabled={isPending}
-                      variant="primary-ghost"
-                      className="mx-auto py-2"
-                    >
-                      <img src={trash} alt="delete" />
-                    </Button>
+                    <div className="flex items-center justify-center">
+                      <Button
+                        onClick={() => deleteSuggestion(data.id)}
+                        disabled={isPending}
+                        variant="primary-ghost"
+                        className="mx-auto py-2"
+                      >
+                        <img src={trash} alt="delete" />
+                      </Button>
+                      <Button
+                        onClick={() => handleShowFullSuggestion(data.comment)}
+                        variant="primary-ghost"
+                        className="py-2 pl-0"
+                      >
+                        View
+                      </Button>
+                    </div>
                   </div>
                 ))
               ) : (

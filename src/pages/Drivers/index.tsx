@@ -1,7 +1,6 @@
 import Button from "../../components/reusable/Button";
 import SearchInput from "../../components/reusable/SearchInput";
 import addCircleSvg from "../../assets/icons/add-circle.svg";
-import Download from "../../components/reusable/Download";
 import { useCallback, useEffect, useState } from "react";
 import UnCheckedBox from "../../assets/icons/unchecked-box";
 import DriverDetail from "./DriverDetail";
@@ -13,6 +12,7 @@ import ErrorOccurred from "../../components/reusable/ErrorOccurred";
 import AppLoading from "../../components/loaders/AppLoading";
 import debounce from "../../utils/debounce";
 import objToQuery from "../../utils/objToQuery";
+import DownloadCSVButton from "../../components/reusable/DownloadCSVButton";
 
 const Drivers = () => {
   const [filteredData, setFilteredData] = useState<DriverResponseType[]>([]);
@@ -74,7 +74,7 @@ const Drivers = () => {
                 />
                 {/* add Drivers and Download CSV */}
                 <div className="flex justify-center gap-3 items-center">
-                  <Download />
+                  <DownloadCSVButton data={drivers!} fileName="drivers" />
                   <Button
                     onClick={() => {
                       setEditDriverData(null);

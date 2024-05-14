@@ -1,5 +1,6 @@
 import Button from "./Button";
 import downloadIcon from "../../assets/icons/download.svg";
+import jsonToCSV from "../../utils/jsonToCSV";
 
 const DownloadCSVButton = ({
   data,
@@ -8,10 +9,16 @@ const DownloadCSVButton = ({
   data: Array<Record<string, any>>;
   fileName: string;
 }) => {
-  const downloadCSV = () => {
-    console.log("Downloading CSV...");
-    // Convert the data to CSV format
-    console.log(data, fileName);
+  const downloadCSV = async () => {
+    jsonToCSV(data).then((csv: any) => {
+      const csvBlob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(csvBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${fileName}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
   };
   return (
     <Button

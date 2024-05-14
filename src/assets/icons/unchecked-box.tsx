@@ -19,7 +19,7 @@ const UnCheckedBox = (props: Props) => {
         height="16"
         rx="3"
         stroke="currentColor"
-        stroke-width="2"
+        strokeWidth="2"
       />
     </svg>
   );
