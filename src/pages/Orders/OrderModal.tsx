@@ -252,7 +252,7 @@ const OrderModal = ({
             {/* Download invoice */}
             <div className="flex justify-end pt-6 ">
               <PDFDownloadLink
-                document={<InvoicePdf invoice={selectedOrder!} />}
+                document={<InvoicePdf order={selectedOrder!} />}
                 fileName="invoice.pdf"
               >
                 {({ blob, url, loading, error }) =>

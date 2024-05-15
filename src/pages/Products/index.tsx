@@ -119,7 +119,10 @@ const ProductsPage = () => {
       {/* all product cards */}
       <ProductReports />
       {/* product table */}
-      <div className="overflow-x-scroll hide-scrollbar min-h-[40vh]  pb-40">
+      <div
+        className="overflow-x-scroll hide-scrollbar min-h-[40vh]  pb-40"
+        id="table"
+      >
         <div className="border border-accent-200 rounded-[20px] bg-white p-6 flex flex-col gap-6 min-w-[1100px]">
           {/* product top action buttons */}
           <div className="flex justify-between items-center">
@@ -136,6 +139,7 @@ const ProductsPage = () => {
               <Dropdown
                 dropdownItems={Object.keys(PRODUCT_CATEGORIES)}
                 setDropdownItem={(item) => {
+                  document.getElementById("table")?.scrollIntoView();
                   setQueryParams((prev) => ({
                     ...prev,
                     category: item,
@@ -148,6 +152,7 @@ const ProductsPage = () => {
             <div className="flex items-center gap-2">
               <Button
                 onClick={() => {
+                  document.getElementById("table")?.scrollIntoView();
                   setQueryParams((prev) => ({
                     ...prev,
                     quantity: prev.quantity === 0 ? null : 0,

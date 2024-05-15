@@ -101,7 +101,7 @@ const Orders = () => {
     <div className="flex flex-col gap-11 overflow-hidden font-inter">
       <OrderReport />
 
-      <div className="overflow-x-scroll hide-scrollbar min-h-[40vh]">
+      <div className="overflow-x-scroll hide-scrollbar min-h-[40vh]" id="table">
         <div className="border border-accent-200 rounded-[20px] bg-white p-6 flex flex-col gap-6 min-w-[1100px]">
           <div className="gap-6 items-center flex">
             <SearchInput
@@ -210,7 +210,7 @@ const Orders = () => {
                           </button>
                           <hr />
                           <PDFDownloadLink
-                            document={<Invoice invoice={order} />}
+                            document={<Invoice order={order!} />}
                             fileName="invoice.pdf"
                           >
                             {(res) =>
@@ -240,6 +240,7 @@ const Orders = () => {
           <div className="flex justify-end items-center gap-4">
             <button
               onClick={() => {
+                document.getElementById("table")?.scrollIntoView();
                 setQueryParams((prev) => ({
                   ...prev,
                   pageNo: prev.pageNo - 1,
@@ -253,6 +254,7 @@ const Orders = () => {
             <span className="text-accent-500">Page {queryParams.pageNo}</span>
             <button
               onClick={() => {
+                document.getElementById("table")?.scrollIntoView();
                 setQueryParams((prev) => ({
                   ...prev,
                   pageNo: prev.pageNo + 1,
