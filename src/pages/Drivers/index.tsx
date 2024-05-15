@@ -159,6 +159,35 @@ const Drivers = () => {
                 </div>
               )}
             </div>
+
+            {/* pagination */}
+            <div className="flex justify-end items-center gap-4">
+              <button
+                onClick={() => {
+                  setQueryParams((prev) => ({
+                    ...prev,
+                    pageNo: prev.pageNo - 1,
+                  }));
+                }}
+                disabled={queryParams.pageNo === 1}
+                className="px-4 py-1 rounded-lg border border-accent-500 text-accent-800 disabled:text-accent-200 disabled:border-accent-200"
+              >
+                Prev
+              </button>
+              <span className="text-accent-500">Page {queryParams.pageNo}</span>
+              <button
+                onClick={() => {
+                  setQueryParams((prev) => ({
+                    ...prev,
+                    pageNo: prev.pageNo + 1,
+                  }));
+                }}
+                disabled={filteredData.length < queryParams.perPage}
+                className="px-4 py-1 rounded-lg border border-accent-500 text-accent-800 disabled:text-accent-200 disabled:border-accent-200"
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
 

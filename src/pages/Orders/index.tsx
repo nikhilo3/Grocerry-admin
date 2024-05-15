@@ -1,9 +1,7 @@
 import { useState, useEffect, useCallback } from "react"; // Fix unused import warning
-import { orderDetails } from "../../assets/mockData/orderData";
 import ThreeDots from "../../assets/icons/three-dots";
 import UnCheckedBox from "../../assets/icons/unchecked-box";
 import OrderModal from "./OrderModal";
-import InfoCard from "../../components/reusable/InfoCard";
 import SearchInput from "../../components/reusable/SearchInput";
 import DownloadCSVButton from "../../components/reusable/DownloadCSVButton";
 import ActionModal from "../../components/reusable/ActionModal";
@@ -17,6 +15,7 @@ import debounce from "../../utils/debounce";
 import objToQuery from "../../utils/objToQuery";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import Invoice from "./Invoice";
+import OrderReport from "./OrderReports";
 
 // Define order status options
 // ! do not change the order of the options
@@ -100,11 +99,7 @@ const Orders = () => {
 
   return (
     <div className="flex flex-col gap-11 overflow-hidden font-inter">
-      <div className="flex gap-5">
-        {orderDetails.map((product, index) => (
-          <InfoCard key={index} {...product} />
-        ))}
-      </div>
+      <OrderReport />
 
       <div className="overflow-x-scroll hide-scrollbar min-h-[40vh]">
         <div className="border border-accent-200 rounded-[20px] bg-white p-6 flex flex-col gap-6 min-w-[1100px]">
@@ -124,6 +119,7 @@ const Orders = () => {
                   orderStatus: value,
                 });
               }}
+              label="Filter by status"
             />
             <div className="pl-[450px] flex justify-end">
               <DownloadCSVButton data={data!} fileName={"orders"} />
@@ -238,6 +234,35 @@ const Orders = () => {
                 No data found
               </div>
             )}
+          </div>
+
+          {/* pagination */}
+          <div className="flex justify-end items-center gap-4">
+            <button
+              onClick={() => {
+                setQueryParams((prev) => ({
+                  ...prev,
+                  pageNo: prev.pageNo - 1,
+                }));
+              }}
+              disabled={queryParams.pageNo === 1}
+              className="px-4 py-1 rounded-lg border border-accent-500 text-accent-800 disabled:text-accent-200 disabled:border-accent-200"
+            >
+              Prev
+            </button>
+            <span className="text-accent-500">Page {queryParams.pageNo}</span>
+            <button
+              onClick={() => {
+                setQueryParams((prev) => ({
+                  ...prev,
+                  pageNo: prev.pageNo + 1,
+                }));
+              }}
+              disabled={filteredData.length < queryParams.perPage}
+              className="px-4 py-1 rounded-lg border border-accent-500 text-accent-800 disabled:text-accent-200 disabled:border-accent-200"
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>

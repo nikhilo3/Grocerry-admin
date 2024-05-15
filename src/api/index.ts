@@ -22,6 +22,10 @@ const API = {
   // suggestions
   getAllSuggestions: PRODUCT_URL + "/suggestion/list",
   removeSuggestion: PRODUCT_URL + "/suggestion/remove",
+
+  // reports
+  getAllProductReport: PRODUCT_URL + "/report/product",
+  getAllOrderReport: PRODUCT_URL + "/report/order",
 };
 
 export default API;

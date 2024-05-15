@@ -8,6 +8,7 @@ interface IDropdownProps {
   dropdownItems: Array<string>;
   setDropdownItem: (item: string | null) => void;
   selectedItem: string | null;
+  label: string;
 }
 const Dropdown = (props: IDropdownProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -23,7 +24,7 @@ const Dropdown = (props: IDropdownProps) => {
           isDropdownOpen ? "rounded-b-none" : "rounded-b-xl"
         )}
       >
-        <span>{props.selectedItem || "Filter by Category"}</span>
+        <span>{props.selectedItem || props.label}</span>
         <img
           src={arrowDown}
           alt="arrow down"

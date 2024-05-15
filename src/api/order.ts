@@ -2,6 +2,7 @@ import axios from "axios";
 import API from ".";
 import { TOKEN } from "../assets/mockData/auth";
 import { IOrder } from "../types/order.types";
+import { ORDER_STATUS_OPTIONS } from "../pages/Orders";
 
 export const handleGetAllOrders = async (
   query: string = ""
@@ -83,6 +84,31 @@ export const handleChangeOrderStatusToOutForDelivery = async (data: {
       })
       .catch((err) => {
         reject(err.response.data?.message ?? "Failed to update order status!");
+      });
+  });
+};
+
+export const handleGetAllOrderReport = async (): Promise<{
+  totalOrders: number;
+  countPerStatus: {
+    [status: (typeof ORDER_STATUS_OPTIONS)[number]]: number;
+  };
+}> => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(API.getAllOrderReport, {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      })
+      .then((res) => {
+        if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
+          reject(res.data?.errorMessage ?? "Failed to fetch order report!");
+        }
+        resolve(res.data?.responseBody ?? {});
+      })
+      .catch((err) => {
+        reject(err.response.data?.message ?? "Failed to fetch order report!");
       });
   });
 };

@@ -449,52 +449,6 @@ const AddUpdateProduct = () => {
               </Button>
             </div>
 
-            {/* More Details */}
-            <div className="bg-white rounded-[20px] border border-accent-100  p-6">
-              <h3 className="text-[20px] font-semibold font-inter text-accent-700">
-                More Details
-              </h3>
-              <p className="font-inter font-normal text-sm mt-[2px] text-accent-500">
-                Lorem ipsum dolor sit amet consectetur adipisicing.
-              </p>
-
-              <div className="flex flex-col lg:flex-row w-full items-center justify-center gap-7">
-                <div className=" w-full flex flex-col justify-center gap-[6px] ">
-                  <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
-                    <label
-                      className="font-inter font-medium text-base text-accent-500"
-                      htmlFor="tags"
-                    >
-                      Tags
-                    </label>
-                    <input
-                      {...register("tags", {
-                        required: false,
-                      })}
-                      className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
-                      type="text"
-                      placeholder="eg., tag1, tag2"
-                    />
-                  </div>
-                  <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
-                    <label
-                      className="font-inter font-medium text-base text-accent-500"
-                      htmlFor="tags"
-                    >
-                      Brand
-                    </label>
-                    <input
-                      {...register("brand", {
-                        required: false,
-                      })}
-                      className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
-                      type="text"
-                      placeholder="eg., brand1"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
             <div className="bg-white mt-4 min-h-[311px]  rounded-[20px] border border-accent-100  p-6">
               <h3 className="font-inter font-semibold text-xl ">Category</h3>
               <p className="font-inter text-sm text-accent-500 mt-1">
@@ -558,6 +512,7 @@ const AddUpdateProduct = () => {
                         ))}
                       </div>
                       <button
+                        disabled //! temporary disabled
                         onClick={() => {
                           if (document) {
                             (
@@ -662,6 +617,7 @@ const AddUpdateProduct = () => {
                       </div>
                       <div className="px-4  bg-primary-200 flex py-2.5 w-full border-t border-accent-200">
                         <button
+                          disabled //! temporary disabled
                           onClick={() => {
                             if (document) {
                               (
@@ -686,6 +642,53 @@ const AddUpdateProduct = () => {
                 {errors.category && (
                   <FormErrorLine message={errors.category.message} />
                 )}
+              </div>
+            </div>
+
+            {/* More Details */}
+            <div className="bg-white rounded-[20px] border border-accent-100  p-6">
+              <h3 className="text-[20px] font-semibold font-inter text-accent-700">
+                More Details
+              </h3>
+              <p className="font-inter font-normal text-sm mt-[2px] text-accent-500">
+                Lorem ipsum dolor sit amet consectetur adipisicing.
+              </p>
+
+              <div className="flex flex-col lg:flex-row w-full items-center justify-center gap-7">
+                <div className=" w-full flex flex-col justify-center gap-[6px] ">
+                  <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
+                    <label
+                      className="font-inter font-medium text-base text-accent-500"
+                      htmlFor="tags"
+                    >
+                      Tags
+                    </label>
+                    <input
+                      {...register("tags", {
+                        required: false,
+                      })}
+                      className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
+                      type="text"
+                      placeholder="eg., tag1, tag2"
+                    />
+                  </div>
+                  <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
+                    <label
+                      className="font-inter font-medium text-base text-accent-500"
+                      htmlFor="tags"
+                    >
+                      Brand
+                    </label>
+                    <input
+                      {...register("brand", {
+                        required: false,
+                      })}
+                      className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
+                      type="text"
+                      placeholder="eg., brand1"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -1,5 +1,3 @@
-import { productDetails } from "../../assets/mockData/products";
-import InfoCard from "../../components/reusable/InfoCard";
 import sadFace from "../../assets/icons/fi-br-sad.svg";
 import addCircleIcon from "../../assets/icons/add-circle.svg";
 import UnCheckedBox from "../../assets/icons/unchecked-box";
@@ -22,12 +20,14 @@ import AppLoading from "../../components/loaders/AppLoading";
 import objToQuery from "../../utils/objToQuery";
 import debounce from "../../utils/debounce";
 import Swal from "sweetalert2";
+import ProductReports from "./ProductReports";
 
 const DEFAULT_QUERY_PARAMS = {
   pageNo: 1,
   perPage: 10,
   name: null as string | null,
   category: null as string | null,
+  quantity: null as number | null,
 };
 
 const ProductsPage = () => {
@@ -36,7 +36,6 @@ const ProductsPage = () => {
   const [queryParams, setQueryParams] = useState(DEFAULT_QUERY_PARAMS);
   const [debouncedQueryParams, setDebouncedQueryParams] =
     useState(DEFAULT_QUERY_PARAMS);
-  const [isOutOfStockActive, setIsOutOfStockActive] = useState<boolean>(false);
 
   const [deletingProduct, setDeletingProduct] = useState({
     isDeleting: false,
@@ -118,11 +117,7 @@ const ProductsPage = () => {
   return (
     <div className="flex flex-col gap-11 overflow-hidden">
       {/* all product cards */}
-      <div className="flex gap-5">
-        {productDetails.map((product, index) => (
-          <InfoCard key={index} {...product} />
-        ))}
-      </div>
+      <ProductReports />
       {/* product table */}
       <div className="overflow-x-scroll hide-scrollbar min-h-[40vh]  pb-40">
         <div className="border border-accent-200 rounded-[20px] bg-white p-6 flex flex-col gap-6 min-w-[1100px]">
@@ -147,15 +142,23 @@ const ProductsPage = () => {
                   }));
                 }}
                 selectedItem={queryParams.category}
+                label="Filter by category"
               />
             </div>
             <div className="flex items-center gap-2">
               <Button
-                onClick={() => setIsOutOfStockActive(!isOutOfStockActive)}
+                onClick={() => {
+                  setQueryParams((prev) => ({
+                    ...prev,
+                    quantity: prev.quantity === 0 ? null : 0,
+                  }));
+                }}
                 variant="error"
                 className="flex items-center justify-center gap-2"
               >
-                <span>{!isOutOfStockActive ? "Out of Stock" : "Show all"}</span>
+                <span>
+                  {queryParams.quantity === null ? "Out of Stock" : "Show all"}
+                </span>
                 <img src={sadFace} alt="sad" className="w-[16px] h-[16px]" />
               </Button>
               <DownloadCSVButton data={products!} fileName="products" />
@@ -265,6 +268,35 @@ const ProductsPage = () => {
                 No products found
               </div>
             )}
+          </div>
+
+          {/* pagination */}
+          <div className="flex justify-end items-center gap-4">
+            <button
+              onClick={() => {
+                setQueryParams((prev) => ({
+                  ...prev,
+                  pageNo: prev.pageNo - 1,
+                }));
+              }}
+              disabled={queryParams.pageNo === 1}
+              className="px-4 py-1 rounded-lg border border-accent-500 text-accent-800 disabled:text-accent-200 disabled:border-accent-200"
+            >
+              Prev
+            </button>
+            <span className="text-accent-500">Page {queryParams.pageNo}</span>
+            <button
+              onClick={() => {
+                setQueryParams((prev) => ({
+                  ...prev,
+                  pageNo: prev.pageNo + 1,
+                }));
+              }}
+              disabled={filteredData.length < queryParams.perPage}
+              className="px-4 py-1 rounded-lg border border-accent-500 text-accent-800 disabled:text-accent-200 disabled:border-accent-200"
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>

@@ -125,3 +125,28 @@ export const handleGetProductsByQueries = async (
       });
   });
 };
+
+export const handleGetProductReport = async (): Promise<{
+  totalProducts: number;
+  totalInStockProducts: number;
+  totalOutOfStockProducts: number;
+} | null> => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(API.getAllProductReport, {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      })
+      .then((res) => {
+        if (res.data?.statusCode === 404) resolve(null);
+        if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
+          reject(res.data?.errorMessage ?? "Failed to fetch product report!");
+        }
+        resolve(res.data?.responseBody ?? null);
+      })
+      .catch((err) => {
+        reject(err.response.data?.message ?? "Failed to fetch product report!");
+      });
+  });
+};
