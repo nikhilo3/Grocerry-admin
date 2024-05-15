@@ -1,6 +1,4 @@
 import UnCheckedBox from "../../assets/icons/unchecked-box";
-import SearchInput from "../../components/reusable/SearchInput";
-import { useState } from "react";
 import DownloadCSVButton from "../../components/reusable/DownloadCSVButton";
 import Button from "../../components/reusable/Button";
 import trash from "../../assets/icons/trash.svg";
@@ -15,7 +13,6 @@ import AppLoading from "../../components/loaders/AppLoading";
 import Swal from "sweetalert2";
 
 const Suggestions = () => {
-  const [queryString, setQueryString] = useState<string>("");
   const queryClient = useQueryClient();
 
   // get all suggestions query

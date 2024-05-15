@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { handleGetProductReport } from "../../api/product";
 import { Skeleton } from "../../components/reusable/Skeleton";
 import InfoCard from "../../components/reusable/InfoCard";
 import { handleGetAllOrderReport } from "../../api/order";

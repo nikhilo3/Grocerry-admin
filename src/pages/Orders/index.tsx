@@ -210,7 +210,7 @@ const Orders = () => {
                           </button>
                           <hr />
                           <PDFDownloadLink
-                            document={<Invoice order={order} />}
+                            document={<Invoice invoice={order} />}
                             fileName="invoice.pdf"
                           >
                             {(res) =>
