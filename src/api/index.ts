@@ -16,7 +16,7 @@ const API = {
   updateDriver: PRODUCT_URL + "/driver/update",
 
   // orders
-  allOrders: PRODUCT_URL + "/order/list",
+  allOrders: PRODUCT_URL + "/order/admin/list",
   updateOrder: PRODUCT_URL + "/order/update",
 
   // suggestions

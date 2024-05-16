@@ -27,6 +27,12 @@ const Sidebar = () => {
       icon2: products2,
     },
     {
+      label: "Categories",
+      path: "/categories",
+      icon1: products1,
+      icon2: products2,
+    },
+    {
       label: "Orders",
       path: "/orders",
       icon1: orders1,

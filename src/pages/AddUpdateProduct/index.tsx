@@ -10,11 +10,8 @@ import deleteIcon from "../../assets/icons/delete.svg";
 import eye from "../../assets/icons/eye.svg";
 import AddVarietyModal from "./AddVarietyModal";
 import editIcon from "../../assets/icons/fi-br-edit.svg";
-import AddCategory from "./AddCategory";
-import AddSubCategory from "./AddSubCategory";
 import caretDownSvg from "../../assets/icons/caret-down.svg";
 import caretUpSvg from "../../assets/icons/caret-up.svg";
-import addCircleOrangeSvg from "../../assets/icons/add-circle-orange.svg";
 import toast from "react-hot-toast";
 import UpdateVarietyModal from "./UpdateVarietyModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -25,7 +22,10 @@ import {
 } from "../../api/product";
 import UploadImage, { error } from "./UploadImage";
 import { PulseLoader } from "react-spinners";
-import { PRODUCT_CATEGORIES } from "../../assets/data/constants";
+import {
+  PRODUCT_CATEGORIES,
+  SUB_SUB_CATEGORIES,
+} from "../../assets/data/constants";
 import Swal from "sweetalert2";
 import AppLoading from "../../components/loaders/AppLoading";
 import ErrorOccurred from "../../components/reusable/ErrorOccurred";
@@ -46,6 +46,7 @@ export interface ProductFormData {
   code: string;
   category: string;
   subCategory: string;
+  subCategory2?: string;
   description: string;
   brand?: string;
   tags?: string;
@@ -69,6 +70,7 @@ const AddUpdateProduct = () => {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [categoryDropdown, setCategoryDropdown] = useState(false);
   const [subcategoryDropdown, setSubcategoryDropdown] = useState(false);
+  const [subcategory2Dropdown, setSubcategory2Dropdown] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -85,11 +87,6 @@ const AddUpdateProduct = () => {
       refetch();
     }
   }, [productCode]);
-
-  // log form data on change
-  useEffect(() => {
-    console.log(watch());
-  }, [watch()]);
 
   // set form data if product is fetched
   useEffect(() => {
@@ -148,6 +145,11 @@ const AddUpdateProduct = () => {
   useEffect(() => {
     setValue("subCategory", "");
   }, [watch("category")]);
+
+  // reset subcategory2 when subcategory changes
+  useEffect(() => {
+    setValue("subCategory2", "");
+  }, [watch("subCategory")]);
 
   const onSubmit: SubmitHandler<ProductFormData> = (formData) => {
     if (varieties.length === 0) {
@@ -511,25 +513,6 @@ const AddUpdateProduct = () => {
                           </label>
                         ))}
                       </div>
-                      <button
-                        disabled //! temporary disabled
-                        onClick={() => {
-                          if (document) {
-                            (
-                              document.getElementById(
-                                "addCategoryModal"
-                              ) as HTMLFormElement
-                            ).showModal();
-                          }
-                        }}
-                        type="button"
-                        className="px-4 bg-primary-200 flex justify-center gap-2 items-center py-2.5 w-full border-t border-accent-200"
-                      >
-                        <span className="text-base font-medium text-primary-500">
-                          Add new Category
-                        </span>
-                        <img src={addCircleOrangeSvg} alt="" />
-                      </button>
                     </div>
                   )}
                 </div>
@@ -580,7 +563,7 @@ const AddUpdateProduct = () => {
                   {subcategoryDropdown && (
                     <div
                       role="button"
-                      className="w-full bg-accent-100 shadow-md overflow-y-auto rounded-xl rounded-t-none absolute"
+                      className="w-full bg-accent-100 shadow-md overflow-y-auto rounded-xl rounded-t-none absolute z-40"
                     >
                       <div className="overflow-y-auto max-h-[242px] scrollbar-md">
                         {
@@ -596,6 +579,7 @@ const AddUpdateProduct = () => {
                                 } else {
                                   setValue("subCategory", item);
                                 }
+                                setSubcategoryDropdown(false);
                               }}
                               role="button"
                               className="flex justify-between items-center w-full p-4  border-t border-accent-200"
@@ -615,26 +599,87 @@ const AddUpdateProduct = () => {
                           ))
                         }
                       </div>
-                      <div className="px-4  bg-primary-200 flex py-2.5 w-full border-t border-accent-200">
-                        <button
-                          disabled //! temporary disabled
-                          onClick={() => {
-                            if (document) {
-                              (
-                                document.getElementById(
-                                  "addSubCategoryModal"
-                                ) as HTMLFormElement
-                              ).showModal();
-                            }
-                          }}
-                          type="button"
-                          className="flex justify-center items-center gap-2 w-full"
-                        >
-                          <span className="text-base font-medium text-primary-500">
-                            Add new Subcategory
-                          </span>
-                          <img src={addCircleOrangeSvg} alt="" />
-                        </button>
+                    </div>
+                  )}
+                </div>
+                {errors.category && (
+                  <FormErrorLine message={errors.category.message} />
+                )}
+              </div>
+
+              {/* sub category 2 */}
+              <div className="mt-5 flex flex-col justify-center gap-[6px] ">
+                <label
+                  className="font-inter font-medium text-base text-accent-500"
+                  htmlFor="category"
+                >
+                  Select Sub Category2
+                </label>
+                <div className="min-w-[259px]  max-w-full relative">
+                  <div
+                    onClick={() => {
+                      if (!watch("subCategory")) {
+                        toast.error("Please select sub category first");
+                        return;
+                      }
+                      setSubcategory2Dropdown((prev) => !prev);
+                    }}
+                    role="button"
+                    className={`bg-accent-50 py-[18px] px-4  border border-accent-100 z-0 rounded-xl ${
+                      subcategory2Dropdown ? "rounded-b-none" : ""
+                    }  w-full flex justify-between `}
+                  >
+                    <div className="font-medium text-base text-accent-600 truncate min-h-fit">
+                      {watch("subCategory2")
+                        ? watch("subCategory2")
+                        : "Select Subcategory"}
+                    </div>
+                    <span>
+                      <img
+                        src={subcategory2Dropdown ? caretUpSvg : caretDownSvg}
+                        alt=""
+                        className="min-h-[19px] min-w-[18px]"
+                      />
+                    </span>
+                  </div>
+                  {subcategory2Dropdown && (
+                    <div
+                      role="button"
+                      className="w-full bg-accent-100 shadow-md overflow-y-auto rounded-xl rounded-t-none absolute"
+                    >
+                      <div className="overflow-y-auto max-h-[242px] scrollbar-md">
+                        {
+                          // @ts-ignore
+                          SUB_SUB_CATEGORIES[
+                            watch("subCategory") ?? ("" as any)
+                          ]?.map((item: string) => (
+                            <label
+                              htmlFor={item}
+                              onClick={() => {
+                                if (watch("subCategory2") === item) {
+                                  setValue("subCategory2", "");
+                                } else {
+                                  setValue("subCategory2", item);
+                                }
+                                setSubcategory2Dropdown(false);
+                              }}
+                              role="button"
+                              className="flex justify-between items-center w-full p-4  border-t border-accent-200"
+                            >
+                              <div className="text-sm cursor-pointer flex-1 font-medium text-accent-600 font-inter">
+                                {item}
+                              </div>
+                              <input
+                                value={item}
+                                className="checkbox checkbox-xs  checkbox-warning rounded-md"
+                                type="checkbox"
+                                checked={
+                                  watch("subCategory2") === item ? true : false
+                                }
+                              />
+                            </label>
+                          ))
+                        }
                       </div>
                     </div>
                   )}
@@ -700,8 +745,6 @@ const AddUpdateProduct = () => {
         selectedVariety={selectedVariety}
         varieties={varieties}
       />
-      <AddCategory />
-      <AddSubCategory />
     </>
   );
 };
