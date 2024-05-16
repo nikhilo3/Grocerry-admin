@@ -34,7 +34,7 @@ const ViewCategoryDetails = ({ category }: { category: string }) => {
                         )
                       )
                     ) : (
-                      <div>No sub categories</div>
+                      <div>No sub sub categories</div>
                     )}
                   </div>
                 </div>

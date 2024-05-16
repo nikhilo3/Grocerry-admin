@@ -209,7 +209,7 @@ export const SUB_SUB_CATEGORIES = {
     "Appliance",
     "Hair accessories",
   ],
-  "Skin & face": [
+  "Skin & Face": [
     "Sunscreen",
     "Creams & serums",
     "Facewash & scrub",
@@ -239,7 +239,7 @@ export const SUB_SUB_CATEGORIES = {
     "Hair removal",
     "Mom care",
   ],
-  "baby care": [
+  "Baby care": [
     "Diaper & wipes",
     "Baby food",
     "Baby shampoo & soaps",
