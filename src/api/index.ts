@@ -26,6 +26,10 @@ const API = {
   // reports
   getAllProductReport: PRODUCT_URL + "/report/product",
   getAllOrderReport: PRODUCT_URL + "/report/order",
+  getAllUserReport: AUTH_URL + "/report/user",
+
+  //users
+  getAllUsers: AUTH_URL + "/profile/admin/fetch",
 };
 
 export default API;
