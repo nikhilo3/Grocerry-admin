@@ -6,7 +6,6 @@ import addCircle from "../../assets/icons/add-circle.svg";
 import { Variety } from ".";
 import { useEffect, useRef, useState } from "react";
 import { TYPES, UNIT } from "./AddVarietyModal";
-import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 
 interface Props {
@@ -32,11 +31,6 @@ const UpdateVarietyModal = ({
   const [images, setImages] = useState<File[]>([]);
 
   const onSubmit: SubmitHandler<Variety> = (data) => {
-    if (images.length === 0) {
-      toast.error("Please upload images");
-      return;
-    }
-
     if (selectedVariety !== null) {
       const updatedVarieties = [...varieties];
       updatedVarieties[selectedVariety] = {
@@ -56,7 +50,6 @@ const UpdateVarietyModal = ({
 
   useEffect(() => {
     if (selectedVariety !== null) {
-      console.log(varieties[selectedVariety]);
       reset(varieties[selectedVariety]);
       setImages(varieties[selectedVariety].documentUrls);
     }
@@ -70,7 +63,7 @@ const UpdateVarietyModal = ({
   }, [varieties, selectedVariety]);
 
   const convertToUrl = (file: File | string) => {
-    if (typeof file === "string") return "";
+    if (typeof file === "string") return file;
     return URL.createObjectURL(file);
   };
 
@@ -288,7 +281,7 @@ const UpdateVarietyModal = ({
               className="font-inter font-medium text-base text-accent-500"
               htmlFor="description"
             >
-              Variety Images*
+              Variety Images
             </label>
             <input
               ref={imagesRef as any}

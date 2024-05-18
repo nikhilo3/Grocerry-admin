@@ -177,6 +177,25 @@ const OrderModal = ({
                     </div>
                   )}
                 </div>
+
+                {selectedOrder?.driverDetailsDto && (
+                  <div className="flex flex-col pt-2">
+                    <span className="text-accent-500">Assigned Driver</span>
+                    <span className="text-accent-700 text-[12px]">
+                      Id: #{selectedOrder?.driverDetailsDto?.id}
+                    </span>
+                    <span className="text-accent-700 text-[12px]">
+                      Name: {selectedOrder?.driverDetailsDto?.name}
+                    </span>
+                    <span className="text-accent-700 text-[12px]">
+                      Phone: {selectedOrder?.driverDetailsDto?.contactNo}
+                    </span>
+                    <span className="text-accent-700 text-[12px]">
+                      Vehicle Number:{" "}
+                      {selectedOrder?.driverDetailsDto?.vehicleNo}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Right Side of the Modal */}
