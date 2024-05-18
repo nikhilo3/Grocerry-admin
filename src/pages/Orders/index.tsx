@@ -1,45 +1,53 @@
-import { useState, useEffect } from "react"; // Fix unused import warning
-import { orderData, orderDetails } from "../../assets/mockData/orderData";
+import { useState, useEffect, useCallback } from "react"; // Fix unused import warning
 import ThreeDots from "../../assets/icons/three-dots";
 import UnCheckedBox from "../../assets/icons/unchecked-box";
 import OrderModal from "./OrderModal";
-import InfoCard from "../../components/reusable/InfoCard";
 import SearchInput from "../../components/reusable/SearchInput";
-import Dropdown from "../../components/reusable/StatusDropdown";
 import DownloadCSVButton from "../../components/reusable/DownloadCSVButton";
 import ActionModal from "../../components/reusable/ActionModal";
-import AssignDriverModal from "./AssignDriverModal";
+import { useQuery } from "@tanstack/react-query";
+import { handleGetAllOrders } from "../../api/order";
+import { IOrder } from "../../types/order.types";
+import Dropdown from "../../components/reusable/Dropdown";
+import ErrorOccurred from "../../components/reusable/ErrorOccurred";
+import AppLoading from "../../components/loaders/AppLoading";
+import debounce from "../../utils/debounce";
+import objToQuery from "../../utils/objToQuery";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import Invoice from "./Invoice";
+import OrderReport from "./OrderReports";
 
 // Define order status options
-const ORDER_STATUS_OPTIONS = [
-  "Processing",
-  "Packing",
-  "Out-for-Delivery",
-  "Delivered",
+// ! do not change the order of the options
+export const ORDER_STATUS_OPTIONS = [
+  "CANCELED",
+  "PROCESSING",
+  "PACKAGING",
+  "OUT_FOR_DELIVERY",
+  "DELIVERED",
 ];
-
-// Search function with proper parameter types
-const search = (data: any[], query: string, keys: string[]): any[] => {
-  if (!query) return data;
-  return data.filter((item) =>
-    keys.some((key) => item[key].toLowerCase().includes(query.toLowerCase()))
-  );
-};
 
 // Function to get Tailwind classes based on order status
 const getStatusClasses = (status: string): string => {
   switch (status) {
-    case "Packing":
+    case "PACKAGING":
       return "text-blue-600 bg-blue-100";
-    case "Out-for-Delivery":
+    case "OUT_FOR_DELIVERY":
       return "text-orange-600 bg-orange-100";
-    case "Delivered":
+    case "DELIVERED":
       return "text-green-600 bg-green-100";
-    case "Processing":
+    case "PROCESSING":
       return "text-warning-500 bg-[#FEFCE8]";
     default:
       return "text-gray-600 bg-gray-100";
   }
+};
+
+const DEFAULT_QUERY_PARAMS = {
+  pageNo: 1,
+  perPage: 10,
+  name: null as string | null,
+  orderStatus: null as string | null,
 };
 
 const Orders = () => {
@@ -50,50 +58,71 @@ const Orders = () => {
   const [activeDropdownRow, setActiveDropdownRow] = useState<number | null>(
     null
   );
-  const [queryString, setQueryString] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState<string>("");
-  const [filteredData, setFilteredData] = useState(orderData);
+
+  const [filteredData, setFilteredData] = useState<IOrder[]>([]);
+  const [selectedViewOrder, setSelectedViewOrder] = useState<IOrder | null>(
+    null
+  );
+
+  const [queryParams, setQueryParams] = useState(DEFAULT_QUERY_PARAMS);
+  const [debouncedQueryParams, setDebouncedQueryParams] =
+    useState(DEFAULT_QUERY_PARAMS);
+
+  // get order query
+  const { isLoading, data, isError } = useQuery({
+    queryFn: () => handleGetAllOrders(objToQuery(debouncedQueryParams)),
+    staleTime: Infinity,
+    queryKey: ["orders", debouncedQueryParams],
+  });
+
+  const debouncedRefetch = useCallback(
+    debounce((queryParams) => {
+      setDebouncedQueryParams(queryParams);
+    }),
+    [] // dependencies
+  ); //callback to ensure that setSearchParams is not called on every render
 
   useEffect(() => {
-    let data = orderData;
-    if (selectedStatus) {
-      data = data.filter((order) => order.Status === selectedStatus);
-    }
+    debouncedRefetch(queryParams);
+  }, [queryParams]);
 
-    const searchKeys = ["Name", "orderID"];
-    data = search(data, queryString, searchKeys);
-
+  useEffect(() => {
+    if (!data || isLoading) return;
     setFilteredData(data);
-  }, [queryString, selectedStatus]);
+  }, [isLoading, data]);
 
   const handleDropdownToggle = (index: number) => {
     setActiveDropdownRow(activeDropdownRow === index ? null : index);
   };
 
+  if (isError) return <ErrorOccurred error="Failed to fetch orders" />;
+
   return (
     <div className="flex flex-col gap-11 overflow-hidden font-inter">
-      <div className="flex gap-5">
-        {orderDetails.map((product, index) => (
-          <InfoCard key={index} {...product} />
-        ))}
-      </div>
+      <OrderReport />
 
-      <div className="overflow-x-scroll hide-scrollbar min-h-[40vh]">
+      <div className="overflow-x-scroll hide-scrollbar min-h-[40vh]" id="table">
         <div className="border border-accent-200 rounded-[20px] bg-white p-6 flex flex-col gap-6 min-w-[1100px]">
           <div className="gap-6 items-center flex">
             <SearchInput
-              placeholder="Search order"
-              onChange={(e) => setQueryString(e.target.value)}
+              placeholder="Search by name..."
+              onChange={(e) => {
+                setQueryParams({ ...queryParams, name: e.target.value });
+              }}
             />
             <Dropdown
               dropdownItems={ORDER_STATUS_OPTIONS}
-              selectedItems={[selectedStatus]}
-              setDropdownItems={(items: any[]) =>
-                setSelectedStatus(items[0] || "")
-              }
+              selectedItem={queryParams.orderStatus}
+              setDropdownItem={(value) => {
+                setQueryParams({
+                  ...queryParams,
+                  orderStatus: value,
+                });
+              }}
+              label="Filter by status"
             />
             <div className="pl-[450px] flex justify-end">
-              <DownloadCSVButton data={[]} fileName={""} />
+              <DownloadCSVButton data={data!} fileName={"orders"} />
             </div>
           </div>
 
@@ -112,9 +141,11 @@ const Orders = () => {
           </div>
 
           <div className="mt-4">
-            {filteredData.length > 0 ? (
+            {isLoading ? (
+              <AppLoading />
+            ) : filteredData.length > 0 ? (
               filteredData.map((order, index) => {
-                const statusClasses = getStatusClasses(order.Status);
+                const statusClasses = getStatusClasses(order.orderStatus);
                 return (
                   <div
                     key={index}
@@ -123,29 +154,29 @@ const Orders = () => {
                     } rounded-xl relative`}
                   >
                     <div className="flex items-center gap-6">
-                      <UnCheckedBox className="w-[18px] h-[18px]" />
-                      <span className="px-2 text-[16px] text-accent-500">
-                        {order._id}
+                      <UnCheckedBox className="min-w-[18px] min-h-[18px] opacity-70" />
+                      <span className="px-2 text-[16px] text-accent-500 truncate">
+                        {order.id}
                       </span>
                     </div>
                     <div className="flex items-center justify-center text-[16px]  text-accent-500">
-                      {order.Date}
+                      {new Date(order.createdAt).toLocaleDateString()}
                     </div>
                     <div className="flex items-center justify-center text-[16px]  text-accent-500">
-                      {order.Name}
+                      {order.userDetailsDto.name}
                     </div>
                     <div className="flex items-center justify-center text-[16px]  text-accent-500">
-                      ₹{order.Total}
+                      ₹{order.totalItemCost}
                     </div>
 
                     <div className="relative">
                       <div
-                        className={`p-4 w-[220px] flex justify-between rounded-xl  items-center ${statusClasses} ${
+                        className={`p-4 w-[220px] flex rounded-xl justify-center items-center ${statusClasses} ${
                           activeDropdownRow === index ? "rounded-b-none" : ""
                         }`}
                         onClick={() => handleDropdownToggle(index)}
                       >
-                        <span className="text-[16px]">{order.Status}</span>
+                        <span className="text-[16px]">{order.orderStatus}</span>
                       </div>
                     </div>
 
@@ -168,6 +199,7 @@ const Orders = () => {
                           <button
                             className="text-[14px] pl-6 text-left font-medium"
                             onClick={() => {
+                              setSelectedViewOrder(order);
                               document
                                 .getElementById("order_modal")
                                 //@ts-ignore
@@ -177,9 +209,20 @@ const Orders = () => {
                             View Order
                           </button>
                           <hr />
-                          <button className="text-[14px] pl-6 text-left font-medium min-w-fit">
-                            Download Invoice
-                          </button>
+                          <PDFDownloadLink
+                            document={<Invoice order={order!} />}
+                            fileName="invoice.pdf"
+                          >
+                            {(res) =>
+                              res.loading ? (
+                                "Loading document..."
+                              ) : (
+                                <button className="text-[14px] pl-6 text-left font-medium min-w-fit">
+                                  Download Invoice
+                                </button>
+                              )
+                            }
+                          </PDFDownloadLink>
                         </ActionModal>
                       )}
                     </div>
@@ -192,10 +235,43 @@ const Orders = () => {
               </div>
             )}
           </div>
+
+          {/* pagination */}
+          <div className="flex justify-end items-center gap-4">
+            <button
+              onClick={() => {
+                document.getElementById("table")?.scrollIntoView();
+                setQueryParams((prev) => ({
+                  ...prev,
+                  pageNo: prev.pageNo - 1,
+                }));
+              }}
+              disabled={queryParams.pageNo === 1}
+              className="px-4 py-1 rounded-lg border border-accent-500 text-accent-800 disabled:text-accent-200 disabled:border-accent-200"
+            >
+              Prev
+            </button>
+            <span className="text-accent-500">Page {queryParams.pageNo}</span>
+            <button
+              onClick={() => {
+                document.getElementById("table")?.scrollIntoView();
+                setQueryParams((prev) => ({
+                  ...prev,
+                  pageNo: prev.pageNo + 1,
+                }));
+              }}
+              disabled={filteredData.length < queryParams.perPage}
+              className="px-4 py-1 rounded-lg border border-accent-500 text-accent-800 disabled:text-accent-200 disabled:border-accent-200"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
-      <AssignDriverModal />
-      <OrderModal />
+      <OrderModal
+        selectedOrder={selectedViewOrder}
+        setSelectedOrder={setSelectedViewOrder}
+      />
     </div>
   );
 };

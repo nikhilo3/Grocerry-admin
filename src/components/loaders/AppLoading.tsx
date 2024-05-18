@@ -1,6 +1,13 @@
-const AppLoading = () => {
+import { twMerge } from "tailwind-merge";
+
+const AppLoading = ({ className }: { className?: string }) => {
   return (
-    <div className="h-screen w-screen flex items-center justify-center">
+    <div
+      className={twMerge(
+        "h-full w-full flex items-center justify-center",
+        className
+      )}
+    >
       <span className="loading loading-spinner loading-md" />
     </div>
   );

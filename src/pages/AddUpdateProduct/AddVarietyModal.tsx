@@ -1,21 +1,56 @@
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import FormErrorLine from "../../components/reusable/FormErrorLine";
 import Button from "../../components/reusable/Button";
 import upload from "../../assets/icons/upload-file.svg";
 import addCircle from "../../assets/icons/add-circle.svg";
-const AddVarietyModal = () => {
+import { Variety } from ".";
+import { useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
+
+interface Props {
+  setVarieties: React.Dispatch<React.SetStateAction<Variety[]>>;
+}
+
+export const TYPES = ["SIZE", "WEIGHT", "PACK_OF", "PRICE"];
+export const UNIT = ["KG", "GRAM", "PCS", "S", "L", "XL", "M", "RS"];
+
+const AddVarietyModal = ({ setVarieties }: Props) => {
+  const [images, setImages] = useState<File[]>([]);
+  const imagesRef = useRef();
   const {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm();
+    reset,
+    watch,
+    setValue,
+  } = useForm<Variety>();
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<Variety> = (data) => {
+    if (images.length === 0) {
+      toast.error("Please upload images");
+      return;
+    }
+    setVarieties((prev) => [
+      ...prev,
+      {
+        ...data,
+        documentUrls: images,
+      },
+    ]);
+    (
+      document.getElementById("add_variety_modal") as HTMLDialogElement
+    )?.close();
+    reset();
+    setImages([]);
   };
 
+  register("type", { required: "Variety Type is required" });
+  register("unit", { required: "Unit is required" });
+
   return (
-    <dialog id="add_variety_modal" className="modal">
+    <dialog id="add_variety_modal" className="modal !z-50">
       <div className="modal-box min-w-[632px] p-8 bg-white border border-accent-200 rounded-3xl hide-scrollbar">
         <form onSubmit={handleSubmit(onSubmit)}>
           <h3 className="text-[20px] font-medium font-inter text-accent-700">
@@ -29,34 +64,45 @@ const AddVarietyModal = () => {
             <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
               <label
                 className="font-inter font-medium text-base text-accent-500"
-                htmlFor="varietyName"
+                htmlFor="type"
               >
-                Variety Name*
+                Variety Type*
               </label>
-              <input
-                {...register("varietyName", {
-                  required: {
-                    value: true,
-                    message: "Variety Name are required",
-                  },
-                })}
-                className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
-                type="text"
-                placeholder="eg., Tomato"
-              />
-              {errors.varietyName && (
-                <FormErrorLine message={errors.varietyName.message as String} />
-              )}
+              <div autoFocus={false} className="dropdown w-full">
+                <div
+                  autoFocus={false}
+                  tabIndex={0}
+                  role="button"
+                  className="font-normal btn m-1 w-full text-accent-500 text-left bg-background flex items-center justify-start"
+                >
+                  {watch("type") ?? "Select Variety Type"}
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full px-4"
+                >
+                  {TYPES.map((type) => (
+                    <li
+                      key={type}
+                      onClick={() => setValue("type", type)}
+                      className="menu-item mt-2 cursor-pointer"
+                    >
+                      {type}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              {errors.type && <FormErrorLine message={errors.type.message} />}
             </div>
             <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
               <label
                 className="font-inter font-medium text-base text-accent-500"
-                htmlFor="varietyValue"
+                htmlFor="value"
               >
                 Variety Value*
               </label>
               <input
-                {...register("varietyValue", {
+                {...register("value", {
                   required: {
                     value: true,
                     message: "Variety Value are required",
@@ -66,22 +112,18 @@ const AddVarietyModal = () => {
                 type="text"
                 placeholder="eg., Red"
               />
-              {errors.varietyValue && (
-                <FormErrorLine
-                  message={errors.varietyValue.message as String}
-                />
-              )}
+              {errors.value && <FormErrorLine message={errors.value.message} />}
             </div>
           </div>
           <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
             <label
               className="font-inter font-medium text-base text-accent-500"
-              htmlFor="varietyDescription"
+              htmlFor="description"
             >
               Variety Description*
             </label>
             <input
-              {...register("varietyDescription", {
+              {...register("description", {
                 required: {
                   value: true,
                   message: "Variety Description are required",
@@ -91,10 +133,8 @@ const AddVarietyModal = () => {
               type="text"
               placeholder="Description goes here..."
             />
-            {errors.varietyDescription && (
-              <FormErrorLine
-                message={errors.varietyDescription.message as String}
-              />
+            {errors.description && (
+              <FormErrorLine message={errors.description.message} />
             )}
           </div>
           <hr className="mt-5 opacity-60" />
@@ -102,49 +142,56 @@ const AddVarietyModal = () => {
             <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
               <label
                 className="font-inter font-medium text-base text-accent-500"
-                htmlFor="originalPrice"
+                htmlFor="price"
               >
                 Original Price*
               </label>
               <input
-                {...register("originalPrice", {
+                {...register("price", {
                   required: {
                     value: true,
-                    message: "Original Price are required",
+                    message: "Price are required",
+                  },
+                  min: {
+                    value: 0,
+                    message: "Price should be greater than 0",
                   },
                 })}
                 className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
                 type="number"
                 placeholder="eg., 1000"
               />
-              {errors.originalPrice && (
-                <FormErrorLine
-                  message={errors.originalPrice.message as String}
-                />
-              )}
+              {errors.price && <FormErrorLine message={errors.price.message} />}
             </div>
             <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
               <label
                 className="font-inter font-medium text-base text-accent-500"
-                htmlFor="discountPrice"
+                htmlFor="discountPercent"
               >
-                Discount Price*
+                Discounted Percent*
               </label>
               <input
-                {...register("discountPrice", {
+                {...register("discountPercent", {
                   required: {
                     value: true,
                     message: "Discount Price are required",
                   },
+                  min: {
+                    value: 0,
+                    message:
+                      "Discount Price should be greater than or equal to 0",
+                  },
+                  max: {
+                    value: 100,
+                    message: "Discount Price should be less than 100",
+                  },
                 })}
                 className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
                 type="number"
-                placeholder="eg., 200"
+                placeholder="eg., 5"
               />
-              {errors.discountPrice && (
-                <FormErrorLine
-                  message={errors.discountPrice.message as String}
-                />
+              {errors.discountPercent && (
+                <FormErrorLine message={errors.discountPercent.message} />
               )}
             </div>
           </div>
@@ -157,20 +204,30 @@ const AddVarietyModal = () => {
               >
                 Unit*
               </label>
-              <input
-                {...register("unit", {
-                  required: {
-                    value: true,
-                    message: "Unit is required",
-                  },
-                })}
-                className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
-                type="text"
-                placeholder="eg., KG"
-              />
-              {errors.unit && (
-                <FormErrorLine message={errors.unit.message as String} />
-              )}
+              <div className="dropdown w-full">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="font-normal btn m-1 w-full text-accent-500 text-left bg-background flex items-center justify-start"
+                >
+                  {watch("unit") ?? "Select A Unit"}
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full px-4 max-h-40 overflow-y-auto scrollbar-sm"
+                >
+                  {UNIT.map((type) => (
+                    <li
+                      key={type}
+                      onClick={() => setValue("unit", type)}
+                      className="menu-item mt-2 cursor-pointer"
+                    >
+                      {type}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              {errors.unit && <FormErrorLine message={errors.unit.message} />}
             </div>
             <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
               <label
@@ -183,7 +240,11 @@ const AddVarietyModal = () => {
                 {...register("quantity", {
                   required: {
                     value: true,
-                    message: "Quantity are required",
+                    message: "Quantity is required",
+                  },
+                  min: {
+                    value: 0,
+                    message: "Quantity should be greater than 0",
                   },
                 })}
                 className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
@@ -191,76 +252,55 @@ const AddVarietyModal = () => {
                 placeholder="eg., 20"
               />
               {errors.quantity && (
-                <FormErrorLine message={errors.quantity.message as String} />
+                <FormErrorLine message={errors.quantity.message} />
               )}
             </div>
           </div>
-          <div className="flex flex-col lg:flex-row w-full items-center justify-center gap-7">
-            <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
-              <label
-                className="font-inter font-medium text-base text-accent-500"
-                htmlFor="tags"
-              >
-                Tags*
-              </label>
-              <input
-                {...register("tags", {
-                  required: {
-                    value: true,
-                    message: "Tags are required",
-                  },
-                })}
-                className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
-                type="text"
-                placeholder="eg., tag1, tag2"
-              />
-              {errors.tags && (
-                <FormErrorLine message={errors.tags.message as String} />
-              )}
-            </div>
-            <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
-              <label
-                className="font-inter font-medium text-base text-accent-500"
-                htmlFor="brands"
-              >
-                Brands*
-              </label>
-              <input
-                {...register("brands", {
-                  required: {
-                    value: true,
-                    message: "Brands are required",
-                  },
-                })}
-                className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
-                type="number"
-                placeholder="eg., brand1"
-              />
-              {errors.brands && (
-                <FormErrorLine message={errors.brands.message as String} />
-              )}
-            </div>
-          </div>
+
           <hr className="mt-5 opacity-60" />
 
           <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
             <label
               className="font-inter font-medium text-base text-accent-500"
-              htmlFor="varietyDescription"
+              htmlFor="description"
             >
               Variety Images*
             </label>
+            <input
+              ref={imagesRef as any}
+              type="file"
+              className="hidden"
+              accept="image/*"
+              multiple
+              onChange={(e) => {
+                if (e.target.files) setImages(Array.from(e.target.files));
+              }}
+            />
             <Button
               type="button"
+              onClick={() => (imagesRef.current as any).click()}
               variant="accent/200"
               className="flex items-center justify-between bg-accent-100"
             >
-              <span>Upload Proof </span>
+              <span>Upload Images </span>
               <img className="h-5 w-5" src={upload} alt="" />
             </Button>
+            <div className="flex flex-col gap-1 ml-2">
+              {images.map((image, index) => (
+                <div key={index} className="w-full truncate">
+                  <Link
+                    to={URL.createObjectURL(image)}
+                    target="_blank"
+                    className="text-accent-500 underline"
+                  >
+                    {image.name}
+                  </Link>
+                </div>
+              ))}
+            </div>
           </div>
           <Button className="mt-5 flex gap-2 ml-auto">
-            <span>Add Variety</span>
+            Add Variety
             <img className="h-5 w-5" src={addCircle} alt="" />
           </Button>
         </form>

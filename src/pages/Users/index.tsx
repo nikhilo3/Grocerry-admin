@@ -1,33 +1,57 @@
-import InfoCard from "../../components/reusable/InfoCard";
 import UnCheckedBox from "../../assets/icons/unchecked-box";
 import SearchInput from "../../components/reusable/SearchInput";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DownloadCSVButton from "../../components/reusable/DownloadCSVButton";
-import search from "../../utils/search";
-import { userData, userStats } from "../../assets/mockData/userData";
 import Button from "../../components/reusable/Button";
 import UserDetailsModal from "./UserDetailsModal";
+import { useQuery } from "@tanstack/react-query";
+import { IGetAllUsersResponse, handleGetAllUsers } from "../../api/users";
+import objToQuery from "../../utils/objToQuery";
+import ErrorOccurred from "../../components/reusable/ErrorOccurred";
+import AppLoading from "../../components/loaders/AppLoading";
+import debounce from "../../utils/debounce";
+import UserReport from "./UserReport";
+
+const DEFAULT_QUERY_PARAMS = {
+  pageNo: 1,
+  perPage: 10,
+  name: null as string | null,
+};
 
 const UsersPage = () => {
-  const [filteredData, setFilteredData] = useState(userData);
-  const [queryString, setQueryString] = useState<string>("");
-  const [selectedUser, setSelectedUser] = useState<(typeof userData)[number]>();
+  const [queryParams, setQueryParams] = useState(DEFAULT_QUERY_PARAMS);
+  const [selectedUser, setSelectedUser] = useState<IGetAllUsersResponse>();
+  const [debouncedQueryParams, setDebouncedQueryParams] =
+    useState(DEFAULT_QUERY_PARAMS);
+
+  // get all users query
+  const {
+    isError,
+    isLoading,
+    data: users,
+  } = useQuery({
+    queryKey: ["users", debouncedQueryParams],
+    queryFn: () => handleGetAllUsers(objToQuery(debouncedQueryParams)),
+    staleTime: Infinity,
+  });
+
+  const debouncedRefetch = useCallback(
+    debounce((queryParams) => {
+      setDebouncedQueryParams(queryParams);
+    }),
+    [] // dependencies
+  ); //callback to ensure that setSearchParams is not called on every render
 
   useEffect(() => {
-    const searchKeys = ["name", "category", "subCategory"];
-    const data = search(userData, queryString, searchKeys);
-    setFilteredData(data);
-  }, [queryString]);
+    debouncedRefetch(queryParams);
+  }, [queryParams]);
 
+  if (isError) return <ErrorOccurred error="Failed to fetch users!" />;
   return (
     <>
       <div className="flex flex-col gap-11 overflow-hidden">
         {/* product cards */}
-        <div className="flex gap-5">
-          {userStats.map((stat, index) => (
-            <InfoCard key={index} {...stat} />
-          ))}
-        </div>
+        <UserReport />
         {/* product table */}
         <div className="overflow-x-scroll hide-scrollbar min-h-[40vh]">
           <div className="border border-accent-200 rounded-[20px] bg-white p-6 flex flex-col gap-6 min-w-[1100px]">
@@ -36,19 +60,24 @@ const UsersPage = () => {
               <div className="flex gap-4">
                 <SearchInput
                   placeholder="Search user..."
-                  onChange={(e) => setQueryString(e.target.value)}
+                  onChange={(e) => {
+                    setQueryParams({
+                      ...queryParams,
+                      name: e.target.value,
+                    });
+                  }}
                 />
               </div>
               <div className="flex items-center gap-2">
-                <DownloadCSVButton data={userData} fileName="userData" />
+                <DownloadCSVButton data={users!} fileName="users" />
               </div>
             </div>
             {/* userData list */}
             <div className="flex flex-col gap-4">
               <div
-                className="grid bg-accent-500 rounded-xl p-4 text-accent-50 font-normal"
+                className="grid bg-accent-500 rounded-xl p-4 text-accent-50 font-normal gap-4"
                 style={{
-                  gridTemplateColumns: "1fr 3fr 4fr 4fr 4fr 1.5fr",
+                  gridTemplateColumns: "0.5fr 3fr 4fr 4fr 4fr 1.5fr",
                 }}
               >
                 <button>
@@ -60,23 +89,34 @@ const UsersPage = () => {
                 <span>Phone No.</span>
                 <span className="m-auto">Actions</span>
               </div>
-              {filteredData.length > 0 ? (
-                filteredData.map((data, index) => (
+              {isLoading ? (
+                <AppLoading />
+              ) : users && users.length > 0 ? (
+                users.map((data, index) => (
                   <div
                     key={index}
-                    className="grid even:bg-accent-50 rounded-xl p-4 text-accent-500 font-normal"
+                    className="grid even:bg-accent-50 rounded-xl p-4 text-accent-500 font-normal gap-4"
                     style={{
-                      gridTemplateColumns: "1fr 3fr 4fr 4fr 4fr 1.5fr",
+                      gridTemplateColumns: "0.5fr 3fr 4fr 4fr 4fr 1.5fr",
                     }}
                   >
                     <button>
                       <UnCheckedBox className="w-[18px] h-[18px]" />
                     </button>
-                    {Object.values(data).map((value, index) => (
-                      <span className="truncate my-auto" key={index}>
-                        {value}
-                      </span>
-                    ))}
+
+                    <span className="truncate my-auto">
+                      {data.userDetails.id}
+                    </span>
+                    <span className="truncate my-auto">
+                      {data.userDetails.name}
+                    </span>
+                    <span className="truncate my-auto">
+                      {data.userDetails.email}
+                    </span>
+                    <span className="truncate my-auto">
+                      {data.userDetails.primaryPhoneNo}
+                    </span>
+
                     <Button
                       variant="primary/100"
                       className="mx-auto w-[100px] py-2"
@@ -97,6 +137,35 @@ const UsersPage = () => {
                   No user data found
                 </div>
               )}
+            </div>
+
+            {/* pagination */}
+            <div className="flex justify-end items-center gap-4">
+              <button
+                onClick={() => {
+                  setQueryParams((prev) => ({
+                    ...prev,
+                    pageNo: prev.pageNo - 1,
+                  }));
+                }}
+                disabled={queryParams.pageNo === 1}
+                className="px-4 py-1 rounded-lg border border-accent-500 text-accent-800 disabled:text-accent-200 disabled:border-accent-200"
+              >
+                Prev
+              </button>
+              <span className="text-accent-500">Page {queryParams.pageNo}</span>
+              <button
+                onClick={() => {
+                  setQueryParams((prev) => ({
+                    ...prev,
+                    pageNo: prev.pageNo + 1,
+                  }));
+                }}
+                disabled={(users ? users?.length : 0) < queryParams.perPage}
+                className="px-4 py-1 rounded-lg border border-accent-500 text-accent-800 disabled:text-accent-200 disabled:border-accent-200"
+              >
+                Next
+              </button>
             </div>
           </div>
         </div>

@@ -1,8 +1,8 @@
 import React from "react";
 
 interface AppFormError {
-  message: String;
-  className?: String;
+  message: string | undefined;
+  className?: string;
 }
 
 const FormErrorLine: React.FC<AppFormError> = ({ message, className = "" }) => {

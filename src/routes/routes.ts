@@ -21,22 +21,22 @@ const ROUTES: IRoute[] = [
   },
   {
     path: "/login",
-    component: lazy(async () => await import("../pages/Login/Login")),
+    component: lazy(async () => await import("../pages/Login")),
   },
   {
     path: "/products",
     component: lazy(async () => await import("../pages/Products")),
   },
   {
-    path: "/suggested-products",
-    component: lazy(async () => await import("../pages/Suggested")),
+    path: "/suggestions",
+    component: lazy(async () => await import("../pages/Suggestions")),
   },
   {
     path: "/products/add-a-product",
     component: lazy(async () => await import("../pages/AddUpdateProduct")),
   },
   {
-    path: "/products/update/:id",
+    path: "/products/update/:productCode",
     component: lazy(async () => await import("../pages/AddUpdateProduct")),
   },
   {
@@ -46,6 +46,14 @@ const ROUTES: IRoute[] = [
   {
     path: "/users",
     component: lazy(async () => await import("../pages/Users")),
+  },
+  {
+    path: "/reports",
+    component: lazy(async () => await import("../pages/Reports")),
+  },
+  {
+    path: "/categories",
+    component: lazy(async () => await import("../pages/Categories")),
   },
 ];
 

@@ -1,26 +1,63 @@
 import Button from "../../components/reusable/Button";
-import { drivers } from "../../assets/mockData/driverData";
 import SearchInput from "../../components/reusable/SearchInput";
 import addCircleSvg from "../../assets/icons/add-circle.svg";
-import Download from "../../components/reusable/Download";
-import { useEffect, useState } from "react";
-import search from "../../utils/search";
+import { useCallback, useEffect, useState } from "react";
 import UnCheckedBox from "../../assets/icons/unchecked-box";
 import DriverDetail from "./DriverDetail";
 import AddDriver from "./AddDriver";
+import { useQuery } from "@tanstack/react-query";
+import { DriverResponseType, getAllDrivers } from "../../api/driver";
+import UpdateDriver from "./UpdateDriver";
+import ErrorOccurred from "../../components/reusable/ErrorOccurred";
+import AppLoading from "../../components/loaders/AppLoading";
+import debounce from "../../utils/debounce";
+import objToQuery from "../../utils/objToQuery";
+import DownloadCSVButton from "../../components/reusable/DownloadCSVButton";
+
+const DEFAULT_QUERY_PARAMS = {
+  pageNo: 1,
+  perPage: 10,
+  name: null as string | null,
+};
 
 const Drivers = () => {
-  const [filteredData, setFilteredData] = useState(drivers);
-  const [queryString, setQueryString] = useState<string>("");
-  const [driverId, setDriverId] = useState("");
+  const [filteredData, setFilteredData] = useState<DriverResponseType[]>([]);
+  const [queryParams, setQueryParams] = useState(DEFAULT_QUERY_PARAMS);
+  const [debouncedQueryParams, setDebouncedQueryParams] =
+    useState(DEFAULT_QUERY_PARAMS);
+  const [selectedDriverData, setSelectedDriverData] =
+    useState<DriverResponseType | null>(null);
+  const [editDriverData, setEditDriverData] =
+    useState<DriverResponseType | null>(null);
+
+  // get all drivers query
+  const {
+    isError,
+    isLoading,
+    data: drivers,
+  } = useQuery({
+    queryKey: ["drivers", debouncedQueryParams],
+    queryFn: () => getAllDrivers(objToQuery(debouncedQueryParams)),
+    staleTime: Infinity,
+  });
 
   useEffect(() => {
-    let data = drivers;
-    const searchKeys = ["id", "name", "vehicle"];
-    data = search(data, queryString, searchKeys);
-    setFilteredData(data);
-  }, [queryString]);
+    if (!drivers || isError || isLoading) return;
+    setFilteredData(drivers);
+  }, [drivers, isLoading, isError]);
 
+  const debouncedRefetch = useCallback(
+    debounce((queryParams) => {
+      setDebouncedQueryParams(queryParams);
+    }),
+    [] // dependencies
+  ); //callback to ensure that setSearchParams is not called on every render
+
+  useEffect(() => {
+    debouncedRefetch(queryParams);
+  }, [queryParams]);
+
+  if (isError) return <ErrorOccurred error="Failed to fetch drivers" />;
   return (
     <div>
       <div className="flex flex-col gap-7 justify-center">
@@ -30,14 +67,20 @@ const Drivers = () => {
             <div className="">
               <div className="flex justify-between items-center">
                 <SearchInput
-                  onChange={(e) => setQueryString(e.target.value)}
-                  placeholder="Search Drivers"
+                  onChange={(e) => {
+                    setQueryParams({
+                      ...queryParams,
+                      name: e.target.value,
+                    });
+                  }}
+                  placeholder="Search by name..."
                 />
                 {/* add Drivers and Download CSV */}
                 <div className="flex justify-center gap-3 items-center">
-                  <Download />
+                  <DownloadCSVButton data={drivers!} fileName="drivers" />
                   <Button
                     onClick={() => {
+                      setEditDriverData(null);
                       if (document) {
                         (
                           document.getElementById(
@@ -60,7 +103,7 @@ const Drivers = () => {
               <div
                 className="grid justify-center text-center bg-accent-500 rounded-xl p-4 text-accent-50 font-normal"
                 style={{
-                  gridTemplateColumns: "0.1fr 2fr 3fr 3fr 3fr 3fr 1fr",
+                  gridTemplateColumns: "0.1fr 2fr 3fr 3fr 3fr 1fr",
                 }}
               >
                 <button>
@@ -70,33 +113,35 @@ const Drivers = () => {
                 <span className="text-nowrap">Full Name</span>
                 <span className="text-nowrap">Phone No.</span>
                 <span className="text-nowrap">Vehicle No.</span>
-                <span className="text-nowrap">Deliveries Completed</span>
                 <span className="text-nowrap  ">Actions</span>
               </div>
-              {filteredData.length > 0 ? (
+              {isLoading ? (
+                <AppLoading />
+              ) : filteredData.length > 0 ? (
                 filteredData.map((drivers, index) => (
                   <div
                     key={index}
-                    className="grid justify-center items-center w-full text-center  even:bg-accent-50 rounded-xl p-4 text-accent-500 font-normal"
+                    className="grid justify-center items-center w-full gap-4 text-center  even:bg-accent-50 rounded-xl p-4 text-accent-500 font-normal"
                     style={{
-                      gridTemplateColumns: "0.1fr 2fr 3fr 3fr 3fr 3fr 1fr",
+                      gridTemplateColumns: "0.1fr 2fr 3fr 3fr 3fr 1fr",
                     }}
                   >
                     <button>
                       <UnCheckedBox className="w-[18px] h-[18px]" />
                     </button>
-                    {Object.values(drivers).map((value, index) => (
-                      <span className="truncate" key={index}>
-                        {value}
-                      </span>
-                    ))}
+                    <span className="truncate" key={index}>
+                      {drivers.id}
+                    </span>
+                    <span className="truncate">{drivers.name}</span>
+                    <span className="truncate">{drivers.contactNo}</span>
+                    <span className="truncate">{drivers.vehicleNo}</span>
                     <Button
                       onClick={() => {
-                        setDriverId(drivers.id);
+                        setSelectedDriverData(drivers);
                         if (document) {
                           (
                             document.getElementById(
-                              "my_modal_3"
+                              "driverDetails"
                             ) as HTMLFormElement
                           ).showModal();
                         }
@@ -114,11 +159,44 @@ const Drivers = () => {
                 </div>
               )}
             </div>
+
+            {/* pagination */}
+            <div className="flex justify-end items-center gap-4">
+              <button
+                onClick={() => {
+                  setQueryParams((prev) => ({
+                    ...prev,
+                    pageNo: prev.pageNo - 1,
+                  }));
+                }}
+                disabled={queryParams.pageNo === 1}
+                className="px-4 py-1 rounded-lg border border-accent-500 text-accent-800 disabled:text-accent-200 disabled:border-accent-200"
+              >
+                Prev
+              </button>
+              <span className="text-accent-500">Page {queryParams.pageNo}</span>
+              <button
+                onClick={() => {
+                  setQueryParams((prev) => ({
+                    ...prev,
+                    pageNo: prev.pageNo + 1,
+                  }));
+                }}
+                disabled={filteredData.length < queryParams.perPage}
+                className="px-4 py-1 rounded-lg border border-accent-500 text-accent-800 disabled:text-accent-200 disabled:border-accent-200"
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
 
-        <DriverDetail driverId={driverId} />
+        <DriverDetail
+          driver={selectedDriverData}
+          setEditDriverData={setEditDriverData}
+        />
         <AddDriver />
+        <UpdateDriver driver={editDriverData} />
       </div>
     </div>
   );

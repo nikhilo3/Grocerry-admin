@@ -1,13 +1,14 @@
-import { userData } from "../../assets/mockData/userData";
 import x from "../../assets/icons/x.svg";
 import Button from "../../components/reusable/Button";
 import ban from "../../assets/icons/ban.svg";
+import { IGetAllUsersResponse } from "../../api/users";
 
 type Props = {
-  user: (typeof userData)[number];
+  user: IGetAllUsersResponse | null;
   clearUser: () => void;
 };
 const UserDetailsModal = ({ user, clearUser }: Props) => {
+  const address = user?.addressDetailsList?.[0] || null;
   return (
     <>
       <dialog id="user_details_modal" className="modal">
@@ -35,13 +36,13 @@ const UserDetailsModal = ({ user, clearUser }: Props) => {
             <div className="flex flex-col">
               <span className="text-accent-500 text-base">Full Name</span>
               <span className="text-[20px] font-semibold text-accent-700">
-                {user?.name}
+                {user?.userDetails.name}
               </span>
             </div>
             <div className="flex flex-col">
               <span className="text-accent-500 text-base">Email ID</span>
               <span className="text-[20px] font-semibold text-accent-700">
-                {user?.email}
+                {user?.userDetails.email}
               </span>
             </div>
           </div>
@@ -50,7 +51,7 @@ const UserDetailsModal = ({ user, clearUser }: Props) => {
             <div className="flex flex-col">
               <span className="text-accent-500 text-base">Mobile No.</span>
               <span className="text-[20px] font-semibold text-accent-700">
-                {user?.phoneNo}
+                {user?.userDetails.primaryPhoneNo}
               </span>
             </div>
             <div className="flex flex-col">
@@ -58,48 +59,56 @@ const UserDetailsModal = ({ user, clearUser }: Props) => {
                 Secondary Mobile No.
               </span>
               <span className="text-[20px] font-semibold text-accent-700">
-                {user?.phoneNo}
+                {user?.userDetails.secondaryPhoneNo || "Not Available!"}
               </span>
             </div>
           </div>
 
           <hr />
 
-          <div className="w-full grid grid-cols-2 gap-4">
-            <div className="flex flex-col">
-              <span className="text-accent-500 text-base">Address Line 1</span>
-              <span className="text-[18px] font-medium text-accent-700 truncate">
-                Lorem ipsum dolor sit amet consectetur.
-              </span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-accent-500 text-base">Address Line 1</span>
-              <span className="text-[18px] font-medium text-accent-700 truncate">
-                Lorem ipsum dolor sit amet consectetur.
-              </span>
-            </div>
-          </div>
+          {address && (
+            <>
+              <div className="w-full grid grid-cols-2 gap-4">
+                <div className="flex flex-col">
+                  <span className="text-accent-500 text-base">
+                    Address Line 1
+                  </span>
+                  <span className="text-[18px] font-medium text-accent-700 truncate">
+                    {address?.addressLine1}
+                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-accent-500 text-base">
+                    Address Line 1
+                  </span>
+                  <span className="text-[18px] font-medium text-accent-700 truncate">
+                    {address?.addressLine2 || "Not Available!"}
+                  </span>
+                </div>
+              </div>
 
-          <div className="w-full grid grid-cols-3 gap-4">
-            <div className="flex flex-col">
-              <span className="text-accent-500 text-base">State</span>
-              <span className="text-[18px] font-medium text-accent-700 truncate">
-                Tamil Nadu
-              </span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-accent-500 text-base">City</span>
-              <span className="text-[18px] font-medium text-accent-700 truncate">
-                Chennai
-              </span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-accent-500 text-base">Pin code</span>
-              <span className="text-[18px] font-medium text-accent-700 truncate">
-                600001
-              </span>
-            </div>
-          </div>
+              <div className="w-full grid grid-cols-3 gap-4">
+                <div className="flex flex-col">
+                  <span className="text-accent-500 text-base">State</span>
+                  <span className="text-[18px] font-medium text-accent-700 truncate">
+                    {address?.state}
+                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-accent-500 text-base">City</span>
+                  <span className="text-[18px] font-medium text-accent-700 truncate">
+                    {address?.city}
+                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-accent-500 text-base">Pin code</span>
+                  <span className="text-[18px] font-medium text-accent-700 truncate">
+                    {address?.pincode || "Not Available!"}
+                  </span>
+                </div>
+              </div>
+            </>
+          )}
           <Button
             variant="error-outline"
             className="w-fit flex items-center justify-center gap-2"

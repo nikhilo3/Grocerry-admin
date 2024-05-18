@@ -25,7 +25,7 @@ const search = <T extends Record<string, unknown>>(
     // Loop through the array to filter objects
     const filteredArray = array.filter((obj) => {
       // Loop through the keys of each object
-      for (let key of keys) {
+      for (const key of keys) {
         // Convert the value to string only for the comparison
 
         let value = obj[key] as any;
