@@ -24,7 +24,7 @@ import UploadImage, { error } from "./UploadImage";
 import { PulseLoader } from "react-spinners";
 import {
   PRODUCT_CATEGORIES,
-  SUB_SUB_CATEGORIES,
+  // SUB_SUB_CATEGORIES,
 } from "../../assets/data/constants";
 import Swal from "sweetalert2";
 import AppLoading from "../../components/loaders/AppLoading";
