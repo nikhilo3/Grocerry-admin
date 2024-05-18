@@ -77,7 +77,7 @@ const AddUpdateProduct = () => {
   //get Product Data for editing if productCode is present
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["product", productCode],
-    queryFn: () => handleGetProductsByQueries(`code=${productCode}`),
+    queryFn: () => handleGetProductsByQueries(`codes=${productCode}`),
     enabled: false,
   });
 
@@ -143,7 +143,14 @@ const AddUpdateProduct = () => {
 
   // reset subcategory when category changes
   useEffect(() => {
-    setValue("subCategory", "");
+    // only if current category does not have the selected subcategory
+    if (
+      watch("subCategory") &&
+      // @ts-ignore
+      !PRODUCT_CATEGORIES[watch("category")]?.includes(watch("subCategory"))
+    ) {
+      setValue("subCategory", "");
+    }
   }, [watch("category")]);
 
   // reset subcategory2 when subcategory changes
@@ -161,7 +168,7 @@ const AddUpdateProduct = () => {
       toast.error("Category is required");
       return;
     }
-    if (!formData["subCategory"] || formData["subCategory"]?.length === 0) {
+    if (!formData["subCategory"]) {
       toast.error("Sub Category is required");
       return;
     }
@@ -399,7 +406,7 @@ const AddUpdateProduct = () => {
                     </div>
                   ) : (
                     varieties.map((variety, index) => (
-                      <div className="relative w-full">
+                      <div key={index} className="relative w-full">
                         <input
                           className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
                           type="text"

@@ -6,9 +6,9 @@ export const productToFd = (product: any) => {
       product[key].map((item: any, index: number) => {
         Object.keys(item).map((itemKey) => {
           if (itemKey === "documents" || itemKey === "documentUrls") {
-            item[itemKey].map((doc: File, docIndex: number) => {
-              fd.append(`${key}[${index}].${"documents"}[${docIndex}]`, doc);
-            });
+            // item[itemKey].map((doc: File, docIndex: number) => {
+            //   fd.append(`${key}[${index}].${"documents"}[${docIndex}]`, doc);
+            // });
           } else {
             fd.append(`${key}[${index}].${itemKey}`, item[itemKey]);
           }
