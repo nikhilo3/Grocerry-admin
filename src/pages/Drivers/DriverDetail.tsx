@@ -89,7 +89,7 @@ const DriverDetail = ({
                 <Button
                   disabled={isPending}
                   variant="error-outline"
-                  onClick={() => mutate(driver?.id!)}
+                  onClick={() => mutate(driver?.id ?? "")}
                   className="gap-2 flex justify-center  items-center bg-white"
                 >
                   {isPending ? (

@@ -255,9 +255,7 @@ const OrderModal = ({
                 document={<InvoicePdf order={selectedOrder!} />}
                 fileName="invoice.pdf"
               >
-                {({ blob, url, loading, error }) =>
-                  loading ? "Loading document..." : <Download />
-                }
+                {(res) => (res.loading ? "Loading document..." : <Download />)}
               </PDFDownloadLink>
             </div>
           </div>

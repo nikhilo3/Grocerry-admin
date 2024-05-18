@@ -1,9 +1,7 @@
-import InfoCard from "../../components/reusable/InfoCard";
 import UnCheckedBox from "../../assets/icons/unchecked-box";
 import SearchInput from "../../components/reusable/SearchInput";
 import { useCallback, useEffect, useState } from "react";
 import DownloadCSVButton from "../../components/reusable/DownloadCSVButton";
-import { userData, userStats } from "../../assets/mockData/userData";
 import Button from "../../components/reusable/Button";
 import UserDetailsModal from "./UserDetailsModal";
 import { useQuery } from "@tanstack/react-query";
@@ -71,7 +69,7 @@ const UsersPage = () => {
                 />
               </div>
               <div className="flex items-center gap-2">
-                <DownloadCSVButton data={userData} fileName="users" />
+                <DownloadCSVButton data={users!} fileName="users" />
               </div>
             </div>
             {/* userData list */}

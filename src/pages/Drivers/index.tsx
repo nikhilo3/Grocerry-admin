@@ -196,10 +196,7 @@ const Drivers = () => {
           setEditDriverData={setEditDriverData}
         />
         <AddDriver />
-        <UpdateDriver
-          driver={editDriverData}
-          setEditDriverData={setEditDriverData}
-        />
+        <UpdateDriver driver={editDriverData} />
       </div>
     </div>
   );

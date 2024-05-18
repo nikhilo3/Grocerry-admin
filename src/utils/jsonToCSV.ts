@@ -2,9 +2,9 @@ import { json2csv } from "json-2-csv";
 import toast from "react-hot-toast";
 
 const jsonToCSV = (json: any[]) => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     try {
-      const res = await json2csv(json);
+      const res = json2csv(json);
       resolve(res);
     } catch (error) {
       toast.error("Failed to convert JSON to CSV");

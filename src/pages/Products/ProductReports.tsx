@@ -29,15 +29,15 @@ const ProductReports = () => {
         <>
           <InfoCard
             title="Total Products"
-            data={productReports?.totalProducts!}
+            data={productReports?.totalProducts ?? 0}
           />
           <InfoCard
             title="Products In Stock"
-            data={productReports?.totalInStockProducts!}
+            data={productReports?.totalInStockProducts ?? 0}
           />
           <InfoCard
             title="Products Out Of Stock"
-            data={productReports?.totalOutOfStockProducts!}
+            data={productReports?.totalOutOfStockProducts ?? 0}
           />
           <InfoCard
             title="Total Categories"

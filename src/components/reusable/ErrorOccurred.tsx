@@ -4,7 +4,7 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
   error?: string | null;
 };
 
-const ErrorOccurred = ({ error, children, className, ...rest }: Props) => {
+const ErrorOccurred = ({ error, className, ...rest }: Props) => {
   return (
     <div
       className={twMerge(

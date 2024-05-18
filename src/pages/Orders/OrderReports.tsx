@@ -28,8 +28,8 @@ const OrderReport = () => {
         </>
       ) : (
         <>
-          <InfoCard title="Total Orders" data={orderReport?.totalOrders!} />
-          {Object.keys(orderReport?.countPerStatus!).map((key) => (
+          <InfoCard title="Total Orders" data={orderReport?.totalOrders ?? 0} />
+          {Object.keys(orderReport?.countPerStatus ?? {})?.map((key) => (
             <InfoCard
               key={key}
               title={key
@@ -40,7 +40,7 @@ const OrderReport = () => {
                 )
                 .join(" ")}
               // @ts-ignore
-              data={orderReport?.countPerStatus![key]}
+              data={(orderReport?.countPerStatus ?? {})[key]}
             />
           ))}
         </>

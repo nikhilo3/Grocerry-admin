@@ -10,7 +10,7 @@ import AddSubCategory from "./AddSubCategory";
 import AddSubSubCategory from "./AddSubSubCategory";
 
 const CategoryPage = () => {
-  const [filteredData, setFilteredData] = useState(PRODUCT_CATEGORIES);
+  const [filteredData] = useState(PRODUCT_CATEGORIES);
   const [selectedCategory, setSelectedCategory] = useState("");
 
   return (

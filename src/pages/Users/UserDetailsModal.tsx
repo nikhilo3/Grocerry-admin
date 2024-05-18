@@ -1,7 +1,6 @@
 import x from "../../assets/icons/x.svg";
 import Button from "../../components/reusable/Button";
 import ban from "../../assets/icons/ban.svg";
-import { IUser } from "../../types/user.types";
 import { IGetAllUsersResponse } from "../../api/users";
 
 type Props = {

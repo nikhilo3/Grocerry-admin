@@ -1,8 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { handleGetProductReport } from "../../api/product";
 import { Skeleton } from "../../components/reusable/Skeleton";
 import InfoCard from "../../components/reusable/InfoCard";
-import { PRODUCT_CATEGORIES } from "../../assets/data/constants";
 import { handleGetAllUserReport } from "../../api/users";
 import { useEffect } from "react";
 
@@ -33,11 +31,17 @@ const UserReport = () => {
         </>
       ) : (
         <>
-          <InfoCard title="Total Users" data={userReport?.totalUserCount!} />
-          <InfoCard title="Active Users" data={userReport?.totalActiveCount!} />
+          <InfoCard
+            title="Total Users"
+            data={userReport?.totalUserCount ?? 0}
+          />
+          <InfoCard
+            title="Active Users"
+            data={userReport?.totalActiveCount ?? 0}
+          />
           <InfoCard
             title="Inactive Users"
-            data={userReport?.totalInActiveCount!}
+            data={userReport?.totalInActiveCount ?? 0}
           />
         </>
       )}
