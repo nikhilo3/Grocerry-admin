@@ -2,7 +2,6 @@ export const jsonToFd = <T extends Record<string, any>>(
   json: T,
   parentKey?: string
 ): FormData => {
-  console.log(json);
   const formData = new FormData();
   Object.entries(json).forEach(([key, value]) => {
     const fullKey = parentKey ? `${parentKey}.${key}` : key;
@@ -14,7 +13,6 @@ export const jsonToFd = <T extends Record<string, any>>(
         formData.append(nestedKey, nestedValue);
       });
     } else if (Array.isArray(value)) {
-
       // if (key === "documents") {
       //   // append the documents to the formData
       //   value.forEach((item, itemIndex) => {
@@ -32,6 +30,5 @@ export const jsonToFd = <T extends Record<string, any>>(
       formData.append(fullKey, value);
     }
   });
-  console.log(formData);
   return formData;
 };

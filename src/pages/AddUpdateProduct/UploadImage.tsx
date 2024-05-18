@@ -88,9 +88,6 @@ const UploadImage: React.FC<UploadImage> = ({
           <h3 className="font-inter font-semibold text-xl ">
             Upload Product Images
           </h3>
-          <p className="font-inter text-sm text-accent-500 mt-1">
-            Lorem ipsum dolor sit abet consectetur. Tortor elit
-          </p>
 
           {/* file input 👇  */}
           <button
@@ -150,9 +147,13 @@ const UploadImage: React.FC<UploadImage> = ({
                           <a
                             className="hover:underline font-medium text-sm"
                             target="_blank"
-                            href={URL.createObjectURL(item)}
+                            href={
+                              typeof item === "string"
+                                ? item
+                                : URL.createObjectURL(item)
+                            }
                           >
-                            {item.name}
+                            {item.name ?? item}
                           </a>
                         </h6>
                         <button

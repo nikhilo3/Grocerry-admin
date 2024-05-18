@@ -7,7 +7,7 @@ const UpdateDriver = ({ driver }: { driver: DriverResponseType | null }) => {
   const queryClient = useQueryClient();
 
   // update driver mutation
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: handleUpdateDriver,
     onSuccess: (msg) => {
       queryClient.invalidateQueries({
@@ -36,6 +36,7 @@ const UpdateDriver = ({ driver }: { driver: DriverResponseType | null }) => {
         })
       }
       defaultValues={driver!}
+      isSubmitSuccess={isSuccess}
     />
   );
 };

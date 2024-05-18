@@ -7,7 +7,7 @@ const AddDriver = () => {
   const queryClient = useQueryClient();
 
   // add driver mutation
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: handleAddDriver,
     onSuccess: (msg) => {
       queryClient.invalidateQueries({
@@ -27,6 +27,7 @@ const AddDriver = () => {
       isEditDriverModal={false}
       isPending={isPending}
       handleFormSubmit={(data) => mutate(data)}
+      isSubmitSuccess={isSuccess}
     />
   );
 };

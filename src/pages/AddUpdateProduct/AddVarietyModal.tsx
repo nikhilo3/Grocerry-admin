@@ -5,7 +5,6 @@ import upload from "../../assets/icons/upload-file.svg";
 import addCircle from "../../assets/icons/add-circle.svg";
 import { Variety } from ".";
 import { useRef, useState } from "react";
-import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 
 interface Props {
@@ -28,10 +27,6 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
   } = useForm<Variety>();
 
   const onSubmit: SubmitHandler<Variety> = (data) => {
-    if (images.length === 0) {
-      toast.error("Please upload images");
-      return;
-    }
     setVarieties((prev) => [
       ...prev,
       {
@@ -264,7 +259,7 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
               className="font-inter font-medium text-base text-accent-500"
               htmlFor="description"
             >
-              Variety Images*
+              Variety Images
             </label>
             <input
               ref={imagesRef as any}
