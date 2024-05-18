@@ -3,21 +3,14 @@ import uploadSvg from "../../assets/icons/upload-file.svg";
 import addCircleSvg from "../../assets/icons/add-circle.svg";
 import trashSvg from "../../assets/icons/trash.svg";
 import crossBlackIcon from "../../assets/icons/cross-black.svg";
+import { PRODUCT_CATEGORIES } from "../../assets/data/constants";
 
 const AddCategory = () => {
-  const category = [
-    "Fruit & Vegetables",
-    "Electronics",
-    "Frozen Food",
-    "Chips & Namkin ",
-    "Juice & Beverages",
-  ];
-
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <>
-      <dialog id="addCategoryModal" className="modal">
+      <dialog id="add_category_modal" className="modal">
         <form
           method="dialog"
           className="modal-box min-w-[800px] p-6 rounded-[20px]"
@@ -94,7 +87,7 @@ const AddCategory = () => {
                 <div className=" overflow-y-auto scrollbar-sm">
                   <div className="w-full max-h-[238px] min-h-[238px]  pe-4">
                     <div className="rounded-2xl border  ">
-                      {category.map((item, index) => (
+                      {Object.keys(PRODUCT_CATEGORIES).map((item, index) => (
                         <div
                           className={`p-[14px] ${
                             index !== 0 ? "border-t" : "rounded-xl"
