@@ -12,6 +12,7 @@ type Props = {
   handleFormSubmit: (data: DriverFormData) => void;
   isPending: boolean;
   defaultValues?: DriverFormData;
+  isSubmitSuccess: boolean;
 };
 
 export type DriverFormData = {
@@ -22,6 +23,7 @@ export type DriverFormData = {
 
 const AddUpdateDriverModal = ({
   id,
+  isSubmitSuccess,
   isEditDriverModal,
   handleFormSubmit,
   isPending,
@@ -44,6 +46,13 @@ const AddUpdateDriverModal = ({
     }
   }, [defaultValues, isEditDriverModal]);
 
+  // reset form on successful submission
+  useEffect(() => {
+    if (isSubmitSuccess) {
+      reset();
+    }
+  }, [isSubmitSuccess]);
+
   return (
     <div>
       <dialog id={id} className="modal">
@@ -54,14 +63,10 @@ const AddUpdateDriverModal = ({
                 <h1 className="font-medium text-[28px] text-accent-700">
                   {isEditDriverModal ? "Edit Driver" : "Add Driver"}
                 </h1>
-                <p className="text-sm font-normal text-accent-500 ">
-                  Lorem ipsum dolor sit amet consectetur. Tortor elit{" "}
-                </p>
               </div>
               <button
                 onClick={() => {
                   reset();
-                  console.log("close");
                   (document.getElementById(id) as HTMLDialogElement)?.close();
                 }}
               >

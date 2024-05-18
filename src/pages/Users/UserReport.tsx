@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "../../components/reusable/Skeleton";
 import InfoCard from "../../components/reusable/InfoCard";
 import { handleGetAllUserReport } from "../../api/users";
-import { useEffect } from "react";
 
 const UserReport = () => {
   // get product reports
@@ -14,10 +13,6 @@ const UserReport = () => {
     queryKey: ["userReports"],
     queryFn: handleGetAllUserReport,
   });
-
-  useEffect(() => {
-    console.log(userReport);
-  }, [userReport]);
 
   if (isReportError) return null;
   return (

@@ -37,9 +37,8 @@ export type IOrder = {
   };
   driverDetailsDto: {
     name: string;
-    email: string;
-    primaryPhoneNo: string;
-    secondaryPhoneNo: string | null;
+    contactNo: string;
+    vehicleNo: string;
     id: string;
   } | null;
 };

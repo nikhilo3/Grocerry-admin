@@ -46,7 +46,7 @@ export interface ProductFormData {
   code: string;
   category: string;
   subCategory: string;
-  subCategory2?: string;
+  // subCategory2?: string;
   description: string;
   brand?: string;
   tags?: string;
@@ -58,19 +58,10 @@ const AddUpdateProduct = () => {
   const [varieties, setVarieties] = useState<Variety[]>([]);
   const [selectedVariety, setSelectedVariety] = useState<number | null>(null);
 
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    watch,
-    setValue,
-    reset,
-  } = useForm<ProductFormData>();
-
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [categoryDropdown, setCategoryDropdown] = useState(false);
   const [subcategoryDropdown, setSubcategoryDropdown] = useState(false);
-  const [subcategory2Dropdown, setSubcategory2Dropdown] = useState(false);
+  // const [subcategory2Dropdown, setSubcategory2Dropdown] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -80,6 +71,15 @@ const AddUpdateProduct = () => {
     queryFn: () => handleGetProductsByQueries(`codes=${productCode}`),
     enabled: false,
   });
+
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+  } = useForm<ProductFormData>();
 
   // fetch if productCode is present or change
   useEffect(() => {
@@ -93,14 +93,12 @@ const AddUpdateProduct = () => {
     if (!productCode) return;
     if (!data || data.length === 0) return;
     const product = data[0];
-    console.log(product);
     reset({
       ...(product as any),
       brand: product.brand === "non-branded" ? "" : product.brand,
     });
-    setSelectedImages(
-      product.documentUrls?.map((doc) => new File([], doc)) ?? []
-    );
+    // @ts-ignore
+    setSelectedImages(product.documentUrls ?? []);
 
     // @ts-ignore
     setVarieties(product.varietyList);
@@ -154,9 +152,9 @@ const AddUpdateProduct = () => {
   }, [watch("category")]);
 
   // reset subcategory2 when subcategory changes
-  useEffect(() => {
-    setValue("subCategory2", "");
-  }, [watch("subCategory")]);
+  // useEffect(() => {
+  //   setValue("subCategory2", "");
+  // }, [watch("subCategory")]);
 
   const onSubmit: SubmitHandler<ProductFormData> = (formData) => {
     if (varieties.length === 0) {
@@ -173,9 +171,14 @@ const AddUpdateProduct = () => {
       return;
     }
 
+    if (selectedImages.length === 0) {
+      toast.error("Please upload at least one image");
+      return;
+    }
+
     const dataToSend = {
-      varietyList: varieties,
       ...formData,
+      varietyList: varieties,
       documents: selectedImages,
     };
 
@@ -302,9 +305,6 @@ const AddUpdateProduct = () => {
               <h3 className="font-inter font-semibold text-xl ">
                 Basic Information
               </h3>
-              <p className="font-inter text-sm text-accent-500 mt-1">
-                Lorem ipsum dolor sit abet consectetur. Tortor elit
-              </p>
 
               {/* product Name */}
               <div className="mt-5 flex flex-col justify-center gap-[6px] ">
@@ -367,7 +367,6 @@ const AddUpdateProduct = () => {
                   })}
                   className="h-[112px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none resize-none"
                   placeholder="Description goes here...."
-                  id="productDesc"
                 />
                 {errors.description && (
                   <FormErrorLine message={errors.description.message} />
@@ -391,9 +390,6 @@ const AddUpdateProduct = () => {
               <h3 className="text-[20px] font-semibold font-inter text-accent-700">
                 Product Varieties
               </h3>
-              <p className="font-inter font-normal text-sm mt-[2px] text-accent-500">
-                Lorem ipsum dolor sit amet consectetur adipisicing.
-              </p>
 
               <div className="flex flex-col lg:flex-row w-full items-center justify-center gap-7">
                 <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
@@ -460,9 +456,6 @@ const AddUpdateProduct = () => {
 
             <div className="bg-white mt-4 min-h-[311px]  rounded-[20px] border border-accent-100  p-6">
               <h3 className="font-inter font-semibold text-xl ">Category</h3>
-              <p className="font-inter text-sm text-accent-500 mt-1">
-                Lorem ipsum dolor sit abet consectetur. Tortor elit
-              </p>
 
               {/* category */}
               <div className="z-50 mt-5 flex flex-col justify-center gap-[6px] ">
@@ -616,7 +609,7 @@ const AddUpdateProduct = () => {
 
               {/* sub category 2 */}
 
-              {
+              {/* {
                 // @ts-ignore
                 SUB_SUB_CATEGORIES[watch("subCategory")] &&
                   // @ts-ignore
@@ -706,7 +699,7 @@ const AddUpdateProduct = () => {
                       )}
                     </div>
                   )
-              }
+              } */}
             </div>
 
             {/* More Details */}
@@ -714,9 +707,6 @@ const AddUpdateProduct = () => {
               <h3 className="text-[20px] font-semibold font-inter text-accent-700">
                 More Details
               </h3>
-              <p className="font-inter font-normal text-sm mt-[2px] text-accent-500">
-                Lorem ipsum dolor sit amet consectetur adipisicing.
-              </p>
 
               <div className="flex flex-col lg:flex-row w-full items-center justify-center gap-7">
                 <div className=" w-full flex flex-col justify-center gap-[6px] ">
