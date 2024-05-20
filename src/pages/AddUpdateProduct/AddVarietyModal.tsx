@@ -6,6 +6,7 @@ import addCircle from "../../assets/icons/add-circle.svg";
 import { Variety } from ".";
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 interface Props {
   setVarieties: React.Dispatch<React.SetStateAction<Variety[]>>;
@@ -104,8 +105,9 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
                   },
                 })}
                 className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
-                type="text"
-                placeholder="eg., Red"
+                type="number"
+                onWheel={(e) => e.currentTarget.blur()}
+                placeholder="eg. 3"
               />
               {errors.value && <FormErrorLine message={errors.value.message} />}
             </div>
@@ -154,6 +156,7 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
                 })}
                 className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
                 type="number"
+                onWheel={(e) => e.currentTarget.blur()}
                 placeholder="eg., 1000"
               />
               {errors.price && <FormErrorLine message={errors.price.message} />}
@@ -183,6 +186,7 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
                 })}
                 className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
                 type="number"
+                onWheel={(e) => e.currentTarget.blur()}
                 placeholder="eg., 5"
               />
               {errors.discountPercent && (
@@ -244,6 +248,7 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
                 })}
                 className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
                 type="number"
+                onWheel={(e) => e.currentTarget.blur()}
                 placeholder="eg., 20"
               />
               {errors.quantity && (
@@ -268,7 +273,16 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
               accept="image/*"
               multiple
               onChange={(e) => {
-                if (e.target.files) setImages(Array.from(e.target.files));
+                if (e.target.files) {
+                  const files = Array.from(e.target.files);
+                  if (files.length > 4) {
+                    toast.error("You can only upload maximum 4 images.");
+                    const newFiles = files.slice(0, 4);
+                    setImages(newFiles);
+                  } else {
+                    setImages(files);
+                  }
+                }
               }}
             />
             <Button
