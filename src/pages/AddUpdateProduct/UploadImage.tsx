@@ -3,6 +3,7 @@ import attachmentIcon from "../../assets/icons/attachment.svg";
 import crossIcon from "../../assets/icons/cross.svg";
 import FormErrorLine from "../../components/reusable/FormErrorLine";
 import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 
 export type error = {
   category?: {
@@ -52,7 +53,13 @@ const UploadImage: React.FC<UploadImage> = ({
         });
         event.target.value = "";
       } else {
-        setSelectedImages([...selectedImages, ...Array.from(fileList)]);
+        const allFiles = [...Array.from(fileList)];
+        if (allFiles.length > 4) {
+          toast.error("You can only upload 4 images maximum!");
+          setSelectedImages(allFiles.slice(0, 4));
+        } else {
+          setSelectedImages(allFiles);
+        }
       }
     }
   };
