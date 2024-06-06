@@ -4,7 +4,7 @@ import Button from "../../components/reusable/Button";
 import backArrowIcon from "../../assets/icons/back-arrow.svg";
 import checkIcon from "../../assets/icons/check.svg";
 import FormErrorLine from "../../components/reusable/FormErrorLine";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ISubCategoryData } from "../../types/categories.types";
 import toast from "react-hot-toast";
 import AddSubCategory from "./AddSubCategory";
