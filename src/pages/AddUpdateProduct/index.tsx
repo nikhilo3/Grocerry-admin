@@ -22,13 +22,10 @@ import {
 } from "../../api/product";
 import UploadImage, { error } from "./UploadImage";
 import { PulseLoader } from "react-spinners";
-import {
-  PRODUCT_CATEGORIES,
-  // SUB_SUB_CATEGORIES,
-} from "../../assets/data/constants";
 import Swal from "sweetalert2";
 import AppLoading from "../../components/loaders/AppLoading";
 import ErrorOccurred from "../../components/reusable/ErrorOccurred";
+import { handleFetchCategory } from "../../api/categories";
 
 export type Variety = {
   type: string;
@@ -46,7 +43,7 @@ export interface ProductFormData {
   code: string;
   category: string;
   subCategory: string;
-  // subCategory2?: string;
+  subCategory2?: string;
   description: string;
   brand?: string;
   tags?: string;
@@ -61,7 +58,7 @@ const AddUpdateProduct = () => {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [categoryDropdown, setCategoryDropdown] = useState(false);
   const [subcategoryDropdown, setSubcategoryDropdown] = useState(false);
-  // const [subcategory2Dropdown, setSubcategory2Dropdown] = useState(false);
+  const [subcategory2Dropdown, setSubcategory2Dropdown] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -139,22 +136,29 @@ const AddUpdateProduct = () => {
       },
     });
 
-  // reset subcategory when category changes
-  useEffect(() => {
-    // only if current category does not have the selected subcategory
-    if (
-      watch("subCategory") &&
-      // @ts-ignore
-      !PRODUCT_CATEGORIES[watch("category")]?.includes(watch("subCategory"))
-    ) {
-      setValue("subCategory", "");
+  // fetch categories
+  const { data: rootCategories, isLoading: isLoadingRootCategories } = useQuery(
+    {
+      queryKey: ["categories"],
+      queryFn: () => handleFetchCategory(),
     }
-  }, [watch("category")]);
+  );
 
-  // reset subcategory2 when subcategory changes
-  // useEffect(() => {
-  //   setValue("subCategory2", "");
-  // }, [watch("subCategory")]);
+  // get subcategories of selected category
+  const { data: subCategories, isLoading: isLoadingSubCategories } = useQuery({
+    queryKey: ["subCategories", watch("category")],
+    queryFn: () => handleFetchCategory(watch("category")),
+    enabled: watch("category") !== "Select Category" || !watch("category"),
+  });
+
+  // fetch sub subcategories of selected subcategory
+  const { data: subSubCategories, isLoading: isLoadingSubSubCategories } =
+    useQuery({
+      queryKey: ["subSubCategories", watch("subCategory")],
+      queryFn: () => handleFetchCategory(watch("subCategory")),
+      enabled:
+        watch("subCategory") !== "Select Subcategory" || !watch("subCategory"),
+    });
 
   const onSubmit: SubmitHandler<ProductFormData> = (formData) => {
     if (varieties.length === 0) {
@@ -173,6 +177,11 @@ const AddUpdateProduct = () => {
 
     if (selectedImages.length === 0) {
       toast.error("Please upload at least one image");
+      return;
+    }
+
+    if (!formData.subCategory2) {
+      toast.error("Sub Category 2 is required");
       return;
     }
 
@@ -473,8 +482,16 @@ const AddUpdateProduct = () => {
                       categoryDropdown && "rounded-b-none"
                     }  w-full flex justify-between `}
                   >
-                    <span className="font-medium text-base text-accent-600">
-                      {watch("category") ?? "Select Category"}
+                    <span
+                      className={`font-medium text-base text-accent-600 ${
+                        isLoadingRootCategories
+                          ? "cursor-wait"
+                          : "cursor-default"
+                      }`}
+                    >
+                      {isLoadingRootCategories
+                        ? "Loading..."
+                        : watch("category") ?? "Select Category"}
                     </span>
                     <span>
                       <img
@@ -489,29 +506,33 @@ const AddUpdateProduct = () => {
                       className="w-full z-50 bg-accent-100 shadow-md  rounded-xl  rounded-t-none absolute"
                     >
                       <div className="overflow-y-auto max-h-[242px] scrollbar-md">
-                        {Object.keys(PRODUCT_CATEGORIES).map((item) => (
-                          <label
-                            htmlFor={item}
-                            onClick={() => {
-                              setValue("category", item);
-                              setCategoryDropdown(false);
-                            }}
-                            role="button"
-                            className="flex justify-between items-center  w-full p-4  border-t border-accent-200"
-                          >
-                            <div className="text-sm cursor-pointer flex-1 font-medium text-accent-600 font-inter">
-                              {item}
-                            </div>
-                            <input
-                              value={item}
-                              className="radio radio-xs radio-error"
-                              type="radio"
-                              name={"category"}
-                              id={item}
-                              checked={watch("category") === item}
-                            />
-                          </label>
-                        ))}
+                        {rootCategories
+                          ?.map((i) => i.name)
+                          ?.map((item) => (
+                            <label
+                              htmlFor={item}
+                              onClick={() => {
+                                setValue("category", item);
+                                setCategoryDropdown(false);
+                                setValue("subCategory", "");
+                                setValue("subCategory2", "");
+                              }}
+                              role="button"
+                              className="flex justify-between items-center  w-full p-4  border-t border-accent-200"
+                            >
+                              <div className="text-sm cursor-pointer flex-1 font-medium text-accent-600 font-inter">
+                                {item}
+                              </div>
+                              <input
+                                value={item}
+                                className="radio radio-xs radio-error"
+                                type="radio"
+                                name={"category"}
+                                id={item}
+                                checked={watch("category") === item}
+                              />
+                            </label>
+                          ))}
                       </div>
                     </div>
                   )}
@@ -547,8 +568,16 @@ const AddUpdateProduct = () => {
                       subcategoryDropdown ? "rounded-b-none" : ""
                     }  w-full flex justify-between `}
                   >
-                    <div className="font-medium text-base text-accent-600 truncate min-h-fit">
-                      {watch("subCategory")
+                    <div
+                      className={`font-medium text-base text-accent-600 truncate min-h-fit ${
+                        isLoadingSubCategories
+                          ? "cursor-wait"
+                          : "cursor-default"
+                      }`}
+                    >
+                      {isLoadingSubCategories
+                        ? "Loading..."
+                        : watch("subCategory")
                         ? watch("subCategory")
                         : "Select Subcategory"}
                     </div>
@@ -566,13 +595,12 @@ const AddUpdateProduct = () => {
                       className="w-full bg-accent-100 shadow-md overflow-y-auto rounded-xl rounded-t-none absolute z-40"
                     >
                       <div className="overflow-y-auto max-h-[242px] scrollbar-md">
-                        {
-                          // @ts-ignore
-                          PRODUCT_CATEGORIES[
-                            watch("category") ?? ("" as any)
-                          ]?.map((item: string) => (
+                        {subCategories
+                          ?.map((i) => i.name)
+                          ?.map((item, i) => (
                             <label
                               htmlFor={item}
+                              key={i}
                               onClick={() => {
                                 if (watch("subCategory") === item) {
                                   setValue("subCategory", "");
@@ -580,6 +608,7 @@ const AddUpdateProduct = () => {
                                   setValue("subCategory", item);
                                 }
                                 setSubcategoryDropdown(false);
+                                setValue("subCategory2", "");
                               }}
                               role="button"
                               className="flex justify-between items-center w-full p-4  border-t border-accent-200"
@@ -596,8 +625,7 @@ const AddUpdateProduct = () => {
                                 }
                               />
                             </label>
-                          ))
-                        }
+                          ))}
                       </div>
                     </div>
                   )}
@@ -609,97 +637,89 @@ const AddUpdateProduct = () => {
 
               {/* sub category 2 */}
 
-              {/* {
-                // @ts-ignore
-                SUB_SUB_CATEGORIES[watch("subCategory")] &&
-                  // @ts-ignore
-                  SUB_SUB_CATEGORIES[watch("subCategory")]?.length > 0 && (
-                    <div className="mt-5 flex flex-col justify-center gap-[6px] ">
-                      <label
-                        className="font-inter font-medium text-base text-accent-500"
-                        htmlFor="category"
-                      >
-                        Select Sub Category2
-                      </label>
-                      <div className="min-w-[259px]  max-w-full relative">
-                        <div
-                          onClick={() => {
-                            if (!watch("subCategory")) {
-                              toast.error("Please select sub category first");
-                              return;
-                            }
-                            setSubcategory2Dropdown((prev) => !prev);
-                          }}
-                          role="button"
-                          className={`bg-accent-50 py-[18px] px-4  border border-accent-100 z-0 rounded-xl ${
-                            subcategory2Dropdown ? "rounded-b-none" : ""
-                          }  w-full flex justify-between `}
-                        >
-                          <div className="font-medium text-base text-accent-600 truncate min-h-fit">
-                            {watch("subCategory2")
-                              ? watch("subCategory2")
-                              : "Select Subcategory"}
-                          </div>
-                          <span>
-                            <img
-                              src={
-                                subcategory2Dropdown ? caretUpSvg : caretDownSvg
-                              }
-                              alt=""
-                              className="min-h-[19px] min-w-[18px]"
-                            />
-                          </span>
-                        </div>
-                        {subcategory2Dropdown && (
-                          <div
-                            role="button"
-                            className="w-full bg-accent-100 shadow-md overflow-y-auto rounded-xl rounded-t-none absolute"
-                          >
-                            <div className="overflow-y-auto max-h-[242px] scrollbar-md">
-                              {
-                                // @ts-ignore
-                                SUB_SUB_CATEGORIES[watch("subCategory")]?.map(
-                                  (item: string) => (
-                                    <label
-                                      htmlFor={item}
-                                      onClick={() => {
-                                        if (watch("subCategory2") === item) {
-                                          setValue("subCategory2", "");
-                                        } else {
-                                          setValue("subCategory2", item);
-                                        }
-                                        setSubcategory2Dropdown(false);
-                                      }}
-                                      role="button"
-                                      className="flex justify-between items-center w-full p-4  border-t border-accent-200"
-                                    >
-                                      <div className="text-sm cursor-pointer flex-1 font-medium text-accent-600 font-inter">
-                                        {item}
-                                      </div>
-                                      <input
-                                        value={item}
-                                        className="checkbox checkbox-xs  checkbox-warning rounded-md"
-                                        type="checkbox"
-                                        checked={
-                                          watch("subCategory2") === item
-                                            ? true
-                                            : false
-                                        }
-                                      />
-                                    </label>
-                                  )
-                                )
-                              }
-                            </div>
-                          </div>
-                        )}
+              {
+                <div className="mt-5 flex flex-col justify-center gap-[6px] ">
+                  <label
+                    className="font-inter font-medium text-base text-accent-500"
+                    htmlFor="category"
+                  >
+                    Select Sub Category2*
+                  </label>
+                  <div className="min-w-[259px]  max-w-full relative">
+                    <div
+                      onClick={() => {
+                        if (!watch("subCategory")) {
+                          toast.error("Please select sub category first");
+                          return;
+                        }
+                        setSubcategory2Dropdown((prev) => !prev);
+                      }}
+                      role="button"
+                      className={`bg-accent-50 py-[18px] px-4  border border-accent-100 z-0 rounded-xl ${
+                        subcategory2Dropdown ? "rounded-b-none" : ""
+                      }  w-full flex justify-between `}
+                    >
+                      <div className="font-medium text-base text-accent-600 truncate min-h-fit">
+                        {isLoadingSubSubCategories
+                          ? "Loading..."
+                          : watch("subCategory2")
+                          ? watch("subCategory2")
+                          : "Select Subcategory"}
                       </div>
-                      {errors.category && (
-                        <FormErrorLine message={errors.category.message} />
-                      )}
+                      <span>
+                        <img
+                          src={subcategory2Dropdown ? caretUpSvg : caretDownSvg}
+                          alt=""
+                          className="min-h-[19px] min-w-[18px]"
+                        />
+                      </span>
                     </div>
-                  )
-              } */}
+                    {subcategory2Dropdown && (
+                      <div
+                        role="button"
+                        className="w-full bg-accent-100 shadow-md overflow-y-auto rounded-xl rounded-t-none absolute"
+                      >
+                        <div className="overflow-y-auto max-h-[242px] scrollbar-md">
+                          {subSubCategories
+                            ?.map((i) => i.name)
+                            ?.map((item: string) => (
+                              <label
+                                htmlFor={item}
+                                onClick={() => {
+                                  if (watch("subCategory2") === item) {
+                                    setValue("subCategory2", "");
+                                  } else {
+                                    setValue("subCategory2", item);
+                                  }
+                                  setSubcategory2Dropdown(false);
+                                }}
+                                role="button"
+                                className="flex justify-between items-center w-full p-4  border-t border-accent-200"
+                              >
+                                <div className="text-sm cursor-pointer flex-1 font-medium text-accent-600 font-inter">
+                                  {item}
+                                </div>
+                                <input
+                                  value={item}
+                                  className="checkbox checkbox-xs  checkbox-warning rounded-md"
+                                  type="checkbox"
+                                  checked={
+                                    watch("subCategory2") === item
+                                      ? true
+                                      : false
+                                  }
+                                />
+                              </label>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  {errors.category && (
+                    <FormErrorLine message={errors.category.message} />
+                  )}
+                </div>
+              }
             </div>
 
             {/* More Details */}

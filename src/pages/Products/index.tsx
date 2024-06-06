@@ -7,7 +7,6 @@ import Button from "../../components/reusable/Button";
 import SearchInput from "../../components/reusable/SearchInput";
 import { useCallback, useEffect, useState } from "react";
 import Dropdown from "../../components/reusable/Dropdown";
-import { PRODUCT_CATEGORIES } from "../../assets/data/constants";
 import DownloadCSVButton from "../../components/reusable/DownloadCSVButton";
 import ActionModal from "../../components/reusable/ActionModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -21,6 +20,7 @@ import objToQuery from "../../utils/objToQuery";
 import debounce from "../../utils/debounce";
 import Swal from "sweetalert2";
 import ProductReports from "./ProductReports";
+import { handleFetchCategory } from "../../api/categories";
 
 const DEFAULT_QUERY_PARAMS = {
   pageNo: 1,
@@ -56,6 +56,12 @@ const ProductsPage = () => {
   } = useQuery({
     queryKey: ["products", debouncedQueryParams],
     queryFn: () => handleGetAllProducts(objToQuery(debouncedQueryParams)),
+  });
+
+  // fetch categories
+  const { data: rootCategories } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => handleFetchCategory(),
   });
 
   // delete product
@@ -116,7 +122,7 @@ const ProductsPage = () => {
   return (
     <div className="flex flex-col gap-11 overflow-hidden">
       {/* all product cards */}
-      <ProductReports />
+      <ProductReports categoriesLength={rootCategories?.length ?? 0} />
       {/* product table */}
       <div className="overflow-x-scroll hide-scrollbar min-h-[40vh]  pb-40">
         <div className="border border-accent-200 rounded-[20px] bg-white p-6 flex flex-col gap-6 min-w-[1100px]">
@@ -133,7 +139,7 @@ const ProductsPage = () => {
                 }}
               />
               <Dropdown
-                dropdownItems={Object.keys(PRODUCT_CATEGORIES)}
+                dropdownItems={rootCategories?.map((item) => item.name) ?? []}
                 setDropdownItem={(item) => {
                   document.getElementById("table")?.scrollIntoView();
                   setQueryParams((prev) => ({
