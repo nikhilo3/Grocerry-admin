@@ -187,24 +187,19 @@ const UpdateVarietyModal = ({
             <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
               <label
                 className="font-inter font-medium text-base text-accent-500"
-                htmlFor="discountPercent"
+                htmlFor="discountprice"
               >
-                Discounted Percent*
+                Selling Price*
               </label>
               <input
-                {...register("discountPercent", {
+                {...register("discountprice", {
                   required: {
                     value: true,
-                    message: "Discount Price are required",
+                    message: "Selling Price is required",
                   },
                   min: {
-                    value: 0,
-                    message:
-                      "Discount Price should be greater than or equal to 0",
-                  },
-                  max: {
-                    value: 100,
-                    message: "Discount Price should be less than 100",
+                    value: 1,
+                    message: "Discount Price should be greater than 0",
                   },
                 })}
                 className="h-[58px] w-full rounded-xl py-[18px] px-4 bg-background text-lg border-accent-100 border outline-none"
@@ -212,8 +207,8 @@ const UpdateVarietyModal = ({
                 onWheel={(e) => e.currentTarget.blur()}
                 placeholder="eg., 5"
               />
-              {errors.discountPercent && (
-                <FormErrorLine message={errors.discountPercent.message} />
+              {errors.discountprice && (
+                <FormErrorLine message={errors.discountprice.message} />
               )}
             </div>
           </div>
