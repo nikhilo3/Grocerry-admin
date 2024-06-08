@@ -34,7 +34,7 @@ export type Variety = {
   description: string;
   price: number;
   quantity: number;
-  discountPercent: number;
+  discountprice: number;
   documentUrls: File[];
 };
 
