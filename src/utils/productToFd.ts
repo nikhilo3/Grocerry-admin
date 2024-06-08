@@ -1,7 +1,7 @@
 export const productToFd = (product: any) => {
   const fd = new FormData();
   Object.keys(product).map((key) => {
-    if (key === "subCategory2") return;
+    // if (key === "subCategory2") return;
     if (key === "productUrls") return;
     if (key === "documents") {
       // if the documents is empty array skip the iteration

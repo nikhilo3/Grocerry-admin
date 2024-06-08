@@ -2,9 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { handleGetProductReport } from "../../api/product";
 import { Skeleton } from "../../components/reusable/Skeleton";
 import InfoCard from "../../components/reusable/InfoCard";
-import { PRODUCT_CATEGORIES } from "../../assets/data/constants";
 
-const ProductReports = () => {
+const ProductReports = ({ categoriesLength }: { categoriesLength: number }) => {
   // get product reports
   const {
     data: productReports,
@@ -39,10 +38,7 @@ const ProductReports = () => {
             title="Products Out Of Stock"
             data={productReports?.totalOutOfStockProducts ?? 0}
           />
-          <InfoCard
-            title="Total Categories"
-            data={Object.keys(PRODUCT_CATEGORIES).length}
-          />
+          <InfoCard title="Total Categories" data={categoriesLength} />
         </>
       )}
     </div>

@@ -121,7 +121,7 @@ const Orders = () => {
               }}
               label="Filter by status"
             />
-            <div className="pl-[450px] flex justify-end">
+            <div className="ml-auto flex justify-end">
               <DownloadCSVButton data={data!} fileName={"orders"} />
             </div>
           </div>

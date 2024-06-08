@@ -1,7 +1,7 @@
 import React from "react";
 
 interface AppFormError {
-  message: string | undefined;
+  message?: string | undefined;
   className?: string;
 }
 
