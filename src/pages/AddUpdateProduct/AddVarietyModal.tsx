@@ -164,15 +164,15 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
             <div className="mt-5 w-full flex flex-col justify-center gap-[6px] ">
               <label
                 className="font-inter font-medium text-base text-accent-500"
-                htmlFor="discountprice"
+                htmlFor="discountPrice"
               >
                 Selling Price*
               </label>
               <input
-                {...register("discountprice", {
+                {...register("discountPrice", {
                   required: {
                     value: true,
-                    message: "Selling Price are required",
+                    message: "Selling Price is required",
                   },
                   min: {
                     value: 1,
@@ -184,8 +184,8 @@ const AddVarietyModal = ({ setVarieties }: Props) => {
                 onWheel={(e) => e.currentTarget.blur()}
                 placeholder="eg., 5"
               />
-              {errors.discountprice && (
-                <FormErrorLine message={errors.discountprice.message} />
+              {errors.discountPrice && (
+                <FormErrorLine message={errors.discountPrice.message} />
               )}
             </div>
           </div>
