@@ -56,12 +56,6 @@ const Sidebar = () => {
       icon1: products1,
       icon2: products2,
     },
-    {
-      label: "Reports",
-      path: "/reports",
-      icon1: reports1,
-      icon2: reports1,
-    },
   ];
 
   return (
