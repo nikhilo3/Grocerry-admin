@@ -30,6 +30,7 @@ const API = {
 
   //users
   getAllUsers: AUTH_URL + "/profile/admin/fetch",
+  login: AUTH_URL + "/login",
 
   // categories
   category: PRODUCT_URL + "/category/all",

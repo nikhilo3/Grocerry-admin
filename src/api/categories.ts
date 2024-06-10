@@ -1,16 +1,11 @@
-import axios from "axios";
 import { ICategory, ISubCategoryData } from "../types/categories.types";
 import API from ".";
-import { TOKEN } from "../assets/mockData/auth";
+import { axiosInstance } from "./axios";
 
 export const handleGetCategories = async (): Promise<ICategory[]> => {
   return new Promise((resolve, reject) => {
-    axios
-      .get(API.category, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      })
+    axiosInstance
+      .get(API.category)
       .then((res) => {
         if (res.data?.statusCode === 404) resolve([]);
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
@@ -62,12 +57,8 @@ export const handleAddCategory = async ({
   });
 
   return new Promise((resolve, reject) => {
-    axios
-      .post(API.addCategory, formData, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      })
+    axiosInstance
+      .post(API.addCategory, formData)
       .then((res) => {
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
           reject(res.data?.errorMessage ?? "Failed to add category!");
@@ -89,11 +80,8 @@ export const handleFetchCategory = async (
   }[]
 > => {
   return new Promise((resolve, reject) => {
-    axios
+    axiosInstance
       .get(API.fetchCategory, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
         params: {
           name,
         },

@@ -1,7 +1,6 @@
-import axios from "axios";
 import API from ".";
-import { TOKEN } from "../assets/mockData/auth";
 import { IUser, IUserAddress } from "../types/user.types";
+import { axiosInstance } from "./axios";
 
 export interface IGetAllUsersResponse {
   userDetails: IUser;
@@ -12,12 +11,8 @@ export const handleGetAllUsers = async (
   query: string = ""
 ): Promise<Array<IGetAllUsersResponse>> => {
   return new Promise((resolve, reject) => {
-    axios
-      .get(`${API.getAllUsers}?${query}`, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      })
+    axiosInstance
+      .get(`${API.getAllUsers}?${query}`)
       .then((res) => {
         if (res.data?.statusCode === 404) return resolve([]);
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
@@ -37,12 +32,8 @@ export const handleGetAllUserReport = async (): Promise<{
   totalInActiveCount: number;
 }> => {
   return new Promise((resolve, reject) => {
-    axios
-      .get(API.getAllUserReport, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      })
+    axiosInstance
+      .get(API.getAllUserReport)
       .then((res) => {
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
           reject(res.data?.errorMessage ?? "Failed to fetch user report!");
