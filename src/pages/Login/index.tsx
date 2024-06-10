@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import eye from "../../assets/icons/eye-alt-svgrepo-com.svg";
 import eyeClosed from "../../assets/icons/eye-slash-svgrepo-com.svg";
 import check from "../../assets/icons/fi-br-check.svg";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { handleLoginService } from "../../api/auth";
 import toast from "react-hot-toast";
 
