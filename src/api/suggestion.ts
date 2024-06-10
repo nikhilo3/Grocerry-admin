@@ -1,6 +1,5 @@
-import axios from "axios";
 import API from ".";
-import { TOKEN } from "../assets/mockData/auth";
+import { axiosInstance } from "./axios";
 
 type ISuggestion = {
   id: string;
@@ -13,12 +12,8 @@ type ISuggestion = {
 
 export const getAllSuggestions = async (): Promise<ISuggestion[]> => {
   return new Promise((resolve, reject) => {
-    axios
-      .get(API.getAllSuggestions, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      })
+    axiosInstance
+      .get(API.getAllSuggestions)
       .then((res) => {
         if (res.data?.statusCode === 404) {
           resolve([]);
@@ -36,11 +31,8 @@ export const getAllSuggestions = async (): Promise<ISuggestion[]> => {
 
 export const handleRemoveSuggestion = async (id: string): Promise<string> => {
   return new Promise((resolve, reject) => {
-    axios
+    axiosInstance
       .delete(API.removeSuggestion, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
         data: [id],
       })
       .then((res) => {

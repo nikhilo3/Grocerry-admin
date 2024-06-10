@@ -1,6 +1,7 @@
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import Sidebar from "../reusable/Sidebar";
 import Header from "../reusable/Header";
+import Cookies from "js-cookie";
 
 type Props = {
   children: React.ReactNode;
@@ -8,6 +9,13 @@ type Props = {
 const RootLayout = (props: Props) => {
   const { pathname } = useLocation();
   if (pathname === "/login") return props.children;
+
+  const isAuth = Cookies.get("auth_token");
+  console.log(isAuth);
+  if (!Cookies.get("auth_token")) {
+    return <Navigate to="/login" />;
+  }
+
   return (
     <div className="h-screen w-screen flex ">
       <Sidebar />

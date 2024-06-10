@@ -8,7 +8,6 @@ import orders2 from "../../assets/icons/orders2.svg";
 import users1 from "../../assets/icons/user1.svg";
 import users2 from "../../assets/icons/users2.svg";
 import drivers1 from "../../assets/icons/drivers1.svg";
-import reports1 from "../../assets/icons/report1.svg";
 
 const Sidebar = () => {
   const { pathname } = useLocation();
@@ -55,12 +54,6 @@ const Sidebar = () => {
       path: "/suggestions",
       icon1: products1,
       icon2: products2,
-    },
-    {
-      label: "Reports",
-      path: "/reports",
-      icon1: reports1,
-      icon2: reports1,
     },
   ];
 
