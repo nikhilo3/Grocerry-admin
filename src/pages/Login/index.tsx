@@ -6,9 +6,12 @@ import { useNavigate } from "react-router-dom";
 import eye from "../../assets/icons/eye-alt-svgrepo-com.svg";
 import eyeClosed from "../../assets/icons/eye-slash-svgrepo-com.svg";
 import check from "../../assets/icons/fi-br-check.svg";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { handleLoginService } from "../../api/auth";
+import toast from "react-hot-toast";
 
 interface FormData {
-  email: string;
+  userName: string;
   password: string;
 }
 
@@ -26,9 +29,19 @@ const Login = () => {
     formState: { errors },
   } = useForm<FormData>();
 
+  const { mutate, isPending } = useMutation({
+    mutationFn: handleLoginService,
+    onSuccess: (data) => {
+      navigate("/");
+      toast.success(data);
+    },
+    onError: (error: string) => {
+      toast.error(error);
+    },
+  });
+
   const handleLogin = (data: FormData): void => {
-    console.log(data);
-    navigate("/");
+    mutate(data);
   };
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-[#E5E7EB] px-10 md:px-0">
@@ -50,7 +63,7 @@ const Login = () => {
         >
           <div className="flex flex-col gap-[6px]">
             <p className="font-inter text-[16px] font-medium text-[#6B7280]">
-              Username / Email*
+              Username*
             </p>
 
             <div className="relative flex gap-2 items-center bg-[#F3F4F6] border border-[#E5E7EB] rounded-xl px-6 h-[64px] w-full">
@@ -59,13 +72,13 @@ const Login = () => {
               <input
                 className="bg-[#F3F4F6]  w-full  focus:outline-none"
                 placeholder="John Doe"
-                type="email"
-                {...register("email", { required: "Enter your email" })}
+                type="text"
+                {...register("userName", { required: "Enter your email" })}
               />
             </div>
-            {errors.email && (
+            {errors.userName && (
               <span className="text-rose-600 font-inter">
-                {errors.email?.message}
+                {errors.userName?.message}
               </span>
             )}
           </div>
@@ -103,8 +116,14 @@ const Login = () => {
           </div>
 
           <button className="bg-[#F97316] text-white flex items-center gap-1 rounded-xl w-full sm:w-40 px-12 py-4 font-inter text-[16px] font-medium">
-            Login
-            <img src={check} alt="" className="ml-2" />
+            {isPending ? (
+              "Loading..."
+            ) : (
+              <>
+                Login
+                <img src={check} alt="" className="ml-2" />
+              </>
+            )}
           </button>
         </form>
       </div>

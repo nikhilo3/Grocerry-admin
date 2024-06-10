@@ -1,19 +1,14 @@
-import axios from "axios";
 import API from ".";
-import { TOKEN } from "../assets/mockData/auth";
 import { IOrder } from "../types/order.types";
 import { ORDER_STATUS_OPTIONS } from "../pages/Orders";
+import { axiosInstance } from "./axios";
 
 export const handleGetAllOrders = async (
   query: string = ""
 ): Promise<IOrder[]> => {
   return new Promise((resolve, reject) => {
-    axios
-      .get(`${API.allOrders}?${query}`, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      })
+    axiosInstance
+      .get(`${API.allOrders}?${query}`)
       .then((res) => {
         if (res.data?.statusCode === 404) resolve([]);
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
@@ -32,19 +27,11 @@ export const handleChangeOrderStatus = async (data: {
   orderStatus: string;
 }): Promise<string> => {
   return new Promise((resolve, reject) => {
-    axios
-      .put(
-        API.updateOrder,
-        {
-          ...data,
-          orderStatus: data.orderStatus.replace(/_/g, " "),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-        }
-      )
+    axiosInstance
+      .put(API.updateOrder, {
+        ...data,
+        orderStatus: data.orderStatus.replace(/_/g, " "),
+      })
       .then((res) => {
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
           reject(res.data?.errorMessage ?? "Failed to update order status!");
@@ -62,20 +49,12 @@ export const handleChangeOrderStatusToOutForDelivery = async (data: {
   driverId: string;
 }): Promise<string> => {
   return new Promise((resolve, reject) => {
-    axios
-      .put(
-        API.updateOrder,
-        {
-          id: data.orderId,
-          orderStatus: "OUT FOR DELIVERY",
-          driverId: data.driverId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-        }
-      )
+    axiosInstance
+      .put(API.updateOrder, {
+        id: data.orderId,
+        orderStatus: "OUT FOR DELIVERY",
+        driverId: data.driverId,
+      })
       .then((res) => {
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
           reject(res.data?.errorMessage ?? "Failed to update order status!");
@@ -95,12 +74,8 @@ export const handleGetAllOrderReport = async (): Promise<{
   };
 }> => {
   return new Promise((resolve, reject) => {
-    axios
-      .get(API.getAllOrderReport, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      })
+    axiosInstance
+      .get(API.getAllOrderReport)
       .then((res) => {
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
           reject(res.data?.errorMessage ?? "Failed to fetch order report!");

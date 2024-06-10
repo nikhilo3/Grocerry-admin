@@ -1,9 +1,8 @@
-import axios from "axios";
 import { ProductFormData, Variety } from "../pages/AddUpdateProduct";
 import API from ".";
 import { productToFd } from "../utils/productToFd";
-import { TOKEN } from "../assets/mockData/auth";
 import { IProduct } from "../types/product.types";
+import { axiosInstance } from "./axios";
 
 type Product = ProductFormData & {
   varietyList: Variety[];
@@ -14,12 +13,8 @@ export const handleGetAllProducts = async (
   query: string = ""
 ): Promise<IProduct[]> => {
   return new Promise((resolve, reject) => {
-    axios
-      .get(`${API.allProducts}?${query}`, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      })
+    axiosInstance
+      .get(`${API.allProducts}?${query}`)
       .then((res) => {
         if (res.data?.statusCode === 404) {
           resolve([]);
@@ -37,12 +32,9 @@ export const handleGetAllProducts = async (
 
 export const handleDeleteProduct = async (code: string): Promise<string> => {
   return new Promise((resolve, reject) => {
-    axios
+    axiosInstance
       .delete(API.deleteProduct, {
         data: [code],
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
       })
       .then((res) => {
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
@@ -59,11 +51,10 @@ export const handleDeleteProduct = async (code: string): Promise<string> => {
 export const handleAddProduct = async (product: Product): Promise<string> => {
   const fd = productToFd(product);
   return new Promise((resolve, reject) => {
-    axios
+    axiosInstance
       .post(API.addProduct, fd, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${TOKEN}`, //
         },
       })
       .then((res) => {
@@ -84,11 +75,10 @@ export const handleUpdateProduct = async (
 ): Promise<string> => {
   const fd = productToFd(product);
   return new Promise((resolve, reject) => {
-    axios
+    axiosInstance
       .put(API.updateProduct, fd, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${TOKEN}`,
         },
       })
       .then((res) => {
@@ -107,12 +97,8 @@ export const handleGetProductsByQueries = async (
   query?: string
 ): Promise<IProduct[]> => {
   return new Promise((resolve, reject) => {
-    axios
-      .get(`${API.allProducts}${query ? `?${query}` : ""}`, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      })
+    axiosInstance
+      .get(`${API.allProducts}${query ? `?${query}` : ""}`)
       .then((res) => {
         if (res.data?.statusCode === 404) resolve([]);
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
@@ -132,12 +118,8 @@ export const handleGetProductReport = async (): Promise<{
   totalOutOfStockProducts: number;
 } | null> => {
   return new Promise((resolve, reject) => {
-    axios
-      .get(API.getAllProductReport, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      })
+    axiosInstance
+      .get(API.getAllProductReport)
       .then((res) => {
         if (res.data?.statusCode === 404) resolve(null);
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
