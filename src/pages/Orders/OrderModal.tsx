@@ -242,6 +242,18 @@ const OrderModal = ({
                   </span>
                   <div className="flex justify-between py-2">
                     <span className="text-[14px] text-accent-500">
+                      Payment Mode
+                    </span>
+                    <span>{selectedOrder?.paymentMode}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-[14px] text-accent-500">
+                      Payment Id
+                    </span>
+                    <span>{selectedOrder?.paymentId}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-[14px] text-accent-500">
                       Item Total
                     </span>
                     <span>₹{selectedOrder?.totalItemCost}</span>

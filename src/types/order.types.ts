@@ -1,6 +1,7 @@
 export type IOrder = {
   id: string;
   paymentId: string;
+  paymentMode: string;
   boughtProductDetailsList: {
     varietyId: string;
     name: string;
