@@ -1,5 +1,4 @@
 import InfoCard from "../../components/reusable/InfoCard";
-import { overviewStats } from "../../assets/mockData/overviewData";
 
 import arrowDown from "../../assets/icons/arrow-down-overview.svg";
 import Chart from "./Chart";
