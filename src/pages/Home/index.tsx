@@ -1,16 +1,39 @@
 import InfoCard from "../../components/reusable/InfoCard";
-import { overviewStats } from "../../assets/mockData/overviewData";
 
 import arrowDown from "../../assets/icons/arrow-down-overview.svg";
 import Chart from "./Chart";
-
+import { useQuery } from "@tanstack/react-query";
+import { handleGetDashboardDataService } from "../../api/dashboard";
+import Cookies from "js-cookie";
 const HomePage = () => {
+  const token = Cookies.get("auth_token");
+  const { isLoading, data } = useQuery({
+    queryKey: ["overview"],
+    queryFn: () => handleGetDashboardDataService(token!),
+  });
   return (
     <div className="flex flex-col gap-11 overflow-hidden">
       {/* all product cards */}
       <div className="flex gap-5">
-        {overviewStats.map((stat, index) => (
-          <InfoCard key={index} {...stat} opacity={0} />
+        {[
+          {
+            title: "Total Revenue",
+            data: isLoading ? "..." : `₹${data?.totalRevenue}`,
+          },
+          {
+            title: "Total Orders",
+            data: isLoading ? "..." : data?.totalOrders,
+          },
+          {
+            title: "Total Products",
+            data: isLoading ? "..." : data?.totalProducts,
+          },
+          {
+            title: "Average Order Value",
+            data: isLoading ? "..." : `₹${data?.averageOrderCost}`,
+          },
+        ].map((stat, index) => (
+          <InfoCard key={index} {...stat} />
         ))}
       </div>
       <div className="flex gap-5 flex-wrap">
