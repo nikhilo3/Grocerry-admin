@@ -1,4 +1,4 @@
-const AUTH_URL = import.meta.env.VITE_LOGIN_SERVICE_BASE_URL + "/login/v1";
+const AUTH_URL = import.meta.env.VITE_LOGIN_SERVICE_BASE_URL + "/v1";
 const PRODUCT_URL = import.meta.env.VITE_PRODUCT_SERVICE_BASE_URL + "/v1";
 // const AUTH_URL = "http://localhost:8080" + "/v1";
 
@@ -36,7 +36,7 @@ const API = {
   category: PRODUCT_URL + "/category/all",
   addCategory: PRODUCT_URL + "/category/add",
   fetchCategory: PRODUCT_URL + "/category/fetch",
-  
+
   dashboardReport: PRODUCT_URL + "/report/overview",
 };
 
