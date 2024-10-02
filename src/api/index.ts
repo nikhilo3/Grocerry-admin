@@ -1,5 +1,7 @@
 // const AUTH_URL = import.meta.env.VITE_LOGIN_SERVICE_BASE_URL + "/v1";
-const AUTH_URL = 'http://192.168.0.101:8000/customer'
+// const AUTH_URL = 'http://192.168.0.101:8000/customer'
+
+const AUTH_URL = 'https://grocerry-backend.vercel.app'
 const PRODUCT_URL = import.meta.env.VITE_PRODUCT_SERVICE_BASE_URL + "/v1";
 // const AUTH_URL = "http://localhost:8080" + "/v1";
 
