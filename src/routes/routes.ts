@@ -40,10 +40,6 @@ const ROUTES: IRoute[] = [
     component: lazy(async () => await import("../pages/AddUpdateProduct")),
   },
   {
-    path: "/drivers",
-    component: lazy(async () => await import("../pages/Drivers")),
-  },
-  {
     path: "/users",
     component: lazy(async () => await import("../pages/Users")),
   },
