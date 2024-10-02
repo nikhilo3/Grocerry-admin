@@ -3,7 +3,7 @@ import API from ".";
 import Cookies from "js-cookie";
 
 export const handleLoginService = async (data: {
-  userName: string;
+  email: string;
   password: string;
 }): Promise<string> => {
   return new Promise((resolve, reject) => {
