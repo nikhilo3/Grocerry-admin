@@ -3,16 +3,20 @@ import API from ".";
 import Cookies from "js-cookie";
 
 export const handleLoginService = async (data: {
-  email: string;
+  userName: string;
   password: string;
 }): Promise<string> => {
   return new Promise((resolve, reject) => {
     axios
-      .post(API.login, data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
+      .post(
+        API.login,
+        { email: data.userName, password: data.password },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
       .then((res) => {
         // if the res statusCode is not in range of 200-299
         if (res.data?.statusCode < 200 || res.data?.statusCode >= 300) {
