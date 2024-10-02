@@ -73,7 +73,7 @@ const Login = () => {
                 className="bg-[#F3F4F6]  w-full  focus:outline-none"
                 placeholder="John Doe"
                 type="text"
-                {...register("userName", { required: "Enter your email" })}
+                {...register("email", { required: "Enter your email" })}
               />
             </div>
             {errors.userName && (
