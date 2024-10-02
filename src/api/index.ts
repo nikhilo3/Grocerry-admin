@@ -10,11 +10,7 @@ const API = {
   deleteProduct: PRODUCT_URL + "/product/delete",
   updateProduct: PRODUCT_URL + "/product/update",
 
-  // drivers
-  addDriver: PRODUCT_URL + "/driver/add",
-  allDrivers: PRODUCT_URL + "/driver/list",
-  deleteDriver: PRODUCT_URL + "/driver/delete",
-  updateDriver: PRODUCT_URL + "/driver/update",
+
 
   // orders
   allOrders: PRODUCT_URL + "/order/admin/list",

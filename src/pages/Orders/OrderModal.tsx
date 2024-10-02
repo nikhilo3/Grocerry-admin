@@ -7,7 +7,7 @@ import imagePlaceholder from "../../assets/icons/image-svgrepo-com.svg";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { handleChangeOrderStatus } from "../../api/order";
 import toast from "react-hot-toast";
-import AssignDriverModal from "./AssignDriverModal";
+// import AssignDriverModal from "./AssignDriverModal";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import InvoicePdf from "./Invoice";
 
@@ -292,7 +292,7 @@ const OrderModal = ({
           </div>
         </div>
       </dialog>
-      <AssignDriverModal orderId={selectedOrder?.id ?? ""} />
+      {/* <AssignDriverModal orderId={selectedOrder?.id ?? ""} /> */}
     </>
   );
 };
