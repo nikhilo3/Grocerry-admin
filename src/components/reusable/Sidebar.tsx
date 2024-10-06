@@ -48,7 +48,7 @@ const Sidebar = () => {
     <div className="h-full w-[240px] bg-white px-6 py-[54px] border-r border-[#F3F4F6]">
       <div className="flex flex-col gap-14">
         <h1 className="font-inter text-[32px] font-bold leading-9 text-neutral-60">
-          A Kasera Company
+          Grocerry
         </h1>
 
         {/* Navlinks */}
